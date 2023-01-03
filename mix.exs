@@ -26,7 +26,7 @@ defmodule Gitsudo.Umbrella.MixProject do
   defp deps do
     [
       # required to run "mix format" on ~H/.heex files from the umbrella root
-      {:phoenix_live_view, ">= 0.0.0"}
+      {:phoenix, "~> 1.7.0-rc.0", override: true}
     ]
   end
 
