@@ -34,14 +34,6 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  # The GitHub app client id
-  github_client_id =
-    System.get_env("GITHUB_CLIENT_ID") ||
-      raise """
-      environment variable GITHUB_CLIENT_ID is missing!
-      See https://docs.github.com/en/rest/guides/basics-of-authentication
-      """
-
   config :gitsudo_web, GitsudoWeb.Endpoint,
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -49,8 +41,7 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
-    secret_key_base: secret_key_base,
-    github_client_id: github_client_id
+    secret_key_base: secret_key_base
 
   # ## Using releases
   #
@@ -112,3 +103,13 @@ if config_env() == :prod do
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
+
+# The GitHub app client id
+github_client_id =
+  System.get_env("GITHUB_CLIENT_ID") ||
+    raise """
+    environment variable GITHUB_CLIENT_ID is missing!
+    See https://docs.github.com/en/rest/guides/basics-of-authentication
+    """
+
+config :gitsudo_web, GitsudoWeb.Endpoint, github_client_id: github_client_id
