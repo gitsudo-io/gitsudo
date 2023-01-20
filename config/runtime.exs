@@ -112,4 +112,14 @@ github_client_id =
     See https://docs.github.com/en/rest/guides/basics-of-authentication
     """
 
-config :gitsudo_web, GitsudoWeb.Endpoint, github_client_id: github_client_id
+# The GitHub app client secret
+github_client_secret =
+  System.get_env("GITHUB_CLIENT_SECRET") ||
+    raise """
+    environment variable GITHUB_CLIENT_SECRET is missing!
+    See https://docs.github.com/en/rest/guides/basics-of-authentication
+    """
+
+config :gitsudo_web, GitsudoWeb.Endpoint,
+  github_client_id: github_client_id,
+  github_client_secret: github_client_secret

@@ -7,7 +7,12 @@ defmodule Gitsudo.Umbrella.MixProject do
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: [
+        gitsudo_umbrella: [
+          applications: [gitsudo: :permanent, gitsudo_web: :permanent]
+        ]
+      ]
     ]
   end
 

@@ -18,6 +18,14 @@ defmodule GitsudoWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/login", PageController, :login
+    get "/oauth/callback", OauthController, :callback
+  end
+
+  scope "/api", GitsudoWeb do
+    pipe_through :api
+
+    resources "/labels", LabelController
   end
 
   # Other scopes may use custom stacks.
