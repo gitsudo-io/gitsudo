@@ -1,0 +1,50 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer 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",
+        "Accept": "application/json"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.github.com/user"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"login\":\"aisrael\",\"id\":89215,\"node_id\":\"MDQ6VXNlcjg5MjE1\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/89215?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/aisrael\",\"html_url\":\"https://github.com/aisrael\",\"followers_url\":\"https://api.github.com/users/aisrael/followers\",\"following_url\":\"https://api.github.com/users/aisrael/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/aisrael/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/aisrael/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/aisrael/subscriptions\",\"organizations_url\":\"https://api.github.com/users/aisrael/orgs\",\"repos_url\":\"https://api.github.com/users/aisrael/repos\",\"events_url\":\"https://api.github.com/users/aisrael/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/aisrael/received_events\",\"type\":\"User\",\"site_admin\":false,\"name\":\"Alistair Israel\",\"company\":\"@adasupport\",\"blog\":\"https://medium.com/@alistairisrael\",\"location\":\"Ontario, Canada\",\"email\":\"aisrael@gmail.com\",\"hireable\":null,\"bio\":\"Staff Engineer (DevOps) at Ada.cx\",\"twitter_username\":null,\"public_repos\":98,\"public_gists\":28,\"followers\":52,\"following\":17,\"created_at\":\"2009-05-27T16:27:46Z\",\"updated_at\":\"2023-01-16T18:31:21Z\"}",
+      "headers": {
+        "Server": "GitHub.com",
+        "Date": "Thu, 26 Jan 2023 16:16:32 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "1255",
+        "Cache-Control": "private, max-age=60, s-maxage=60",
+        "Vary": "Accept, Authorization, Cookie, X-GitHub-OTP",
+        "ETag": "\"f6dff2b8e7a0b6cdda6c9ee3669d6bdbf74e8083f8e99fa583ec5a5657f50834\"",
+        "Last-Modified": "Mon, 16 Jan 2023 18:31:21 GMT",
+        "X-OAuth-Scopes": "",
+        "X-Accepted-OAuth-Scopes": "",
+        "x-oauth-client-id": "4218015567269009f6d4",
+        "X-GitHub-Media-Type": "github.v3",
+        "x-github-api-version-selected": "2022-11-28",
+        "X-RateLimit-Limit": "5000",
+        "X-RateLimit-Remaining": "4998",
+        "X-RateLimit-Reset": "1674753207",
+        "X-RateLimit-Used": "2",
+        "X-RateLimit-Resource": "core",
+        "Access-Control-Expose-Headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+        "Access-Control-Allow-Origin": "*",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains; preload",
+        "X-Frame-Options": "deny",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Referrer-Policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
+        "Content-Security-Policy": "default-src 'none'",
+        "X-GitHub-Request-Id": "AD76:32AF:1FCDBE8:40FCDE5:63D2A760"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

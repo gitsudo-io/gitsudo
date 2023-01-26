@@ -36,6 +36,8 @@ defmodule Gitsudo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:httpoison, "~> 1.0"},
+      {:exvcr, "~> 0.11", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.6"},
