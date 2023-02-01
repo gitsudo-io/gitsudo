@@ -104,22 +104,11 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 end
 
-# The GitHub app client id
-github_client_id =
-  System.get_env("GITHUB_CLIENT_ID") ||
+github_app_id =
+  System.get_env("GITHUB_APP_ID") ||
     raise """
-    environment variable GITHUB_CLIENT_ID is missing!
-    See https://docs.github.com/en/rest/guides/basics-of-authentication
+    environment variable GITHUB_APP_ID is missing!
+    See https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps
     """
 
-# The GitHub app client secret
-github_client_secret =
-  System.get_env("GITHUB_CLIENT_SECRET") ||
-    raise """
-    environment variable GITHUB_CLIENT_SECRET is missing!
-    See https://docs.github.com/en/rest/guides/basics-of-authentication
-    """
-
-config :gitsudo_web, GitsudoWeb.Endpoint,
-  github_client_id: github_client_id,
-  github_client_secret: github_client_secret
+config :gitsudo_web, GitsudoWeb.Endpoint, github_app_id: github_app_id
