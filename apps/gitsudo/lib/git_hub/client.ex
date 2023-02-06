@@ -3,6 +3,8 @@ defmodule GitHub.Client do
   The high-level GitHub client
   """
 
+  require Logger
+
   @doc """
   Get app installations
   """
@@ -41,6 +43,7 @@ defmodule GitHub.Client do
           {:ok, String.t()} | {:error, any}
   def exchange_code_for_access_token(client_id, client_secret, code) do
     body = Jason.encode!(%{client_id: client_id, client_secret: client_secret, code: code})
+    Logger.debug(body)
     url = "https://github.com/login/oauth/access_token"
 
     with {:ok, resp} <-
