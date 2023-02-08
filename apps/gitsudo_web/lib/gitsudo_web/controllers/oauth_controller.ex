@@ -22,6 +22,6 @@ defmodule GitsudoWeb.OauthController do
 
     Logger.debug("access_token: #{access_token}")
 
-    render(conn, :home, layout: false)
+    redirect(conn, to: ~p"/")
   end
 end
