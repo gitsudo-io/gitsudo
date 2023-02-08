@@ -5,7 +5,8 @@ defmodule GitsudoWeb.PageController do
   def home(conn, _params) do
     # The home page is often custom made,
     # so skip the default app layout.
-    render(conn, :home, layout: false)
+    repositories = []
+    render(conn, :home, layout: false, repositories: repositories)
   end
 
   @spec login(Plug.Conn.t(), any) :: Plug.Conn.t()
