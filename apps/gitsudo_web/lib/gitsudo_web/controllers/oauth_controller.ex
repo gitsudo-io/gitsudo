@@ -22,6 +22,10 @@ defmodule GitsudoWeb.OauthController do
 
     Logger.debug("access_token: #{access_token}")
 
-    redirect(conn, to: ~p"/")
+    conn_with_token = put_session(conn, :access_token, access_token)
+    access_token_in_session = get_session(conn_with_token, :access_token)
+    Logger.debug("access_token_in_session: #{access_token_in_session}")
+
+    redirect(conn_with_token, to: ~p"/")
   end
 end

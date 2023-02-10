@@ -1,6 +1,8 @@
 defmodule GitsudoWeb.Router do
   use GitsudoWeb, :router
 
+  import GitsudoWeb.UserAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule GitsudoWeb.Router do
     plug :put_root_layout, {GitsudoWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   pipeline :api do
@@ -15,12 +18,18 @@ defmodule GitsudoWeb.Router do
   end
 
   scope "/", GitsudoWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_user]
 
     get "/", PageController, :home
+  end
+
+  scope "/", GitsudoWeb do
+    pipe_through [:browser, :redirect_if_user_is_authenticated]
+
     get "/login", PageController, :login
     get "/oauth/callback", OauthController, :callback
   end
+
 
   scope "/api", GitsudoWeb do
     pipe_through :api
