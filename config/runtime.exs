@@ -127,7 +127,16 @@ github_client_secret =
     See https://docs.github.com/en/rest/guides/basics-of-authentication
     """
 
+# The salt to use to encrypt Plug session data
+gitsudo_session_encryption_salt =
+  System.get_env("GITSUDO_SESSION_ENCRYPTION_SALT") ||
+    raise """
+    environment variable GITSUDO_SESSION_ENCRYPTION_SALT is missing!
+    See https://hexdocs.pm/plug/Plug.Session.COOKIE.html#module-options
+    """
+
 config :gitsudo_web, GitsudoWeb.Endpoint,
   github_app_id: github_app_id,
   github_client_id: github_client_id,
-  github_client_secret: github_client_secret
+  github_client_secret: github_client_secret,
+  gitsudo_session_encryption_salt: gitsudo_session_encryption_salt

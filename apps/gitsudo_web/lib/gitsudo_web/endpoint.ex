@@ -8,6 +8,7 @@ defmodule GitsudoWeb.Endpoint do
     store: :cookie,
     key: "_gitsudo_web_key",
     signing_salt: "2moIroOS",
+    encryption_salt: {GitsudoWeb.Endpoint, :session_encryption_salt, []},
     same_site: "Lax"
   ]
 
@@ -48,4 +49,10 @@ defmodule GitsudoWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug GitsudoWeb.Router
+
+  def session_encryption_salt,
+    do:
+      Application.fetch_env!(:gitsudo_web, GitsudoWeb.Endpoint)[
+        :gitsudo_session_encryption_salt
+      ]
 end
