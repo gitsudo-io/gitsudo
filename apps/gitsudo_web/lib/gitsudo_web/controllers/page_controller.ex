@@ -1,10 +1,14 @@
 defmodule GitsudoWeb.PageController do
   use GitsudoWeb, :controller
 
+  require Logger
+
   @spec home(Plug.Conn.t(), any) :: Plug.Conn.t()
   def home(conn, _params) do
-    # The home page is often custom made,
-    # so skip the default app layout.
+    if user = conn.assigns[:current_user] do
+      Logger.debug(inspect(user["login"]))
+    end
+
     repositories = []
     render(conn, :home, repositories: repositories)
   end

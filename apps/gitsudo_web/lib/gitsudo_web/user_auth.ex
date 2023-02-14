@@ -12,7 +12,19 @@ defmodule GitsudoWeb.UserAuth do
   def fetch_current_user(conn, _opts) do
     access_token = get_session(conn, :access_token)
     Logger.debug("access_token: #{access_token}")
-    assign(conn, :access_token, access_token)
+
+    if access_token do
+      with {:ok, user} <- GitHub.Client.get_user(access_token) do
+        Logger.debug("user: #{inspect(user)}")
+        conn |> assign(:access_token, access_token) |> assign(:current_user, user)
+      else
+        err ->
+          Logger.error(err)
+          assign(conn, :current_user, nil)
+      end
+    else
+      assign(conn, :current_user, nil)
+    end
   end
 
   @doc """

@@ -22,10 +22,7 @@ defmodule GitHub.Client do
     }
 
     with {:ok, token, _} <- Gitsudo.Token.generate_and_sign(payload, signer),
-         {:ok, resp} <-
-           HTTPoison.get("https://api.github.com/app/installations", [
-             {"Authorization", "Bearer #{token}"}
-           ]) do
+         {:ok, resp} <- http_get_api(token, "app/installations") do
       Jason.decode(resp.body)
     else
       {:error, err} -> {:error, err}
@@ -61,14 +58,23 @@ defmodule GitHub.Client do
   @doc """
   Get the logged in user associated with an access token, if available.
   """
-  @spec get_user(binary()) :: {:ok, map()} | {:error, any()}
+  @spec get_user(binary()) :: {:ok, map()} | {:error, HTTPoison.Error.t()}
   def get_user(access_token) do
-    case HTTPoison.get("https://api.github.com/user", [
-           {"Authorization", "Bearer #{access_token}"},
-           {"Accept", "application/json"}
-         ]) do
+    case http_get_api(access_token, "user") do
       {:ok, resp} -> Jason.decode(resp.body)
       {:error, err} -> {:error, err}
     end
+  end
+
+  # Construct an HTTPoison.get request to the given path with the given access token
+  # as the `Authorization: Bearer` token.
+  @spec http_get_api(access_token :: String.t(), path :: String.t()) ::
+          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
+          | {:error, HTTPoison.Error.t()}
+  defp(http_get_api(access_token, path)) do
+    HTTPoison.get("https://api.github.com/#{path}", [
+      {"Authorization", "Bearer #{access_token}"},
+      {"Accept", "application/json"}
+    ])
   end
 end

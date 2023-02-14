@@ -5,9 +5,11 @@
         <a class="btn btn-ghost normal-case text-xl" href="http://localhost:4000">Gitsudo</a>
       </div>
       <div class="flex-none">
+        <%= if @current_user do %>
+          <span>Signed in as <b><%= @current_user["login"] %></b></span>
+        <% end %>
         <ul class="menu menu-horizontal px-1">
-          <li><a>Item 1</a></li>
-          <%= if @access_token do %>
+          <%= if @current_user do %>
             <li><a href="/logout">Logout</a></li>
           <% end %>
         </ul>
