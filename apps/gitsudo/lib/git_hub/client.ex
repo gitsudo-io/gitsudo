@@ -66,12 +66,54 @@ defmodule GitHub.Client do
     end
   end
 
+  @spec list_user_repositories(binary) ::
+          {:error,
+           %{
+             :__exception__ => true,
+             :__struct__ => HTTPoison.Error | Jason.DecodeError,
+             optional(:data) => binary,
+             optional(:id) => nil,
+             optional(:position) => integer,
+             optional(:reason) => any,
+             optional(:token) => any
+           }}
+          | {:ok, any}
+  def list_user_repositories(access_token) do
+    http_get_and_decode(access_token, "user/repos")
+  end
+
+  def list_user_orgs(access_token) do
+    http_get_and_decode(access_token, "user/orgs")
+  end
+
+  @spec http_get_and_decode(access_token :: String.t(), path :: String.t()) ::
+          {:error,
+           %{
+             :__exception__ => true,
+             :__struct__ => HTTPoison.Error | Jason.DecodeError,
+             optional(:data) => binary,
+             optional(:id) => nil,
+             optional(:position) => integer,
+             optional(:reason) => any,
+             optional(:token) => any
+           }}
+          | {:ok, any}
+  def http_get_and_decode(access_token, path) when is_binary(access_token) and is_binary(path) do
+    with {:ok, resp} <- http_get_api(access_token, path) do
+      Jason.decode(resp.body)
+    else
+      err -> {:error, err}
+    end
+  end
+
   # Construct an HTTPoison.get request to the given path with the given access token
   # as the `Authorization: Bearer` token.
   @spec http_get_api(access_token :: String.t(), path :: String.t()) ::
           {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
           | {:error, HTTPoison.Error.t()}
-  defp(http_get_api(access_token, path)) do
+  defp http_get_api(access_token, path)
+       when is_binary(access_token) and
+              is_binary(path) do
     HTTPoison.get("https://api.github.com/#{path}", [
       {"Authorization", "Bearer #{access_token}"},
       {"Accept", "application/json"}
