@@ -13,6 +13,10 @@ import Config
 config :gitsudo,
   ecto_repos: [Gitsudo.Repo]
 
+# Set Ecto Repo defaults
+# Configure your database
+config :gitsudo, Gitsudo.Repo, migration_timestamps: [type: :utc_datetime_usec]
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
