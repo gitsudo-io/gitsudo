@@ -50,6 +50,7 @@ defmodule GitsudoWeb.Endpoint do
   plug Plug.Session, @session_options
   plug GitsudoWeb.Router
 
+  @spec session_encryption_salt :: String.t()
   def session_encryption_salt,
     do:
       Application.fetch_env!(:gitsudo_web, GitsudoWeb.Endpoint)[

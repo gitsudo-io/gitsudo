@@ -21,15 +21,20 @@ defmodule GitsudoWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/", PageController, :home
+    get "/logout", PageController, :logout
   end
 
   scope "/", GitsudoWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     get "/login", PageController, :login
-    get "/oauth/callback", OauthController, :callback
   end
 
+  scope "/", GitsudoWeb do
+    pipe_through [:browser]
+
+    get "/oauth/callback", OauthController, :callback
+  end
 
   scope "/api", GitsudoWeb do
     pipe_through :api
