@@ -1,4 +1,8 @@
 defmodule GitsudoWeb.ErrorJSON do
+  @moduledoc """
+  The JSON Error controller
+  """
+
   # If you want to customize a particular status code,
   # you may add your own clauses, such as:
   #

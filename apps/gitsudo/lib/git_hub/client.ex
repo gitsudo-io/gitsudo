@@ -101,8 +101,6 @@ defmodule GitHub.Client do
   def http_get_and_decode(access_token, path) when is_binary(access_token) and is_binary(path) do
     with {:ok, resp} <- http_get_api(access_token, path) do
       Jason.decode(resp.body)
-    else
-      err -> {:error, err}
     end
   end
 

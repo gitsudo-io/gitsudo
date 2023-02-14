@@ -1,4 +1,7 @@
 defmodule GitsudoWeb.UserAuth do
+  @moduledoc """
+  The user authentication module
+  """
   use GitsudoWeb, :verified_routes
 
   import Plug.Conn
@@ -6,6 +9,7 @@ defmodule GitsudoWeb.UserAuth do
 
   require Logger
 
+  @spec fetch_current_user(Plug.Conn.t(), any) :: Plug.Conn.t()
   @doc """
   Authenticates the user by looking into the session.
   """
@@ -14,11 +18,12 @@ defmodule GitsudoWeb.UserAuth do
     Logger.debug("access_token: #{access_token}")
 
     if access_token do
-      with {:ok, user} <- GitHub.Client.get_user(access_token) do
-        Logger.debug("user: #{inspect(user)}")
-        conn |> assign(:access_token, access_token) |> assign(:current_user, user)
-      else
-        err ->
+      case GitHub.Client.get_user(access_token) do
+        {:ok, user} ->
+          Logger.debug("user: #{inspect(user)}")
+          conn |> assign(:access_token, access_token) |> assign(:current_user, user)
+
+        {:error, err} ->
           Logger.error(err)
           assign(conn, :current_user, nil)
       end
@@ -27,6 +32,10 @@ defmodule GitsudoWeb.UserAuth do
     end
   end
 
+  @spec redirect_if_user_is_authenticated(
+          atom | %{:assigns => nil | maybe_improper_list | map, optional(any) => any},
+          any
+        ) :: atom | %{:assigns => nil | maybe_improper_list | map, optional(any) => any}
   @doc """
   Used for routes that require the user to not be authenticated.
   """
@@ -40,6 +49,10 @@ defmodule GitsudoWeb.UserAuth do
     end
   end
 
+  @spec require_authenticated_user(
+          atom | %{:assigns => nil | maybe_improper_list | map, optional(any) => any},
+          any
+        ) :: atom | %{:assigns => nil | maybe_improper_list | map, optional(any) => any}
   @doc """
   Used for routes that require the user to be authenticated.
 
@@ -56,12 +69,6 @@ defmodule GitsudoWeb.UserAuth do
       |> redirect(to: ~p"/login")
       |> halt()
     end
-  end
-
-  defp put_token_in_session(conn, token) do
-    conn
-    |> put_session(:user_token, token)
-    |> put_session(:live_socket_id, "users_sessions:#{Base.url_encode64(token)}")
   end
 
   defp maybe_store_return_to(%{method: "GET"} = conn) do

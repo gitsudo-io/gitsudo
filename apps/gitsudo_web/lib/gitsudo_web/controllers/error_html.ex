@@ -1,4 +1,7 @@
 defmodule GitsudoWeb.ErrorHTML do
+  @moduledoc """
+  The Error HTML template
+  """
   use GitsudoWeb, :html
 
   # If you want to customize your error pages,

@@ -1,4 +1,8 @@
 defmodule GitsudoWeb.LabelJSON do
+  @moduledoc """
+  The Labels JSON API controller
+  """
+
   alias Gitsudo.Labels.Label
 
   @doc """

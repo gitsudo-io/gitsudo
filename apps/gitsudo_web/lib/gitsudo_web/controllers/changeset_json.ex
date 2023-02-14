@@ -1,4 +1,8 @@
 defmodule GitsudoWeb.ChangesetJSON do
+  @moduledoc """
+  The Changeset JSON view
+  """
+
   @doc """
   Traverses and translates changeset errors.
 

@@ -31,6 +31,7 @@ defmodule GitHub.ClientTest do
       use_cassette "client_get_user_works" do
         {:ok, user} = Client.get_user("06d5607433ef55fbfd842fd06ee740eddec4caaf")
         assert "aisrael" == user["login"]
+        # credo:disable-for-next-line
         assert 89215 == user["id"]
       end
     end

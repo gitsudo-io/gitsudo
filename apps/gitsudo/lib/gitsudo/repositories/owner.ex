@@ -1,4 +1,7 @@
 defmodule Gitsudo.Repositories.Owner do
+  @moduledoc """
+  A GitHub Repository Owner (user or organization)
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
