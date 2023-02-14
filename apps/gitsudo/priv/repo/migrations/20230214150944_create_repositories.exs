@@ -13,6 +13,7 @@ defmodule Gitsudo.Repo.Migrations.CreateRepositories do
       timestamps()
     end
 
+    create unique_index(:repositories, [:owner_id, :name])
     create index(:repositories, [:owner_id])
   end
 end

@@ -10,5 +10,7 @@ defmodule Gitsudo.Repo.Migrations.CreateRepositoryOwners do
 
       timestamps()
     end
+
+    create unique_index(:repository_owners, [:login])
   end
 end
