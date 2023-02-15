@@ -39,7 +39,6 @@ defmodule Gitsudo.MixProject do
       {:joken, "~> 2.5.0"},
       {:httpoison, "~> 1.0"},
       {:exvcr, "~> 0.11", only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},

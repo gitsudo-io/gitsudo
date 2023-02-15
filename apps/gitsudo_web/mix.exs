@@ -37,7 +37,6 @@ defmodule GitsudoWeb.MixProject do
   defp deps do
     [
       {:secure_random, "~> 0.5"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.7.0-rc.0", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.0"},

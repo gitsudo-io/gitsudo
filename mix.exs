@@ -31,6 +31,8 @@ defmodule Gitsudo.Umbrella.MixProject do
   defp deps do
     [
       # required to run "mix format" on ~H/.heex files from the umbrella root
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.7.0-rc.0", override: true}
     ]
   end
