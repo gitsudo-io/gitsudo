@@ -21,7 +21,9 @@ config :gitsudo_web, GitsudoWeb.Endpoint,
   server: false
 
 # Print only warnings and errors during test
-config :logger, level: :warning
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id, :mfa]
 
 # In test we don't send emails.
 config :gitsudo, Gitsudo.Mailer, adapter: Swoosh.Adapters.Test

@@ -42,6 +42,12 @@ defmodule GitsudoWeb.Router do
     resources "/labels", LabelController
   end
 
+  scope "/", GitsudoWeb do
+    pipe_through :api
+
+    post "/webhook", WebhookController, :webhook
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", GitsudoWeb do
   #   pipe_through :api

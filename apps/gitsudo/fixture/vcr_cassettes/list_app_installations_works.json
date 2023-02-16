@@ -1,0 +1,42 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJHaXRzdWRvIiwiZXhwIjoxNjc2NTAyNjQxLCJpYXQiOjE2NzY1MDIwNDEsImlzcyI6IjI4Nzk0MiIsImp0aSI6IjJ0MjIzZWMyb2hocGc1Y2NhZzAwMDBvMSIsIm5iZiI6MTY3NjUwMjA0MX0.onXEcF4kDscR39Xu8mQ-93yB-U1SrOv7GTgnC_Kj_5-e46w2n6j4u-mfDYoxEDMw_f03LCpuc6x5JHRd3-EwMXMkxvtFMMB7so0dmT1Y4J--O3xmw4eFnxKg2_3gZoMH2gJP8MYr11vwcHsu57MAqivDf_CwU2KdFZssTfsWZWYn3NPK7Vi0Dajj6xRwQBAUmfAfWFXoLvvtfYT44nsm1VwJgvIBC072VT13HsomkofJh0GbGrABlaucaU04de4a7k8fIwILD8Dwg1SGEkO1_A6xNGAWWg3Fd6vl4GCNY0vJf6NA2d8oKShVu4uv2eX57jxR5atKxp64X9dejRG-YQ",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.github.com/app/installations"
+    },
+    "response": {
+      "binary": false,
+      "body": "[{\"id\":34222363,\"account\":{\"login\":\"gitsudo-io\",\"id\":121780924,\"node_id\":\"O_kgDOB0I6vA\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/121780924?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/gitsudo-io\",\"html_url\":\"https://github.com/gitsudo-io\",\"followers_url\":\"https://api.github.com/users/gitsudo-io/followers\",\"following_url\":\"https://api.github.com/users/gitsudo-io/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/gitsudo-io/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/gitsudo-io/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/gitsudo-io/subscriptions\",\"organizations_url\":\"https://api.github.com/users/gitsudo-io/orgs\",\"repos_url\":\"https://api.github.com/users/gitsudo-io/repos\",\"events_url\":\"https://api.github.com/users/gitsudo-io/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/gitsudo-io/received_events\",\"type\":\"Organization\",\"site_admin\":false},\"repository_selection\":\"all\",\"access_tokens_url\":\"https://api.github.com/app/installations/34222363/access_tokens\",\"repositories_url\":\"https://api.github.com/installation/repositories\",\"html_url\":\"https://github.com/organizations/gitsudo-io/settings/installations/34222363\",\"app_id\":287942,\"app_slug\":\"gitsudo-local-dev\",\"target_id\":121780924,\"target_type\":\"Organization\",\"permissions\":{\"checks\":\"write\",\"actions\":\"write\",\"members\":\"read\",\"secrets\":\"write\",\"contents\":\"read\",\"metadata\":\"read\",\"statuses\":\"read\",\"workflows\":\"write\",\"deployments\":\"read\",\"environments\":\"write\",\"administration\":\"write\",\"security_events\":\"read\",\"repository_hooks\":\"write\",\"actions_variables\":\"write\",\"dependabot_secrets\":\"write\",\"organization_hooks\":\"write\",\"organization_events\":\"read\",\"organization_secrets\":\"write\",\"organization_custom_roles\":\"write\",\"organization_actions_variables\":\"write\",\"organization_dependabot_secrets\":\"write\"},\"events\":[\"member\",\"membership\",\"organization\",\"repository\",\"team\",\"team_add\"],\"created_at\":\"2023-02-15T00:58:35.000Z\",\"updated_at\":\"2023-02-15T00:58:35.000Z\",\"single_file_name\":null,\"has_multiple_single_files\":false,\"single_file_paths\":[],\"suspended_by\":null,\"suspended_at\":null}]",
+      "headers": {
+        "Server": "GitHub.com",
+        "Date": "Wed, 15 Feb 2023 23:00:42 GMT",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Length": "2159",
+        "Cache-Control": "public, max-age=60, s-maxage=60",
+        "Vary": "Accept",
+        "ETag": "\"4cc1e1e06c4dc61b3540dfa8d6f2d391161795058b7124387456592a35c67026\"",
+        "X-GitHub-Media-Type": "github.v3",
+        "x-github-api-version-selected": "2022-11-28",
+        "Access-Control-Expose-Headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+        "Access-Control-Allow-Origin": "*",
+        "Strict-Transport-Security": "max-age=31536000; includeSubdomains; preload",
+        "X-Frame-Options": "deny",
+        "X-Content-Type-Options": "nosniff",
+        "X-XSS-Protection": "0",
+        "Referrer-Policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
+        "Content-Security-Policy": "default-src 'none'",
+        "X-GitHub-Request-Id": "D8CF:4EEF:1B6CDD9:386D0A0:63ED641A"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
