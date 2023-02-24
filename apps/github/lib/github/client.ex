@@ -21,7 +21,7 @@ defmodule GitHub.Client do
       "exp" => iat + 600
     }
 
-    with {:ok, token, _} <- Gitsudo.Token.generate_and_sign(payload, signer),
+    with {:ok, token, _} <- GitHub.Token.generate_and_sign(payload, signer),
          {:ok, resp} <- http_get_api(token, "app/installations") do
       Jason.decode(resp.body)
     end
@@ -47,7 +47,7 @@ defmodule GitHub.Client do
       "exp" => iat + 600
     }
 
-    with {:ok, token, _} <- Gitsudo.Token.generate_and_sign(payload, signer),
+    with {:ok, token, _} <- GitHub.Token.generate_and_sign(payload, signer),
          {:ok, resp} <- http_post(token, access_tokens_url, "") do
       Jason.decode(resp.body)
     end
@@ -68,10 +68,16 @@ defmodule GitHub.Client do
     url = "https://github.com/login/oauth/access_token"
 
     with {:ok, resp} <-
-           HTTPoison.post(url, body, [
-             {"Content-Type", "application/json"},
-             {"Accept", "application/json"}
-           ]),
+           Finch.build(
+             :post,
+             url,
+             [
+               {"Content-Type", "application/json"},
+               {"Accept", "application/json"}
+             ],
+             body
+           )
+           |> Finch.request(GitHub.Finch),
          %{"access_token" => access_token} <- Jason.decode!(resp.body) do
       {:ok, access_token}
     end
@@ -88,7 +94,7 @@ defmodule GitHub.Client do
     GET /user
   ```
   """
-  @spec get_user(binary()) :: {:ok, map()} | {:error, HTTPoison.Error.t()}
+  @spec get_user(binary()) :: {:ok, map()} | {:error, Exception.t()}
   def get_user(access_token) do
     http_get_and_decode(access_token, "user")
   end
@@ -99,7 +105,7 @@ defmodule GitHub.Client do
   ```
   """
   @spec list_user_repositories(binary) ::
-          {:ok, any} | {:error, HTTPoison.Error.t() | Jason.DecodeError.t()}
+          {:ok, any} | {:error, Exception.t() | Jason.DecodeError.t()}
   def list_user_repositories(access_token) do
     http_get_and_decode(access_token, "user/repos")
   end
@@ -110,45 +116,55 @@ defmodule GitHub.Client do
   ```
   """
   @spec list_user_orgs(binary) ::
-          {:ok, any} | {:error, HTTPoison.Error.t() | Jason.DecodeError.t()}
+          {:ok, any} | {:error, Exception.t() | Jason.DecodeError.t()}
   def list_user_orgs(access_token) do
     http_get_and_decode(access_token, "user/orgs")
   end
 
   @spec http_get_and_decode(binary, binary) ::
-          {:ok, any} | {:error, HTTPoison.Error.t() | Jason.DecodeError.t()}
+          {:ok, any} | {:error, Exception.t() | Jason.DecodeError.t()}
   defp http_get_and_decode(access_token, path) when is_binary(access_token) and is_binary(path) do
     with {:ok, resp} <- http_get_api(access_token, path) do
-      Jason.decode(resp.body)
+      if 200 == resp.status do
+        Jason.decode(resp.body)
+      else
+        Logger.debug("resp.status: #{resp.status}")
+        {:error, "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"}
+      end
     end
   end
 
   # Construct an HTTPoison.get request to the given path with the given access token
   # as the `Authorization: Bearer` token.
   @spec http_get_api(access_token :: String.t(), path :: String.t()) ::
-          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
-          | {:error, HTTPoison.Error.t()}
+          {:ok, Finch.Response.t()} | {:error, Exception.t()}
   defp http_get_api(access_token, path)
        when is_binary(access_token) and
               is_binary(path) do
     url = "https://api.github.com/#{path}"
     Logger.debug("GET #{url}")
 
-    HTTPoison.get(url, [
+    Finch.build(:get, url, [
       {"Authorization", "Bearer #{access_token}"},
       {"Content-Type", "application/json"},
       {"Accept", "application/json"}
     ])
+    |> Finch.request(GitHub.Finch)
   end
 
   @spec http_post(access_token :: String.t(), url :: String.t(), body :: String.t()) ::
-          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()}
-          | {:error, HTTPoison.Error.t()}
+          {:ok, Finch.Response.t()} | {:error, Exception.t()}
   defp http_post(access_token, url, body) when is_binary(access_token) and is_binary(url) do
-    HTTPoison.post(url, body, [
-      {"Authorization", "Bearer #{access_token}"},
-      {"Content-Type", "application/json"},
-      {"Accept", "application/json"}
-    ])
+    Finch.build(
+      :post,
+      url,
+      [
+        {"Authorization", "Bearer #{access_token}"},
+        {"Content-Type", "application/json"},
+        {"Accept", "application/json"}
+      ],
+      body
+    )
+    |> Finch.request(GitHub.Finch)
   end
 end

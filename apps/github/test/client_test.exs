@@ -1,6 +1,6 @@
 defmodule GitHub.ClientTest do
   use ExUnit.Case, async: true
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Finch
 
   alias GitHub.Client
 
@@ -19,7 +19,7 @@ defmodule GitHub.ClientTest do
 
         assert 1 == Enum.count(installations)
         # credo:disable-for-next-line
-        assert 34222363 == first["id"]
+        assert 34_222_363 == first["id"]
       end
     end
 
@@ -29,9 +29,9 @@ defmodule GitHub.ClientTest do
         key_pem = File.read!(System.fetch_env!("GITHUB_APP_PRIVATE_KEY_FILE"))
 
         access_tokens_url = "https://api.github.com/app/installations/34222363/access_tokens"
-        
+
         {:ok, resp} = Client.get_app_installation_access_token(app_id, key_pem, access_tokens_url)
-        
+
         assert "jDBs1BJ8PX27u05MIDW73pViiQSxwZrDz5pqeVma" == resp["token"]
       end
     end
@@ -54,6 +54,9 @@ defmodule GitHub.ClientTest do
     end
 
     test "get_user/1 works" do
+      access_token = System.fetch_env!("TEST_PERSONAL_ACCESS_TOKEN")
+      ExVCR.Config.filter_sensitive_data(access_token, "06d5607433ef55fbfd842fd06ee740eddec4caaf")
+
       use_cassette "client_get_user_works" do
         {:ok, user} = Client.get_user("06d5607433ef55fbfd842fd06ee740eddec4caaf")
         assert "aisrael" == user["login"]

@@ -10,7 +10,11 @@ defmodule Gitsudo.Umbrella.MixProject do
       aliases: aliases(),
       releases: [
         gitsudo_umbrella: [
-          applications: [gitsudo: :permanent, gitsudo_web: :permanent]
+          applications: [
+            github: :permanent,
+            gitsudo: :permanent,
+            gitsudo_web: :permanent
+          ]
         ]
       ]
     ]

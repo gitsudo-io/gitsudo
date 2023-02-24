@@ -1,6 +1,16 @@
 import Config
 
 # Configure your database
+config :github, GitHub.Repo,
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  database: "github_dev",
+  stacktrace: true,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
+
+# Configure your database
 config :gitsudo, Gitsudo.Repo,
   username: "postgres",
   password: "postgres",

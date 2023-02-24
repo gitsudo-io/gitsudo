@@ -10,6 +10,26 @@
 import Config
 
 # Configure Mix tasks and generators
+config :github,
+  namespace: GitHub,
+  ecto_repos: [GitHub.Repo]
+
+# Set Ecto Repo defaults
+# Configure your database
+config :github,
+       GitHub.Repo,
+       migration_timestamps: [type: :utc_datetime_usec]
+
+# Configures the mailer
+#
+# By default it uses the "Local" adapter which stores the emails
+# locally. You can see the emails in your browser, at "/dev/mailbox".
+#
+# For production it's recommended to configure a different adapter
+# at the `config/runtime.exs`.
+config :github, GitHub.Mailer, adapter: Swoosh.Adapters.Local
+
+# Configure Mix tasks and generators
 config :gitsudo,
   ecto_repos: [Gitsudo.Repo]
 

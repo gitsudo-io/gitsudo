@@ -1,9 +1,9 @@
-defmodule Gitsudo.MixProject do
+defmodule GitHub.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :gitsudo,
+      app: :github,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -22,7 +22,7 @@ defmodule Gitsudo.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Gitsudo.Application, []},
+      mod: {GitHub.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -36,7 +36,9 @@ defmodule Gitsudo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:github, in_umbrella: true},
+      {:plug, "~> 1.13"},
+      {:joken, "~> 2.5.0"},
+      {:exvcr, "~> 0.11", only: [:dev, :test], runtime: false},
       {:phoenix_pubsub, "~> 2.1"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},

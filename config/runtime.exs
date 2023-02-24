@@ -16,6 +16,21 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
 
+  config :github, GitHub.Repo,
+    # ssl: true,
+    url: database_url,
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    socket_options: maybe_ipv6
+
+  database_url =
+    System.get_env("DATABASE_URL") ||
+      raise """
+      environment variable DATABASE_URL is missing.
+      For example: ecto://USER:PASS@HOST/DATABASE
+      """
+
+  maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+
   config :gitsudo, Gitsudo.Repo,
     # ssl: true,
     url: database_url,
@@ -134,6 +149,11 @@ gitsudo_session_encryption_salt =
     environment variable GITSUDO_SESSION_ENCRYPTION_SALT is missing!
     See https://hexdocs.pm/plug/Plug.Session.COOKIE.html#module-options
     """
+
+config :github, GitHub,
+  github_app_id: github_app_id,
+  github_client_id: github_client_id,
+  github_client_secret: github_client_secret
 
 config :gitsudo_web, GitsudoWeb.Endpoint,
   github_app_id: github_app_id,
