@@ -57,6 +57,7 @@ defmodule GitHub.Client do
       ) do
     Logger.debug("app_id: #{app_id}")
     Logger.debug("key_thumprint: #{JOSE.JWK.thumbprint(signer.jwk)}")
+    Logger.debug("access_tokens_url: #{access_tokens_url}")
 
     iat = :os.system_time(:second)
 
@@ -70,6 +71,7 @@ defmodule GitHub.Client do
     with {:ok, token, _} <- GitHub.Token.generate_and_sign(payload, signer),
          {:ok, resp} <- http_post(token, access_tokens_url, "") do
       if 201 == resp.status do
+        Logger.debug(resp.body)
         Jason.decode(resp.body)
       else
         Logger.debug("resp.status: #{resp.status}")
@@ -77,6 +79,10 @@ defmodule GitHub.Client do
         Logger.error(reason)
         {:error, reason}
       end
+    else
+      {:error, reason} ->
+        Logger.error(reason)
+        {:error, reason}
     end
   end
 
@@ -182,6 +188,8 @@ defmodule GitHub.Client do
   @spec http_post(access_token :: String.t(), url :: String.t(), body :: String.t()) ::
           {:ok, Finch.Response.t()} | {:error, Exception.t()}
   defp http_post(access_token, url, body) when is_binary(access_token) and is_binary(url) do
+    Logger.debug("POST #{url}: #{inspect(body)}")
+
     Finch.build(
       :post,
       url,
