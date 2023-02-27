@@ -38,6 +38,26 @@ defmodule GitHub.Client do
           {:ok, map()} | {:error, any()}
   def get_app_installation_access_token(app_id, key_pem, access_tokens_url) do
     signer = Joken.Signer.create("RS256", %{"pem" => key_pem})
+    get_app_installation_access_token_with_signer(app_id, signer, access_tokens_url)
+  end
+
+  @doc """
+  Get app access token with a Joken.Signer
+  """
+  @spec get_app_installation_access_token_with_signer(
+          app_id :: String.t(),
+          signer :: Joken.Signer.t(),
+          access_tokens_url :: String.t()
+        ) ::
+          {:ok, map()} | {:error, any()}
+  def get_app_installation_access_token_with_signer(
+        app_id,
+        %Joken.Signer{} = signer,
+        access_tokens_url
+      ) do
+    Logger.debug("app_id: #{app_id}")
+    Logger.debug("key_thumprint: #{JOSE.JWK.thumbprint(signer.jwk)}")
+
     iat = :os.system_time(:second)
 
     payload = %{
@@ -49,7 +69,14 @@ defmodule GitHub.Client do
 
     with {:ok, token, _} <- GitHub.Token.generate_and_sign(payload, signer),
          {:ok, resp} <- http_post(token, access_tokens_url, "") do
-      Jason.decode(resp.body)
+      if 201 == resp.status do
+        Jason.decode(resp.body)
+      else
+        Logger.debug("resp.status: #{resp.status}")
+        reason = "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"
+        Logger.error(reason)
+        {:error, reason}
+      end
     end
   end
 

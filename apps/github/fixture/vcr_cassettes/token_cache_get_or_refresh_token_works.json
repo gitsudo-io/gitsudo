@@ -1,0 +1,42 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJHaXRzdWRvIiwiZXhwIjoxNjc3NTE5OTczLCJpYXQiOjE2Nzc1MTkzNzMsImlzcyI6IjI4Nzk0MiIsImp0aSI6IjJ0M3J0dXJodDVjb285Ym1lZzAwMDAyaSIsIm5iZiI6MTY3NzUxOTM3M30.BSvdJyUH20L46GFlTdViCQH5y38XH-Y1VKbuKvXI2l--NuQNJvuqYKs9BvndyGS8Rb9Y1kOQ01wtT_xdVgvRXm8ChI_g4saozGWdfVrn04KplX3DQTTUVr7Bio91NKHvAfr-h9dGeJwjHIJobwrENpyMqOEems65N6RJ_hBxHtxswrrdrFwg_k5ZOPNkqS2ez2HnWRv_VTf0eOC4ZucU0gikOsodfkSd6g_L9K1rjJktM4dKU4RPfut_yyUWb4GrUvagYHCOkO32RtO0d6iAKjy8ZvYY9XZild00ENWzQSQIUXmXgBG74-wHBf9MZOhnzaTt6vqZgMdC_zPCbDkR9g",
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://api.github.com/app/installations/34261427/access_tokens"
+    },
+    "response": {
+      "binary": false,
+      "body": "{\"token\":\"ghs_tjNgRfGJr5ZEe2ziz5znm2AA1bF2aC2ORdtJ\",\"expires_at\":\"2023-02-27T18:36:13Z\",\"permissions\":{\"members\":\"read\",\"organization_actions_variables\":\"write\",\"organization_custom_roles\":\"write\",\"organization_dependabot_secrets\":\"write\",\"organization_events\":\"read\",\"organization_hooks\":\"write\",\"organization_secrets\":\"write\",\"actions\":\"write\",\"actions_variables\":\"write\",\"administration\":\"write\",\"checks\":\"write\",\"contents\":\"read\",\"dependabot_secrets\":\"write\",\"deployments\":\"read\",\"environments\":\"write\",\"metadata\":\"read\",\"repository_hooks\":\"write\",\"secrets\":\"write\",\"security_events\":\"read\",\"statuses\":\"read\",\"workflows\":\"write\"},\"repository_selection\":\"all\"}",
+      "headers": {
+        "server": "GitHub.com",
+        "date": "Mon, 27 Feb 2023 17:36:13 GMT",
+        "content-type": "application/json; charset=utf-8",
+        "content-length": "663",
+        "cache-control": "public, max-age=60, s-maxage=60",
+        "vary": "Accept",
+        "etag": "\"d0340ae5cc3ea27080b926024eecb7b98199d3858c5c25fdd25c1e85e752dca8\"",
+        "x-github-media-type": "github.v3",
+        "x-github-api-version-selected": "2022-11-28",
+        "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
+        "access-control-allow-origin": "*",
+        "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
+        "x-frame-options": "deny",
+        "x-content-type-options": "nosniff",
+        "x-xss-protection": "0",
+        "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
+        "content-security-policy": "default-src 'none'",
+        "x-github-request-id": "C502:19E9:5C93E24:BE78036:63FCEA0D"
+      },
+      "status_code": 201,
+      "type": "ok"
+    }
+  }
+]
