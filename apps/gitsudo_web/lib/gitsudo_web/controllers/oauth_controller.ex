@@ -1,6 +1,8 @@
 defmodule GitsudoWeb.OauthController do
   use GitsudoWeb, :controller
 
+  import Phoenix.Controller
+
   require Logger
 
   @spec callback(Plug.Conn.t(), map()) :: Plug.Conn.t()
@@ -17,15 +19,22 @@ defmodule GitsudoWeb.OauthController do
     client_secret =
       Application.fetch_env!(:gitsudo_web, GitsudoWeb.Endpoint)[:github_client_secret]
 
-    {:ok, access_token} =
-      GitHub.Client.exchange_code_for_access_token(client_id, client_secret, code)
+    case Gitsudo.Accounts.handle_user_login(client_id, client_secret, code) do
+      {:ok, %{access_token: access_token, exp: expires_at}} when is_binary(access_token) ->
+        conn
+        |> put_session(:access_token, access_token)
+        |> put_session(:exp, expires_at)
+        |> redirect(to: ~p"/")
 
-    Logger.debug("access_token: #{access_token}")
+      {:error, reason} ->
+        Logger.error(inspect(reason))
 
-    conn_with_token = put_session(conn, :access_token, access_token)
-    access_token_in_session = get_session(conn_with_token, :access_token)
-    Logger.debug("access_token_in_session: #{access_token_in_session}")
+        message = if is_binary(reason), do: reason, else: "Something went wrong"
 
-    redirect(conn_with_token, to: ~p"/")
+        conn
+        |> put_flash(:error, message)
+        |> redirect(to: ~p"/login")
+        |> halt()
+    end
   end
 end

@@ -94,31 +94,32 @@ defmodule GitHub.Client do
           client_secret :: String.t(),
           code :: String.t()
         ) ::
-          {:ok, String.t()} | {:error, any}
+          {:ok, term} | {:error, Exception.t() | Jason.DecodeError.t()}
   def exchange_code_for_access_token(client_id, client_secret, code) do
-    body = Jason.encode!(%{client_id: client_id, client_secret: client_secret, code: code})
-    Logger.debug(body)
-    url = "https://github.com/login/oauth/access_token"
+    with {:ok, body} <-
+           Jason.encode(%{client_id: client_id, client_secret: client_secret, code: code}) do
+      Logger.debug(body)
+      url = "https://github.com/login/oauth/access_token"
 
-    with {:ok, resp} <-
-           Finch.build(
-             :post,
-             url,
-             [
-               {"Content-Type", "application/json"},
-               {"Accept", "application/json"}
-             ],
-             body
-           )
-           |> Finch.request(GitHub.Finch) do
-      Logger.debug(resp.body)
-
-      with %{"access_token" => access_token} <- Jason.decode!(resp.body) do
-        {:ok, access_token}
+      with {:ok, resp} <-
+             Finch.build(
+               :post,
+               url,
+               [
+                 {"Content-Type", "application/json"},
+                 {"Accept", "application/json"}
+               ],
+               body
+             )
+             |> Finch.request(GitHub.Finch) do
+        Jason.decode(resp.body)
       end
     end
   end
 
+  @spec list_org_repos(binary, any) ::
+          {:error, %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
+          | {:ok, any}
   def list_org_repos(access_token, org) do
     http_get_and_decode(access_token, "orgs/#{org}/repos")
   end
@@ -130,7 +131,7 @@ defmodule GitHub.Client do
     GET /user
   ```
   """
-  @spec get_user(binary()) :: {:ok, map()} | {:error, Exception.t()}
+  @spec get_user(String.t()) :: {:ok, map()} | {:error, Exception.t()}
   def get_user(access_token) do
     http_get_and_decode(access_token, "user")
   end

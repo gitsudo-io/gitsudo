@@ -5,8 +5,8 @@ defmodule Gitsudo.GitHub do
   import Ecto.Query, warn: false
   alias Gitsudo.Repo
 
-  alias Gitsudo.GitHub.{AppInstallation}
-  alias Gitsudo.Accounts.Account
+  alias Gitsudo.GitHub.AppInstallation
+  alias Gitsudo.Accounts
 
   require Logger
 
@@ -53,7 +53,7 @@ defmodule Gitsudo.GitHub do
         access_tokens_url
       ) do
     Repo.transaction(fn ->
-      with {:ok, account} <- find_or_create_account(account_id, account) do
+      with {:ok, account} <- Accounts.find_or_create_account(account_id, account) do
         Logger.debug("account: #{inspect(account)}")
 
         %AppInstallation{}
@@ -65,16 +65,5 @@ defmodule Gitsudo.GitHub do
         |> Repo.insert!()
       end
     end)
-  end
-
-  @spec find_or_create_account(any, map) :: any
-  def find_or_create_account(account_id, %{"login" => login, "type" => type}) do
-    Logger.debug("find_or_create_account(account_id, %{login: #{login}, type: #{type}})")
-
-    account = Repo.get(Account, account_id) || %Account{id: account_id}
-
-    account
-    |> Account.changeset(%{id: account_id, login: login, type: type})
-    |> Repo.insert_or_update()
   end
 end
