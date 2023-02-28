@@ -6,7 +6,7 @@ defmodule Gitsudo.GitHub do
   alias Gitsudo.Repo
 
   alias Gitsudo.GitHub.{AppInstallation}
-  alias Gitsudo.Repositories.Owner
+  alias Gitsudo.Accounts.Account
 
   require Logger
 
@@ -33,9 +33,7 @@ defmodule Gitsudo.GitHub do
         Logger.debug("token: #{inspect(token)}")
 
         with {:ok, repos} <- GitHub.Client.list_org_repos(token, account["login"]) do
-          Enum.each(repos, fn repo ->
-            Logger.debug(inspect(repo))
-          end)
+          Enum.each(repos, &Gitsudo.Repositories.create_repository/1)
         else
           {:error, reason} -> Logger.error(reason)
         end
@@ -73,10 +71,10 @@ defmodule Gitsudo.GitHub do
   def find_or_create_account(account_id, %{"login" => login, "type" => type}) do
     Logger.debug("find_or_create_account(account_id, %{login: #{login}, type: #{type}})")
 
-    account = Repo.get(Owner, account_id) || %Owner{id: account_id}
+    account = Repo.get(Account, account_id) || %Account{id: account_id}
 
     account
-    |> Owner.changeset(%{id: account_id, login: login, type: type})
+    |> Account.changeset(%{id: account_id, login: login, type: type})
     |> Repo.insert_or_update()
   end
 end

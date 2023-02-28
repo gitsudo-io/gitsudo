@@ -1,12 +1,12 @@
-defmodule Gitsudo.Repositories.Owner do
+defmodule Gitsudo.Accounts.Account do
   @moduledoc """
-  A GitHub Repository Owner (user or organization)
+  A GitHub Account (user or organization)
   """
   use Ecto.Schema
   import Ecto.Changeset
 
   @primary_key {:id, :integer, autogenerate: false}
-  schema "repository_owners" do
+  schema "accounts" do
     field :login, :string
     field :type, :string
 
@@ -22,8 +22,8 @@ defmodule Gitsudo.Repositories.Owner do
             },
           :invalid | %{optional(:__struct__) => none, optional(atom | binary) => any}
         ) :: Ecto.Changeset.t()
-  def changeset(owner, attrs) do
-    owner
+  def changeset(account, attrs) do
+    account
     |> cast(attrs, [:id, :login, :type])
     |> validate_required([:id, :login, :type])
   end

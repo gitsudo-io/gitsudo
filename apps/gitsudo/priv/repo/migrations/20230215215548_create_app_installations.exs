@@ -8,7 +8,7 @@ defmodule Gitsudo.Repo.Migrations.CreateAppInstallations do
       add :access_tokens_url, :string
 
       add :account_id,
-          references(:repository_owners, type: :integer, on_delete: :nothing, null: false)
+          references(:accounts, type: :integer, on_delete: :nothing, null: false)
 
       timestamps()
     end

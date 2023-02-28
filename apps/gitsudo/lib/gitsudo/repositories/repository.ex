@@ -8,7 +8,7 @@ defmodule Gitsudo.Repositories.Repository do
   @primary_key {:id, :integer, autogenerate: false}
   schema "repositories" do
     field :name, :string
-    field :owner_id, :integer
+    belongs_to :owner, Gitsudo.Accounts.Account
 
     timestamps()
   end

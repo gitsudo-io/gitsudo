@@ -8,7 +8,7 @@ defmodule Gitsudo.GitHub.AppInstallation do
   @primary_key {:id, :integer, autogenerate: false}
   schema "app_installations" do
     field :access_tokens_url, :string
-    belongs_to :account, Gitsudo.Repositories.Owner
+    belongs_to :account, Gitsudo.Accounts.Account
 
     timestamps()
   end

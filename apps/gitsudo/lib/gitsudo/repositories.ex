@@ -4,14 +4,29 @@ defmodule Gitsudo.Repositories do
   """
 
   import Ecto.Query, warn: false
-  alias Gitsudo.Repo
 
-  alias Gitsudo.Repositories.{Repository, Owner}
+  alias Gitsudo.Repo
+  alias Gitsudo.Repositories.Repository
+
+  require Logger
 
   @doc """
   Get repository by owner_id and name
   """
   def get_repository_by_owner_id_and_name(owner_id, name) do
     Repo.get_by(Repository, owner_id: owner_id, name: name)
+  end
+
+  @doc """
+  Create a Repository record.
+  """
+  def create_repository(%{"id" => id, "name" => name, "owner" => owner} = _args) do
+    Logger.debug(
+      ~s[create_repository(%{"id" => #{id}, "name" => #{name}, "owner" => #{inspect(owner)}} = _args)]
+    )
+
+    %Repository{}
+    |> Repository.changeset(%{id: id, name: name, owner_id: owner["id"]})
+    |> Repo.insert()
   end
 end

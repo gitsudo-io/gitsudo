@@ -1,8 +1,8 @@
-defmodule Gitsudo.Repo.Migrations.CreateRepositoryOwners do
+defmodule Gitsudo.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
 
   def change do
-    create table(:repository_owners, primary_key: false) do
+    create table(:accounts, primary_key: false) do
       add :id, :integer, primary_key: true
 
       add :login, :string, null: false
@@ -11,6 +11,6 @@ defmodule Gitsudo.Repo.Migrations.CreateRepositoryOwners do
       timestamps()
     end
 
-    create unique_index(:repository_owners, [:login])
+    create unique_index(:accounts, [:login])
   end
 end

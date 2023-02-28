@@ -8,7 +8,7 @@ defmodule Gitsudo.Repo.Migrations.CreateRepositories do
       add :name, :string, null: false
 
       add :owner_id,
-          references(:repository_owners, type: :integer, on_delete: :nothing, null: false)
+          references(:accounts, type: :integer, on_delete: :nothing, null: false)
 
       timestamps()
     end

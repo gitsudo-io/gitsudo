@@ -110,9 +110,12 @@ defmodule GitHub.Client do
              ],
              body
            )
-           |> Finch.request(GitHub.Finch),
-         %{"access_token" => access_token} <- Jason.decode!(resp.body) do
-      {:ok, access_token}
+           |> Finch.request(GitHub.Finch) do
+      Logger.debug(resp.body)
+
+      with %{"access_token" => access_token} <- Jason.decode!(resp.body) do
+        {:ok, access_token}
+      end
     end
   end
 
