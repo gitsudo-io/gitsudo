@@ -8,10 +8,13 @@
       </tr>
     </thead>
     <tbody>
-    <%= for repository <- @repositories do %>
-      <tr>
-      </tr>
-    <% end %>
+      <%= for repository <- @repositories do %>
+        <tr>
+          <td><%= repository["name"] %></td>
+          <td>labels</td>
+          <td>configset</td>
+        </tr>
+      <% end %>
     </tbody>
   </table>
 </div>

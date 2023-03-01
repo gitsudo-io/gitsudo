@@ -9,8 +9,27 @@ defmodule GitsudoWeb.PageController do
       Logger.debug(inspect(user["login"]))
     end
 
-    repositories = []
-    render(conn, :home, repositories: repositories)
+    conn |> list_repositories |> render(:home)
+  end
+
+  @spec list_repositories(Plug.Conn.t()) :: Plug.Conn.t()
+  def list_repositories(conn) do
+    with user <- conn.assigns[:current_user],
+         access_token <- get_session(conn, :access_token) do
+      Logger.debug("access_token: #{access_token}")
+
+      with {:ok, repositories} <- Gitsudo.Repositories.list_user_repositories(user, access_token) do
+        Logger.debug("list_user_repositories() found: #{length(repositories)}")
+        conn |> assign(:repositories, repositories)
+      else
+        {:error, reason} ->
+          Logger.error("list_user_repositories() returned: #{reason}")
+          conn
+      end
+    else
+      _ ->
+        conn
+    end
   end
 
   @spec login(Plug.Conn.t(), any) :: Plug.Conn.t()
