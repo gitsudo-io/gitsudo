@@ -1,5 +1,5 @@
 <div class="container mx-auto">
-  <table class="table-fixed">
+  <table class="table table-fixed">
     <thead>
       <tr class="align-bottom">
         <th scope="col" class="w-3/5">Repository</th>
@@ -10,9 +10,22 @@
     <tbody>
       <%= for repository <- @repositories do %>
         <tr>
-          <td><%= repository["name"] %></td>
-          <td>labels</td>
-          <td>configset</td>
+          <td>
+            <%= link(repository["name"],
+              to: URI.parse(repository["html_url"]),
+              class: "link-primary link-hover"
+            ) %>
+          </td>
+          <td>
+            <%= if Enum.empty?(repository["labels"]),
+              do: ~H'<span class="italic text-slate-700">none</span>',
+              else: Enum.join(repository["labels"], ", ") %>
+          </td>
+          <td>
+            <%= if Enum.empty?(repository["config_sets_applied"]),
+              do: ~H'<span class="italic text-slate-700">none</span>',
+              else: Enum.join(repository["config_sets_applied"], ", ") %>
+          </td>
         </tr>
       <% end %>
     </tbody>
