@@ -1,3 +1,46 @@
-<a href={"https://github.com/login/oauth/authorize?client_id=#{@client_id}"}>
-  Login via github
-</a>
+<div class="hero">
+  <div class="hero-content">
+    <p class="text-4xl">Do more with GitHub!</p>
+  </div>
+</div>
+
+<div class="flex w-auto">
+  <div class="card w-80 px-4">
+    <figure></figure>
+    <div class="card-body bg-base-100 shadow-xl">
+      <h3 class="card-title">Create ConfigSet</h3>
+      <p>
+        A <span class="font-medium">ConfigSet</span>
+        contains settings commonly applied across multiple repositories which will be applied to repositories with matching labels.
+      </p>
+    </div>
+  </div>
+  <div class="card w-80 px-4">
+    <figure></figure>
+    <div class="card-body bg-base-100 shadow-xl">
+      <h3 class="card-title">Label your repos</h3>
+      <p>
+        Create and associate labels to <span class="font-medium">ConfigSet</span>s, then attach them to your repositories.
+      </p>
+    </div>
+  </div>
+  <div class="card w-80 px-4">
+    <figure></figure>
+    <div class="card-body bg-base-100 shadow-xl">
+      <h3 class="card-title">Configuration gets applied!</h3>
+      <p>
+        A repository with labels associated with a <span class="font-medium">ConfigSet</span>
+        will get those settings applied to it!
+      </p>
+    </div>
+  </div>
+</div>
+<p class="pt-8">
+  <%= link to: "https://github.com/login/oauth/authorize?client_id=#{@client_id}" do %>
+    <img
+      style="width: 240px"
+      class="h-auto rounded-lg mx-auto"
+      src="/images/sign-in-with-github.png"
+    />
+  <% end %>
+</p>
