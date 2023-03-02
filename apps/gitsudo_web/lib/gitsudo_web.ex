@@ -85,6 +85,8 @@ defmodule GitsudoWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       import Phoenix.HTML.Link
+      import Phoenix.HTML.Tag
+
       # Core UI components and translation
       import GitsudoWeb.CoreComponents
       import GitsudoWeb.Gettext

@@ -118,8 +118,7 @@ defmodule GitHub.Client do
   end
 
   @spec list_org_repos(binary, any) ::
-          {:error, %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
-          | {:ok, any}
+          {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_org_repos(access_token, org) do
     http_get_and_decode(access_token, "orgs/#{org}/repos")
   end
@@ -131,7 +130,7 @@ defmodule GitHub.Client do
     GET /user
   ```
   """
-  @spec get_user(String.t()) :: {:ok, map()} | {:error, Exception.t()}
+  @spec get_user(String.t()) :: {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def get_user(access_token) do
     http_get_and_decode(access_token, "user")
   end
@@ -142,7 +141,7 @@ defmodule GitHub.Client do
   ```
   """
   @spec list_user_repositories(binary) ::
-          {:ok, any} | {:error, Exception.t() | Jason.DecodeError.t()}
+          {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_user_repositories(access_token) do
     http_get_and_decode(access_token, "user/repos")
   end
@@ -153,13 +152,13 @@ defmodule GitHub.Client do
   ```
   """
   @spec list_user_orgs(binary) ::
-          {:ok, any} | {:error, Exception.t() | Jason.DecodeError.t()}
+          {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_user_orgs(access_token) do
     http_get_and_decode(access_token, "user/orgs")
   end
 
   @spec http_get_and_decode(binary, binary) ::
-          {:ok, any} | {:error, Exception.t() | Jason.DecodeError.t()}
+          {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   defp http_get_and_decode(access_token, path) when is_binary(access_token) and is_binary(path) do
     with {:ok, resp} <- http_get_api(access_token, path) do
       if 200 == resp.status do

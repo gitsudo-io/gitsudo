@@ -6,11 +6,21 @@
           Git<span class="opacity-75">sudo</span>
         </a>
       </div>
-      <div class="flex-none">
+      <div class="flex-none gap-1">
         <%= if @current_user do %>
-          <span>Signed in as <b><%= @current_user["login"] %></b></span>
+          <div class="flex items-end">
+            Signed in as
+            <div class="inline px-1">
+              <div class="avatar inline">
+                <div class="w-7 rounded-full">
+                  <%= img_tag(@current_user["avatar_url"]) %>
+                </div>
+              </div>
+            </div>
+            <b><%= @current_user["login"] %></b>
+          </div>
         <% end %>
-        <ul class="menu menu-horizontal px-1">
+        <ul class="menu menu-horizontal px-1 items-end">
           <%= if @current_user do %>
             <li><a href="/logout">Logout</a></li>
           <% end %>

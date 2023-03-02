@@ -31,14 +31,26 @@ defmodule Gitsudo.Repositories do
 
     Enum.reduce_while(orgs, {:ok, []}, fn org, {:ok, repos} ->
       Logger.debug(~s'org["login"]: #{org["login"]}')
-
-      with {:ok, org_repos} <- GitHub.Client.list_org_repos(access_token, org["login"]) do
-        Logger.debug(~s[Found #{length(org_repos)} repos under #{org["login"]}}])
-        {:cont, {:ok, repos ++ org_repos}}
-      else
-        {:error, reason} -> {:halt, {:error, reason}}
-      end
+      list_user_repositories_for_org(access_token, repos, org["login"])
     end)
+  end
+
+  def list_user_repositories_for_org(access_token, repos, org) do
+    with {:ok, org_repos} <- GitHub.Client.list_org_repos(access_token, org) do
+      Logger.debug(~s[Found #{length(org_repos)} repos under #{org}}])
+      {:cont, {:ok, repos ++ org_repos}}
+    else
+      {:error, reason} ->
+        # Ignore "403 Forbidden" on an org
+        case reason do
+          "403 Forbidden" ->
+            {:cont, {:ok, repos}}
+
+          _ ->
+            Logger.error(if(is_binary(reason), do: reason, else: inspect(reason)))
+            {:halt, {:error, reason}}
+        end
+    end
   end
 
   @spec enrich_repos_with_labels_and_config_sets(list()) :: list()
