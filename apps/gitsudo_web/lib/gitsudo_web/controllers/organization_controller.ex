@@ -3,11 +3,11 @@ defmodule GitsudoWeb.OrganizationController do
 
   require Logger
 
-  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def index(conn, params) do
-    Logger.debug("org: #{params["org"]}")
+  @spec show(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def show(conn, params) do
+    Logger.debug("org: #{params["name"]}")
 
-    conn |> fetch_organization(params["org"]) |> render(:index)
+    conn |> fetch_organization(params["name"]) |> render(:show)
   end
 
   @spec fetch_organization(conn :: Plug.Conn.t(), organization :: String.t()) :: Plug.Conn.t()

@@ -6,6 +6,7 @@ defmodule Gitsudo.Labels.Label do
   import Ecto.Changeset
 
   schema "labels" do
+    belongs_to :owner, Gitsudo.Accounts.Account
     field(:color, :string)
     field(:name, :string)
 
@@ -23,7 +24,7 @@ defmodule Gitsudo.Labels.Label do
   @doc false
   def changeset(label, attrs) do
     label
-    |> cast(attrs, [:name, :color])
-    |> validate_required([:name, :color])
+    |> cast(attrs, [:owner_id, :name, :color])
+    |> validate_required([:owner_id, :name, :color])
   end
 end

@@ -1,15 +1,28 @@
 defmodule GitsudoWeb.LabelController do
   use GitsudoWeb, :controller
 
+  alias GitsudoWeb.OrganizationController
   alias Gitsudo.Labels
   alias Gitsudo.Labels.Label
 
   action_fallback GitsudoWeb.FallbackController
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def index(conn, _params) do
-    labels = Labels.list_labels()
-    render(conn, :index, labels: labels)
+  def index(conn, %{"organization_name" => organization_name} = params) do
+    with {:ok, organization} <- fetch_organization(organization_name) do
+      conn
+      |> assign(:organization, organization)
+      |> fetch_labels(organization)
+      |> render(:index)
+    end
+  end
+
+  def fetch_organization(name) do
+    {:ok, Gitsudo.Accounts.get_account_by_login(name)}
+  end
+
+  def fetch_labels(conn, organization) do
+    assign(conn, :labels, Labels.list_organization_labels(organization.id))
   end
 
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()

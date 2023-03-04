@@ -8,9 +8,15 @@ defmodule Gitsudo.Accounts do
 
   require Logger
 
+  @spec get_account_by_login(login :: String.t()) ::
+          %Account{} | term() | nil
+  def get_account_by_login(login) do
+    Repo.get_by(Account, login: login)
+  end
+
   @spec find_or_create_account(any, map) :: any
   def find_or_create_account(account_id, %{"login" => login, "type" => type}) do
-    Logger.debug("find_or_create_account(account_id, %{login: #{login}, type: #{type}})")
+    Logger.debug("find_or_create_account(#{account_id}, %{login: #{login}, type: #{type}})")
 
     account = Repo.get(Account, account_id) || %Account{id: account_id}
 

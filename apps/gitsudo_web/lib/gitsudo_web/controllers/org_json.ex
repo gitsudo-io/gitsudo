@@ -1,6 +1,6 @@
-defmodule GitsudoWeb.LabelJSON do
+defmodule GitsudoWeb.OrgJSON do
   @moduledoc """
-  The Labels JSON API controller
+  The Organization JSON API controller
   """
 
   alias Gitsudo.Labels.Label

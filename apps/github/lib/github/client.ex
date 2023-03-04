@@ -130,7 +130,7 @@ defmodule GitHub.Client do
     GET /user
   ```
   """
-  @spec get_user(String.t()) :: {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  @spec get_user(map()) :: {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def get_user(access_token) do
     http_get_and_decode(access_token, "user")
   end

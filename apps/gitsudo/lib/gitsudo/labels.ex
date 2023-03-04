@@ -9,16 +9,17 @@ defmodule Gitsudo.Labels do
   alias Gitsudo.Labels.Label
 
   @doc """
-  Returns the list of labels.
+  Returns the labels for an organization.
 
   ## Examples
 
-      iex> list_labels()
+      iex> list_labels(org)
       [%Label{}, ...]
 
   """
-  def list_labels do
-    Repo.all(Label)
+  def list_organization_labels(owner_id) do
+    query = from l in Label, where: l.owner_id == ^owner_id
+    Repo.all(query)
   end
 
   @doc """

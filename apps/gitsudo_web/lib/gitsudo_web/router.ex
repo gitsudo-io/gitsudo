@@ -29,7 +29,9 @@ defmodule GitsudoWeb.Router do
     get "/", PageController, :home
     get "/logout", PageController, :logout
 
-    get "/:org", OrganizationController, :index
+    resources "/", OrganizationController, only: [:show], param: "name" do
+      resources "/labels", LabelController
+    end
   end
 
   scope "/", GitsudoWeb do
@@ -47,7 +49,9 @@ defmodule GitsudoWeb.Router do
   scope "/api", GitsudoWeb do
     pipe_through :api
 
-    resources "/labels", LabelController
+    resources "/org", OrgJSON, param: "org" do
+      resources "/labels", LabelJSON
+    end
   end
 
   # Other scopes may use custom stacks.
