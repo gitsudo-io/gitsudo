@@ -1,6 +1,7 @@
 // See the Tailwind configuration guide for advanced usage
 // https://tailwindcss.com/docs/configuration
 
+const colors = require('tailwindcss/colors')
 const plugin = require("tailwindcss/plugin")
 const fs = require("fs")
 const path = require("path")
@@ -15,10 +16,30 @@ module.exports = {
     extend: {
       colors: {
         brand: "#FD4F00",
-        primary: "#266AE8"
+        primary: "#266AE8",
+        "label-gray": "#6B7280",
+        "label-red": "#DC2626",
+        "label-orange": "#F97316",
+        "label-yellow": "#FDE047",
+        "label-lime": "#84CC16",
+        "label-green": "#16A34A",
+        "label-teal": "#14B8A6",
+        "label-cyan": "#38BDF8",
+        "label-blue": "#1D4ED8",
+        "label-violet": "#6D28D9",
+        "label-purple": "#9333EA",
+        "label-pink": "#F472B6"
       }
     },
   },
+  safelist: [
+    {
+      pattern: /bg-(label-.+)$/,
+    },
+    {
+      pattern: /border-(label-.+)$/,
+    }
+  ],
   plugins: [
     require("@tailwindcss/forms"),
     require("@tailwindcss/typography"),
