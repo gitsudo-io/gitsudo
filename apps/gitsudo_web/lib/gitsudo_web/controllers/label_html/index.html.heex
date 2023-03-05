@@ -1,20 +1,30 @@
 <h1><%= @organization.login %></h1>
 <h2 class="pt-8">Labels</h2>
 <%= if !Enum.empty?(@labels) do %>
-  <table class="table table-fixed pt-8">
-    <thead>
-      <tr class="align-bottom">
-        <th scope="col">Label</th>
-      </tr>
-    </thead>
-    <tbody>
-      <%= for label <- @labels do %>
-        <tr>
-          <td>
-            <%= content_tag("div", label.name, class: "badge border-green-600 bg-green-600") %>
-          </td>
+  <div class="container">
+    <table class="table table-fixed min-w-full pt-8">
+      <thead>
+        <tr class="align-bottom">
+          <th scope="col" class="w-1/5">Label</th>
+          <th scope="col" class="w-2/5">Description</th>
+          <th scope="col" class="w-1/5">Repositories</th>
+          <th scope="col" class="w-1/5">ConfigSets</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <%= for label <- @labels do %>
+          <tr>
+            <td>
+              <%= content_tag("div", label.name,
+                class: "badge badge-lg border-#{label.color} bg-#{label.color}"
+              ) %>
+            </td>
+            <td><%= label.description %></td>
+            <td></td>
+            <td></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 <% end %>

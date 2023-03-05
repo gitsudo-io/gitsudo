@@ -9,6 +9,7 @@ defmodule Gitsudo.Labels.Label do
     belongs_to :owner, Gitsudo.Accounts.Account
     field(:color, :string)
     field(:name, :string)
+    field(:description, :string)
 
     timestamps()
   end
