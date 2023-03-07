@@ -13,7 +13,7 @@
           <.input
             field={f[:color]}
             type="radio"
-            class={"radio checked:bg-label-#{color} checked:border-label-#{color} focused:bg-label-#{color} focused:text-label-#{color} text-label-#{color}"}
+            class={"radio checked:bg-label-#{color} checked:border-label-#{color} focused:bg-label-#{color} text-label-#{color}"}
             value={"label-#{color}"}
           />
           <%= content_tag("span", color, class: "badge bg-label-#{color} border-label-#{color}") %>

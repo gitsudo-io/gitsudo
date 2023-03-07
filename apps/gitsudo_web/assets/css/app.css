@@ -13,3 +13,130 @@
         @apply text-xl;
     }
 }
+
+/* This to override the checked radio button styling that TailwindCSS forms does */
+[type='radio']:checked {
+    background-image: none;
+}
+
+/* The following checked classes are dynamically used, so Tailwind's JIT doesn't output them */
+
+.checked\:bg-label-blue:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-blue:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(29 78 216 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-cyan:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(56 189 248 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-cyan:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(56 189 248 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-gray:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-gray:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(107 114 128 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-green:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(22 163 74 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-green:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(22 163 74 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-lime:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(132 204 22 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-lime:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(132 204 22 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-orange:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(249 115 22 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-orange:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(249 115 22 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-pink:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(244 114 182 / var(--tw-border-opacity));
+}
+
+.checked\:border-label-pink:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(249 115 22 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-purple:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(147 51 234 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-purple:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(147 51 234 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-red:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(220 38 38 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-red:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(220 38 38 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-teal:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(20 184 166 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-teal:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(20 184 166 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-violet:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(109 40 217 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-violet:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(109 40 217 / var(--tw-border-opacity));
+}
+
+.checked\:bg-label-yellow:checked {
+    --tw-bg-opacity: 1;
+    background-color: rgb(253 224 71 / var(--tw-bg-opacity));
+}
+
+.checked\:border-label-yellow:checked {
+    --tw-border-opacity: 1;
+    border-color: rgb(253 224 71 / var(--tw-border-opacity));
+}
