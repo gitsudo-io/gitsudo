@@ -4,27 +4,38 @@ defmodule GitsudoWeb.LabelController do
   alias Gitsudo.Labels
   alias Gitsudo.Labels.Label
 
+  require Logger
+
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def index(conn, %{"organization_name" => organization_name} = params) do
-    with organization <- Gitsudo.Accounts.get_account_by_login(organization_name) do
-      conn
-      |> assign(:organization, organization)
-      |> fetch_labels(organization)
-      |> render(:index)
-    end
+  def index(conn, _params) do
+    conn
+    |> fetch_labels()
+    |> render(:index)
   end
 
-  def fetch_labels(conn, organization) do
+  def fetch_labels(%{assigns: %{organization: organization}} = conn) do
     assign(conn, :labels, Labels.list_organization_labels(organization.id))
   end
 
+  def new(conn, _params) do
+    changeset = Labels.change_label(%Label{})
+    render(conn, :new, changeset: changeset)
+  end
+
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def create(conn, %{"label" => label_params}) do
-    with {:ok, %Label{} = label} <- Labels.create_label(label_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/labels/#{label}")
-      |> render(:show, label: label)
+  def create(%{assigns: %{organization: organization}} = conn, %{"label" => label_params}) do
+    params = Map.put(label_params, "owner_id", organization.id)
+
+    case Labels.create_label(params) do
+      {:ok, %Label{} = _label} ->
+        conn
+        |> put_flash(:info, "Label created successfully.")
+        |> fetch_labels()
+        |> redirect(to: ~p"/#{organization.login}/labels")
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        Logger.error(inspect(changeset))
+        render(conn, :new, changeset: changeset)
     end
   end
 

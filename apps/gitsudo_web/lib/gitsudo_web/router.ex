@@ -2,6 +2,7 @@ defmodule GitsudoWeb.Router do
   use GitsudoWeb, :router
 
   import GitsudoWeb.UserAuth
+  import GitsudoWeb.OrgScope
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -23,15 +24,23 @@ defmodule GitsudoWeb.Router do
     get "/login", PageController, :login
   end
 
+  pipeline :org do
+    plug :fetch_org
+  end
+
   scope "/", GitsudoWeb do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/", PageController, :home
     get "/logout", PageController, :logout
 
-    resources "/", OrganizationController, only: [:show], param: "name" do
-      resources "/labels", LabelController
-    end
+    get "/:organization_name", OrganizationController, :show
+  end
+
+  scope "/:organization_name", GitsudoWeb do
+    pipe_through [:browser, :require_authenticated_user, :org]
+
+    resources "/labels", LabelController
   end
 
   scope "/", GitsudoWeb do

@@ -1,4 +1,4 @@
-<h1><%= @organization.login %></h1>
+<h1><%= link(@organization.login, to: ~p[/#{@organization.login}/]) %></h1>
 <h2 class="pt-8">Labels</h2>
 <%= if !Enum.empty?(@labels) do %>
   <div class="container">
@@ -28,3 +28,8 @@
     </table>
   </div>
 <% end %>
+<p class="pt-4">
+  <%= link to: ~p[/#{@organization.login}/labels/new], class: "btn btn-primary" do %>
+    Add new Label
+  <% end %>
+</p>

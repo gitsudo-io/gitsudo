@@ -27,5 +27,6 @@ defmodule Gitsudo.Labels.Label do
     label
     |> cast(attrs, [:owner_id, :name, :color])
     |> validate_required([:owner_id, :name, :color])
+    |> unique_constraint(:name, name: :labels_owner_id_name_index)
   end
 end

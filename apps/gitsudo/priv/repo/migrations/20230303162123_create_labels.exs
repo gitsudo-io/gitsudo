@@ -12,5 +12,7 @@ defmodule Gitsudo.Repo.Migrations.CreateLabels do
 
       timestamps()
     end
+
+    create unique_index(:labels, [:owner_id, :name])
   end
 end

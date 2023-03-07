@@ -34,6 +34,9 @@ module.exports = {
   },
   safelist: [
     {
+      pattern: /^btn/,
+    },
+    {
       pattern: /bg-(label-.+)$/,
     },
     {

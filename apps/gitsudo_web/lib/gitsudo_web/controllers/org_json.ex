@@ -2,6 +2,7 @@ defmodule GitsudoWeb.OrgJSON do
   @moduledoc """
   The Organization JSON API controller
   """
+  use GitsudoWeb, :controller
 
   alias Gitsudo.Labels.Label
 
