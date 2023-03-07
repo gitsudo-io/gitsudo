@@ -10,8 +10,12 @@ defmodule GitsudoWeb.OrganizationController do
     conn |> fetch_organization(params["name"]) |> render(:show)
   end
 
-  @spec fetch_organization(conn :: Plug.Conn.t(), organization :: String.t()) :: Plug.Conn.t()
-  def fetch_organization(conn, organization) when is_binary(organization) do
-    conn |> assign(:organization, %{"login" => organization})
+  @spec fetch_organization(conn :: Plug.Conn.t(), name :: String.t()) :: Plug.Conn.t()
+  def fetch_organization(conn, name) when is_binary(name) do
+    if organization = Gitsudo.Organizations.get_organization(name) do
+      conn |> assign(:organization, organization)
+    else
+      send_resp(conn, :not_found, "Not fou")
+    end
   end
 end
