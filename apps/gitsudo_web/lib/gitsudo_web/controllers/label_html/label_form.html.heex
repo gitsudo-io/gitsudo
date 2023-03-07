@@ -3,7 +3,24 @@
     Oops, something went wrong! Please check the errors below.
   </.error>
   <.input field={f[:name]} type="text" label="Name" />
-  <.input field={f[:color]} type="text" label="Color" />
+  <div phx-feedback-for="label[color]">
+    <label for="label_color" class="block text-sm font-semibold leading-6 text-zinc-800">
+      Color
+    </label>
+    <%= for color <- ["red", "orange", "yellow", "lime", "green", "teal", "cyan", "blue", "violet", "purple", "pink", "gray"] do %>
+      <div class="inline form-control pr-2">
+        <label>
+          <.input
+            field={f[:color]}
+            type="radio"
+            class={"radio checked:bg-label-#{color} checked:border-label-#{color} focused:bg-label-#{color} focused:text-label-#{color} text-label-#{color}"}
+            value={"label-#{color}"}
+          />
+          <%= content_tag("span", color, class: "badge bg-label-#{color} border-label-#{color}") %>
+        </label>
+      </div>
+    <% end %>
+  </div>
   <.input field={f[:description]} type="text" label="Description" />
   <:actions>
     <.button class="btn btn-primary">Save Label</.button>

@@ -41,7 +41,10 @@ module.exports = {
     },
     {
       pattern: /border-(label-.+)$/,
-    }
+    },
+    {
+      pattern: /text-(label-.+)$/,
+    },
   ],
   plugins: [
     require("@tailwindcss/forms"),
@@ -91,5 +94,8 @@ module.exports = {
         }
       }, { values })
     })
-  ]
+  ],
+  daisyui: {
+    theme: "emerald",
+  }
 }

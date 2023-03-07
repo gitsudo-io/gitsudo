@@ -13,7 +13,7 @@
       </thead>
       <tbody>
         <%= for label <- @labels do %>
-          <tr>
+          <%= content_tag("tr", "data-id": label.id) do %>
             <td>
               <%= content_tag("div", label.name,
                 class: "badge badge-lg border-#{label.color} bg-#{label.color}"
@@ -22,7 +22,7 @@
             <td><%= label.description %></td>
             <td></td>
             <td></td>
-          </tr>
+          <% end %>
         <% end %>
       </tbody>
     </table>
