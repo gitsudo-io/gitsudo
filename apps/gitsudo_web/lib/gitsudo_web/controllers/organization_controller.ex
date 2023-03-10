@@ -8,7 +8,7 @@ defmodule GitsudoWeb.OrganizationController do
   plug :fetch_org
 
   @spec show(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def show(conn, params) do
+  def show(conn, _params) do
     render(conn, :show)
   end
 end
