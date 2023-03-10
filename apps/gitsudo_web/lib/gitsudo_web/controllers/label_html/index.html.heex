@@ -1,5 +1,5 @@
-<h1><%= link(@organization.login, to: ~p[/#{@organization.login}/]) %></h1>
-<h2 class="pt-8">Labels</h2>
+<h1 class="pb-4"><%= link(@organization.login, to: ~p[/#{@organization.login}/]) %></h1>
+<h2 class="py-4">Labels</h2>
 <%= if !Enum.empty?(@labels) do %>
   <div class="container">
     <table class="table table-fixed min-w-full pt-8">
