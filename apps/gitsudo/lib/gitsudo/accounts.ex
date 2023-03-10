@@ -14,7 +14,7 @@ defmodule Gitsudo.Accounts do
     Repo.get_by(Account, login: login)
   end
 
-  @spec find_or_create_account(any, map) :: any
+  @spec find_or_create_account(any, map) :: {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
   def find_or_create_account(account_id, %{"login" => login, "type" => type}) do
     Logger.debug("find_or_create_account(#{account_id}, %{login: #{login}, type: #{type}})")
 
