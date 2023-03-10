@@ -7,21 +7,29 @@ defmodule GitsudoWeb.LabelControllerTest do
 
   @create_attrs %{
     color: "some color",
-    name: "some name"
+    name: "some name",
+    owner_id: 42
   }
   @update_attrs %{
     color: "some updated color",
-    name: "some updated name"
+    name: "some updated name",
+    owner_id: 43
   }
-  @invalid_attrs %{color: nil, name: nil}
+  @invalid_attrs %{color: nil, name: nil, owner_id: nil}
 
   setup %{conn: conn} do
+    {:ok, _account} =
+      Gitsudo.Accounts.find_or_create_account(42, %{
+        "login" => "gitsudo-io",
+        "type" => "Organization"
+      })
+
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
     test "lists all labels", %{conn: conn} do
-      conn = get(conn, ~p"/api/labels")
+      conn = get(conn, ~p"/api/org/gitsudo-io/labels")
       assert json_response(conn, 200)["data"] == []
     end
   end
@@ -36,7 +44,8 @@ defmodule GitsudoWeb.LabelControllerTest do
       assert %{
                "id" => ^id,
                "color" => "some color",
-               "name" => "some name"
+               "name" => "some name",
+               "owner_id" => 42
              } = json_response(conn, 200)["data"]
     end
 
@@ -58,7 +67,8 @@ defmodule GitsudoWeb.LabelControllerTest do
       assert %{
                "id" => ^id,
                "color" => "some updated color",
-               "name" => "some updated name"
+               "name" => "some updated name",
+               "owner_id" => 43
              } = json_response(conn, 200)["data"]
     end
 
