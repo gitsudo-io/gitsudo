@@ -8,13 +8,14 @@ defmodule Gitsudo.LabelsFixtures do
   Generate a label.
   """
   def label_fixture(attrs \\ %{}) do
-    {:ok, label} =
+    create_attrs =
       attrs
       |> Enum.into(%{
-        color: "some color",
-        name: "some name"
+        color: "label-red",
+        name: "backend"
       })
-      |> Gitsudo.Labels.create_label()
+
+    {:ok, label} = Gitsudo.Labels.create_label(42, create_attrs)
 
     label
   end

@@ -2,11 +2,10 @@ defmodule Gitsudo.Labels do
   @moduledoc """
   The Labels context.
   """
+  alias Gitsudo.Repo
+  alias Gitsudo.Labels.Label
 
   import Ecto.Query, warn: false
-  alias Gitsudo.Repo
-
-  alias Gitsudo.Labels.Label
 
   @doc """
   Returns the labels for an organization.
@@ -23,35 +22,31 @@ defmodule Gitsudo.Labels do
   end
 
   @doc """
-  Gets a single label.
-
-  Raises `Ecto.NoResultsError` if the Label does not exist.
-
-  ## Examples
-
-      iex> get_label!(123)
-      %Label{}
-
-      iex> get_label!(456)
-      ** (Ecto.NoResultsError)
-
+  Retrieves a single organization label by id
   """
-  def get_label!(id), do: Repo.get!(Label, id)
+  def get_label!(owner_id, id),
+    do: Repo.get_by!(Label, owner_id: owner_id, id: id)
 
   @doc """
   Creates a label.
 
   ## Examples
 
-      iex> create_label(%{field: value})
+      iex> create_label(42, %{field: value})
       {:ok, %Label{}}
 
-      iex> create_label(%{field: bad_value})
+      iex> create_label(42, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_label(attrs \\ %{}) do
-    %Label{}
+  @spec create_label(
+          integer(),
+          map()
+        ) :: {:ok, %Label{}} | {:error, Ecto.Changeset.t()}
+  def create_label(owner_id, attrs) do
+    %Label{
+      owner_id: owner_id
+    }
     |> Label.changeset(attrs)
     |> Repo.insert()
   end

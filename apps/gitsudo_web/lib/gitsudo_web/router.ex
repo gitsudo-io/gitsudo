@@ -61,7 +61,7 @@ defmodule GitsudoWeb.Router do
     resources "/org/", API.OrganizationController, name: "organization", param: "name", only: [] do
       pipe_through :org
 
-      resources "/labels", API.LabelController, param: "name"
+      resources "/labels", API.LabelController
     end
   end
 

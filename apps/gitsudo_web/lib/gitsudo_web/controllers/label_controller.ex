@@ -26,7 +26,7 @@ defmodule GitsudoWeb.LabelController do
   def create(%{assigns: %{organization: organization}} = conn, %{"label" => label_params}) do
     params = Map.put(label_params, "owner_id", organization.id)
 
-    case Labels.create_label(params) do
+    case Labels.create_label(organization.id, params) do
       {:ok, %Label{} = _label} ->
         conn
         |> put_flash(:info, "Label created successfully.")
@@ -39,21 +39,28 @@ defmodule GitsudoWeb.LabelController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    label = Labels.get_label!(id)
+  def show(%{assigns: %{organization: organization}} = conn, %{
+        "name" => name
+      }) do
+    label = Labels.get_label!(organization.id, name)
     render(conn, :show, label: label)
   end
 
-  def update(conn, %{"id" => id, "label" => label_params}) do
-    label = Labels.get_label!(id)
+  def update(%{assigns: %{organization: organization}} = conn, %{
+        "name" => name,
+        "label" => label_params
+      }) do
+    label = Labels.get_label!(organization.id, name)
 
     with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
       render(conn, :show, label: label)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    label = Labels.get_label!(id)
+  def delete(%{assigns: %{organization: organization}} = conn, %{
+        "name" => name
+      }) do
+    label = Labels.get_label!(organization.id, name)
 
     with {:ok, %Label{}} <- Labels.delete_label(label) do
       send_resp(conn, :no_content, "")
