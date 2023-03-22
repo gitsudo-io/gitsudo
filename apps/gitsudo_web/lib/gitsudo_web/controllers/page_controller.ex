@@ -18,10 +18,11 @@ defmodule GitsudoWeb.PageController do
          access_token <- get_session(conn, :access_token) do
       Logger.debug("access_token: #{access_token}")
 
-      with {:ok, repositories} <- Gitsudo.Repositories.list_user_repositories(user, access_token) do
-        Logger.debug("list_user_repositories() found: #{length(repositories)}")
-        conn |> assign(:repositories, repositories)
-      else
+      case Gitsudo.Repositories.list_user_repositories(user, access_token) do
+        {:ok, repositories} ->
+          Logger.debug("list_user_repositories() found: #{length(repositories)}")
+          conn |> assign(:repositories, repositories)
+
         {:error, reason} ->
           Logger.error("list_user_repositories() returned: #{reason}")
           conn

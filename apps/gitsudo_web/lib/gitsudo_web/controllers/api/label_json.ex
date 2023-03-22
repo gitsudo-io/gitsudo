@@ -1,9 +1,14 @@
 defmodule GitsudoWeb.API.LabelJSON do
+  @moduledoc """
+  The JSON 'views' for labels
+  """
+
   alias Gitsudo.Labels.Label
 
   @doc """
   Renders a list of labels.
   """
+  @spec index(%{:labels => list, optional(any) => any}) :: %{data: list}
   def index(%{labels: labels}) do
     %{data: for(label <- labels, do: data(label))}
   end
@@ -11,6 +16,10 @@ defmodule GitsudoWeb.API.LabelJSON do
   @doc """
   Renders a single label.
   """
+  @spec show(%{
+          :label => map(),
+          optional(any) => any
+        }) :: %{data: %{color: any, id: any, name: any, owner_id: any}}
   def show(%{label: label}) do
     %{data: data(label)}
   end

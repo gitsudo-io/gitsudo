@@ -1,4 +1,7 @@
 defmodule Gitsudo.Accounts.UserSession do
+  @moduledoc """
+  A GitHub user session stores the temporary access token and refresh tokens
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

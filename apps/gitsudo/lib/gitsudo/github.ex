@@ -28,17 +28,20 @@ defmodule Gitsudo.GitHub do
            create_app_installation_and_account(installation_id, account, access_tokens_url) do
       Logger.debug("app_installation: #{inspect(app_installation)}")
 
-      with {:ok, token} <-
-             GitHub.TokenCache.get_or_refresh_token(installation_id) do
-        Logger.debug("token: #{inspect(token)}")
+      case GitHub.TokenCache.get_or_refresh_token(installation_id) do
+        {:ok, token} ->
+          Logger.debug("token: #{inspect(token)}")
 
-        with {:ok, repos} <- GitHub.Client.list_org_repos(token, account["login"]) do
-          Enum.each(repos, &Gitsudo.Repositories.create_repository/1)
-        else
-          {:error, reason} -> Logger.error(reason)
-        end
-      else
-        {:error, reason} -> Logger.error(reason)
+          case GitHub.Client.list_org_repos(token, account["login"]) do
+            {:ok, repos} ->
+              Enum.each(repos, &Gitsudo.Repositories.create_repository/1)
+
+            {:error, reason} ->
+              Logger.error(reason)
+          end
+
+        {:error, reason} ->
+          Logger.error(reason)
       end
 
       {:ok, app_installation}

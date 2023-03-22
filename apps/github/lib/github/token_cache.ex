@@ -49,10 +49,12 @@ defmodule GitHub.TokenCache do
     Logger.debug("app_id: #{app_id}")
     Logger.debug("key_thumprint: #{JOSE.JWK.thumbprint(signer.jwk)}")
 
-    with {:ok, token} <- get_token_and_check_expiry(cache, installation_id) do
-      {:reply, {:ok, token}, {args, cache}}
-    else
-      nil -> {:reply, {:error, "No value for installation id #{installation_id}"}, {args, cache}}
+    case get_token_and_check_expiry(cache, installation_id) do
+      {:ok, token} ->
+        {:reply, {:ok, token}, {args, cache}}
+
+      nil ->
+        {:reply, {:error, "No value for installation id #{installation_id}"}, {args, cache}}
     end
   end
 
@@ -69,24 +71,28 @@ defmodule GitHub.TokenCache do
     Logger.debug("app_id: #{app_id}")
     Logger.debug("key_thumprint: #{JOSE.JWK.thumbprint(signer.jwk)}")
 
-    with {:ok, token} <- get_token_and_check_expiry(cache, installation_id) do
-      {:reply, {:ok, token}, {args, cache}}
-    else
-      nil -> fetch_new_token(args, cache, installation_id)
+    case get_token_and_check_expiry(cache, installation_id) do
+      {:ok, token} ->
+        {:reply, {:ok, token}, {args, cache}}
+
+      nil ->
+        fetch_new_token(args, cache, installation_id)
     end
   end
 
   defp get_token_and_check_expiry(cache, installation_id) do
     Logger.debug("installation_id: #{installation_id}")
 
-    with {:ok, [token: token, expiry: expiry]} <- Map.fetch(cache, installation_id) do
-      if :os.system_time(:second) < expiry do
-        {:ok, token}
-      else
+    case Map.fetch(cache, installation_id) do
+      {:ok, [token: token, expiry: expiry]} ->
+        if :os.system_time(:second) < expiry do
+          {:ok, token}
+        else
+          nil
+        end
+
+      :error ->
         nil
-      end
-    else
-      :error -> nil
     end
   end
 
@@ -100,17 +106,17 @@ defmodule GitHub.TokenCache do
 
     Logger.debug("access_tokens_url: #{url}")
 
-    with {:ok, resp} <-
-           GitHub.Client.get_app_installation_access_token_with_signer(app_id, signer, url) do
-      token = resp["token"]
-      # expire after 59 minutes
-      expiry = :os.system_time(:second) + 59 * 60
-      value = [token: token, expiry: expiry]
+    case GitHub.Client.get_app_installation_access_token_with_signer(app_id, signer, url) do
+      {:ok, resp} ->
+        token = resp["token"]
+        # expire after 59 minutes
+        expiry = :os.system_time(:second) + 59 * 60
+        value = [token: token, expiry: expiry]
 
-      new_map = Map.put(cache, installation_id, value)
-      Logger.debug("{:reply, {:ok, #{inspect(token)}, {#{inspect(args)}, #{inspect(new_map)}}")
-      {:reply, {:ok, token}, {args, new_map}}
-    else
+        new_map = Map.put(cache, installation_id, value)
+        Logger.debug("{:reply, {:ok, #{inspect(token)}, {#{inspect(args)}, #{inspect(new_map)}}")
+        {:reply, {:ok, token}, {args, new_map}}
+
       {:error, reason} ->
         Logger.error(reason)
         {:reply, {:error, reason}, {args, cache}}

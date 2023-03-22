@@ -36,21 +36,23 @@ defmodule Gitsudo.Repositories do
   end
 
   def list_user_repositories_for_org(access_token, repos, org) do
-    with {:ok, org_repos} <- GitHub.Client.list_org_repos(access_token, org) do
-      Logger.debug(~s'Found #{length(org_repos)} repos under "#{org}"}')
-      {:cont, {:ok, repos ++ org_repos}}
-    else
-      {:error, reason} ->
-        # Ignore "403 Forbidden" on an org
-        case reason do
-          "403 Forbidden" ->
-            {:cont, {:ok, repos}}
+    case GitHub.Client.list_org_repos(access_token, org) do
+      {:ok, org_repos} ->
+        Logger.debug(~s'Found #{length(org_repos)} repos under "#{org}"}')
+        {:cont, {:ok, repos ++ org_repos}}
 
-          _ ->
-            Logger.error(if(is_binary(reason), do: reason, else: inspect(reason)))
-            {:halt, {:error, reason}}
-        end
+      {:error, reason} ->
+        handle_list_user_repositories_for_org_error(reason, repos)
     end
+  end
+
+  # Ignore "403 Forbidden" on an org
+  defp handle_list_user_repositories_for_org_error("403 Forbidden", repos),
+    do: {:cont, {:ok, repos}}
+
+  defp handle_list_user_repositories_for_org_error(reason, _) do
+    Logger.error(if(is_binary(reason), do: reason, else: inspect(reason)))
+    {:halt, {:error, reason}}
   end
 
   @spec enrich_repos_with_labels_and_config_sets(list()) :: list()
