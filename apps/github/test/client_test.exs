@@ -9,6 +9,8 @@ defmodule GitHub.ClientTest do
     :ok
   end
 
+  @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
+
   describe "client" do
     test "list_app_installations/2 works" do
       use_cassette "list_app_installations_works" do
@@ -49,16 +51,17 @@ defmodule GitHub.ClientTest do
         {:ok, %{"access_token" => access_token}} =
           Client.exchange_code_for_access_token(client_id, client_secret, code)
 
-        assert "06d5607433ef55fbfd842fd06ee740eddec4caaf" == access_token
+        assert @dummy_personal_access_token == access_token
       end
     end
 
     test "get_user/1 works" do
-      access_token = System.fetch_env!("TEST_PERSONAL_ACCESS_TOKEN")
-      ExVCR.Config.filter_sensitive_data(access_token, "06d5607433ef55fbfd842fd06ee740eddec4caaf")
+      access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN", @dummy_personal_access_token)
+
+      ExVCR.Config.filter_sensitive_data(access_token, @dummy_personal_access_token)
 
       use_cassette "client_get_user_works" do
-        {:ok, user} = Client.get_user("06d5607433ef55fbfd842fd06ee740eddec4caaf")
+        {:ok, user} = Client.get_user(@dummy_personal_access_token)
         assert "aisrael" == user["login"]
         # credo:disable-for-next-line
         assert 89215 == user["id"]
