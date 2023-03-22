@@ -11,6 +11,9 @@ defmodule Gitsudo.Labels.Label do
     field(:name, :string)
     field(:description, :string)
 
+    many_to_many :repositories, Gitsudo.Repositories.Repository,
+      join_through: "repositories_labels"
+
     timestamps()
   end
 

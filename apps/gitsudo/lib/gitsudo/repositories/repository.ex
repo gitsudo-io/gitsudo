@@ -10,6 +10,8 @@ defmodule Gitsudo.Repositories.Repository do
     belongs_to :owner, Gitsudo.Accounts.Account
     field :name, :string
 
+    many_to_many :labels, Gitsudo.Labels.Label, join_through: "repositories_labels"
+
     timestamps()
   end
 

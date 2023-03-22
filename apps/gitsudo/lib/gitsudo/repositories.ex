@@ -55,14 +55,21 @@ defmodule Gitsudo.Repositories do
 
   @spec enrich_repos_with_labels_and_config_sets(list()) :: list()
   def enrich_repos_with_labels_and_config_sets(repos) do
-    Enum.map(repos, &Repositories.enrich_repo/1)
+    repos |> Enum.map(&Repositories.find_or_create_repository/1)
   end
 
-  @spec enrich_repo(map()) :: map()
-  def enrich_repo(repo) do
-    repo
-    |> Map.put_new("labels", [])
-    |> Map.put_new("config_sets_applied", [])
+  @spec find_or_create_repository(map()) :: map()
+  def find_or_create_repository(%{"id" => id, "owner" => owner} = repo) do
+    with repository <-
+           Repo.get(Repository, id) |> Repo.preload([:owner, :labels]) do
+      repository
+    else
+      nil ->
+        %Repository{id: id, owner_id: owner["id"]}
+        |> Repository.changeset(repo)
+        |> Repo.insert_or_update()
+        |> Repo.preload([:owner, :labels])
+    end
   end
 
   @doc """
