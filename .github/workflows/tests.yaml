@@ -31,6 +31,8 @@ jobs:
           elixir-version: 1.14.3
       - run: mix deps.get
       - env:
+          # Need a placeholder value
+          GITHUB_APP_ID: ''
           GITHUB_APP_PRIVATE_KEY_FILE: "/tmp/app-key.pem"
         run: |
           echo "${{ secrets.APP_PRIVATE_KEY }}" > "${GITHUB_APP_PRIVATE_KEY_FILE}"
