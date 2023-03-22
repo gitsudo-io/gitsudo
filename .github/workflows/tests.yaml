@@ -31,12 +31,7 @@ jobs:
           elixir-version: 1.14.3
       - run: mix deps.get
       - env:
-          GITHUB_APP_ID: ''
-          GITHUB_CLIENT_ID: ''
-          GITHUB_CLIENT_SECRET: ''
-          GITHUB_APP_WEBHOOK_SECRET: ''
           GITHUB_APP_PRIVATE_KEY_FILE: "/tmp/app-key.pem"
-          GITSUDO_SESSION_ENCRYPTION_SALT: ''
         run: |
           echo "${{ secrets.APP_PRIVATE_KEY }}" > "${GITHUB_APP_PRIVATE_KEY_FILE}"
           mix test

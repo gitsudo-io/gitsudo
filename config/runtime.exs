@@ -121,34 +121,42 @@ end
 
 github_app_id =
   System.get_env("GITHUB_APP_ID") ||
-    raise """
-    environment variable GITHUB_APP_ID is missing!
-    See https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps
-    """
+    if config_env() != :test,
+      do:
+        raise("""
+        environment variable GITHUB_APP_ID is missing!
+        See https://docs.github.com/en/developers/apps/building-github-apps/authenticating-with-github-apps
+        """)
 
 # The GitHub app client id
 github_client_id =
   System.get_env("GITHUB_CLIENT_ID") ||
-    raise """
-    environment variable GITHUB_CLIENT_ID is missing!
-    See https://docs.github.com/en/rest/guides/basics-of-authentication
-    """
+    if config_env() != :test,
+      do:
+        raise("""
+        environment variable GITHUB_CLIENT_ID is missing!
+        See https://docs.github.com/en/rest/guides/basics-of-authentication
+        """)
 
 # The GitHub app client secret
 github_client_secret =
   System.get_env("GITHUB_CLIENT_SECRET") ||
-    raise """
-    environment variable GITHUB_CLIENT_SECRET is missing!
-    See https://docs.github.com/en/rest/guides/basics-of-authentication
-    """
+    if config_env() != :test,
+      do:
+        raise("""
+        environment variable GITHUB_CLIENT_SECRET is missing!
+        See https://docs.github.com/en/rest/guides/basics-of-authentication
+        """)
 
 # The salt to use to encrypt Plug session data
 gitsudo_session_encryption_salt =
   System.get_env("GITSUDO_SESSION_ENCRYPTION_SALT") ||
-    raise """
-    environment variable GITSUDO_SESSION_ENCRYPTION_SALT is missing!
-    See https://hexdocs.pm/plug/Plug.Session.COOKIE.html#module-options
-    """
+    if config_env() != :test,
+      do:
+        raise("""
+        environment variable GITSUDO_SESSION_ENCRYPTION_SALT is missing!
+        See https://hexdocs.pm/plug/Plug.Session.COOKIE.html#module-options
+        """)
 
 config :github, GitHub,
   github_app_id: github_app_id,

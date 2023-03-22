@@ -7,7 +7,8 @@ defmodule GitHub.TokenCacheTest do
   require Logger
 
   setup do
-    app_id = github_app_id = System.fetch_env!("GITHUB_APP_ID")
+    app_id = Application.fetch_env!(:github, GitHub)[:github_app_id]
+
     key_pem = File.read!(System.fetch_env!("GITHUB_APP_PRIVATE_KEY_FILE"))
     GitHub.TokenCache.start_link(app_id: app_id, key_pem: key_pem)
 
