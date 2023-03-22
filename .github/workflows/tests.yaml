@@ -31,4 +31,7 @@ jobs:
           otp-version: 25.2
           elixir-version: 1.14.3
       - run: mix deps.get
-      - run: mix test
+      - env:
+          GITHUB_APP_ID: ${{ secrets.APP_ID }}
+        run: mix test
+ 
