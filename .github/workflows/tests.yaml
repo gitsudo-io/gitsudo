@@ -34,6 +34,7 @@ jobs:
           # Need a placeholder value
           GITHUB_APP_ID: ''
           GITHUB_APP_PRIVATE_KEY_FILE: "/tmp/app-key.pem"
+          GITSUDO_SESSION_ENCRYPTION_SALT: ${{ secrets.GITSUDO_SESSION_ENCRYPTION_SALT }}
         run: |
           echo "${{ secrets.APP_PRIVATE_KEY }}" > "${GITHUB_APP_PRIVATE_KEY_FILE}"
           mix test
