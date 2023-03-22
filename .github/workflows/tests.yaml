@@ -6,7 +6,33 @@ env:
   MIX_ENV: test
 
 jobs:
-  mix-test:  
+   credo:  
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.2
+          elixir-version: 1.14.3
+      - run: mix deps.get
+      - run: |
+          mix credo
+
+   dialyzer:  
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: 25.2
+          elixir-version: 1.14.3
+      - run: mix deps.get
+      - run: |
+          mix dialyzer
+ 
+   mix-test:  
     services:
       db:
         image: postgres:14.6-alpine

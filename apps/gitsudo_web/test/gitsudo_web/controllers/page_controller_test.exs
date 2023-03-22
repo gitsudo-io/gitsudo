@@ -11,6 +11,7 @@ defmodule GitsudoWeb.PageControllerTest do
 
   setup do
     {:ok, _account} =
+      # credo:disable-for-next-line
       Gitsudo.Accounts.find_or_create_account(121780924, %{
         "login" => "gitsudo-io",
         "type" => "Organization"

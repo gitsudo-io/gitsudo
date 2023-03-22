@@ -1,5 +1,4 @@
 defmodule Gitsudo.Accounts.UserSession do
-  alias Gitsudo.Accounts.UserSession
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -14,7 +13,7 @@ defmodule Gitsudo.Accounts.UserSession do
   end
 
   @doc false
-  @spec changeset(%UserSession{}, map()) :: Ecto.Changeset.t()
+  @spec changeset(map(), map()) :: Ecto.Changeset.t()
   def changeset(user_session, attrs) do
     user_session
     |> cast(attrs, [:access_token, :expires_at, :refresh_token, :refresh_token_expires_at])

@@ -42,7 +42,7 @@ defmodule Gitsudo.Labels do
   @spec create_label(
           integer(),
           map()
-        ) :: {:ok, %Label{}} | {:error, Ecto.Changeset.t()}
+        ) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
   def create_label(owner_id, attrs) do
     %Label{
       owner_id: owner_id

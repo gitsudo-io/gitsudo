@@ -9,12 +9,12 @@ defmodule Gitsudo.Accounts do
   require Logger
 
   @spec get_account_by_login(login :: String.t()) ::
-          %Account{} | term() | nil
+          Account | term() | nil
   def get_account_by_login(login) do
     Repo.get_by(Account, login: login)
   end
 
-  @spec find_or_create_account(any, map) :: {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
+  @spec find_or_create_account(any, map) :: {:ok, Account} | {:error, Ecto.Changeset.t()}
   def find_or_create_account(account_id, %{"login" => login, "type" => type}) do
     Logger.debug("find_or_create_account(#{account_id}, %{login: #{login}, type: #{type}})")
 
@@ -76,7 +76,7 @@ defmodule Gitsudo.Accounts do
   @spec create_or_update_user_session(
           integer(),
           map()
-        ) :: {:ok, %UserSession{}} | {:error, %Ecto.Changeset{}}
+        ) :: {:ok, UserSession} | {:error, Ecto.Changeset.t()}
   def create_or_update_user_session(
         user_id,
         data
