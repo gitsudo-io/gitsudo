@@ -2,8 +2,6 @@ defmodule GitHub.TokenCacheTest do
   use ExUnit.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Finch
 
-  alias GitHub.TokenCache
-
   require Logger
 
   setup do
