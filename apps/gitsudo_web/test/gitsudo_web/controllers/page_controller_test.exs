@@ -3,11 +3,21 @@ defmodule GitsudoWeb.PageControllerTest do
   use GitsudoWeb.ConnCase
 
   setup do
-    ExVCR.Config.cassette_library_dir("fixture/vcr_cassettes")
+    ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
     :ok
   end
 
   @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
+
+  setup do
+    {:ok, _account} =
+      Gitsudo.Accounts.find_or_create_account(121780924, %{
+        "login" => "gitsudo-io",
+        "type" => "Organization"
+      })
+
+    :ok
+  end
 
   test "GET /", %{conn: conn} do
     # We use a GitHub personal access token for testing

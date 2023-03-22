@@ -117,6 +117,13 @@ defmodule GitHub.Client do
     end
   end
 
+  @doc """
+  List all the repos under the given organization visible to the given access token.
+
+  ```
+    GET /org/:org/repos
+  ```
+  """
   @spec list_org_repos(binary, any) ::
           {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_org_repos(access_token, org) do
@@ -130,7 +137,7 @@ defmodule GitHub.Client do
     GET /user
   ```
   """
-  @spec get_user(map()) :: {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  @spec get_user(binary) :: {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def get_user(access_token) do
     http_get_and_decode(access_token, "user")
   end

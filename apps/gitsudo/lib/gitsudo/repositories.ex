@@ -37,7 +37,7 @@ defmodule Gitsudo.Repositories do
 
   def list_user_repositories_for_org(access_token, repos, org) do
     with {:ok, org_repos} <- GitHub.Client.list_org_repos(access_token, org) do
-      Logger.debug(~s[Found #{length(org_repos)} repos under #{org}}])
+      Logger.debug(~s'Found #{length(org_repos)} repos under "#{org}"}')
       {:cont, {:ok, repos ++ org_repos}}
     else
       {:error, reason} ->
@@ -55,20 +55,23 @@ defmodule Gitsudo.Repositories do
 
   @spec enrich_repos_with_labels_and_config_sets(list()) :: list()
   def enrich_repos_with_labels_and_config_sets(repos) do
-    repos |> Enum.map(&Repositories.find_or_create_repository/1)
+    Enum.map(repos, &Repositories.find_or_create_repository/1)
   end
 
   @spec find_or_create_repository(map()) :: map()
   def find_or_create_repository(%{"id" => id, "owner" => owner} = repo) do
-    with repository <-
-           Repo.get(Repository, id) |> Repo.preload([:owner, :labels]) do
+    Logger.debug("repo: #{inspect(repo)}")
+
+    if repository = Repo.get(Repository, id) |> Repo.preload([:owner, :labels]) do
+      Logger.debug("Found repository: #{inspect(repository)}")
       repository
     else
-      nil ->
-        %Repository{id: id, owner_id: owner["id"]}
-        |> Repository.changeset(repo)
-        |> Repo.insert_or_update()
-        |> Repo.preload([:owner, :labels])
+      with {:ok, repository} <-
+             %Repository{id: id, owner_id: owner["id"]}
+             |> Repository.changeset(repo)
+             |> Repo.insert() do
+        Repo.preload(repository, [:owner, :labels])
+      end
     end
   end
 
