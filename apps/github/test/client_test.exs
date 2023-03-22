@@ -46,7 +46,7 @@ defmodule GitHub.ClientTest do
 
         code = "b1ecef51a773c4ee17ab"
 
-        {:ok, access_token} =
+        {:ok, %{"access_token" => access_token}} =
           Client.exchange_code_for_access_token(client_id, client_secret, code)
 
         assert "06d5607433ef55fbfd842fd06ee740eddec4caaf" == access_token
