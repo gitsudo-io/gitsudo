@@ -57,7 +57,6 @@ defmodule GitHub.ClientTest do
 
     test "get_user/1 works" do
       access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN", @dummy_personal_access_token)
-
       ExVCR.Config.filter_sensitive_data(access_token, @dummy_personal_access_token)
 
       use_cassette "client_get_user_works" do
