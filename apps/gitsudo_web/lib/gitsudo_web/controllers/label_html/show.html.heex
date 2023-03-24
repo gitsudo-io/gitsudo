@@ -1,0 +1,26 @@
+<.header>
+  <h1><%= link(@organization.login, to: ~p[/#{@organization.login}/labels]) %></h1>
+  <%= @label.name %>
+</.header>
+
+<div>
+  <h2 class="pt-2">Repositories</h2>
+  <ul>
+    <%= for repository <- @label.repositories do %>
+      <%= content_tag("li", repository.name, class: "") %>
+    <% end %>
+  </ul>
+
+  <h2 class="pt-2">Collaborators</h2>
+  <ul class="list-disc pl-4">
+    <%= for collaborator_policy <- @label.collaborator_policies do %>
+      <li>
+        <%= collaborator_policy.collaborator.login %>: <%= collaborator_policy.permission %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<.back navigate={~p"/#{@organization.login}/labels"}>
+  Back to labels
+</.back>

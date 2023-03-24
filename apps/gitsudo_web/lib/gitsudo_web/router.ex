@@ -40,7 +40,7 @@ defmodule GitsudoWeb.Router do
   scope "/:organization_name", GitsudoWeb do
     pipe_through [:browser, :require_authenticated_user, :org]
 
-    resources "/labels", LabelController
+    resources "/labels", LabelController, param: "name"
   end
 
   scope "/", GitsudoWeb do

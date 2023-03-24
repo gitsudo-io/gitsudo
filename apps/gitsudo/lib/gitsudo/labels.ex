@@ -28,6 +28,15 @@ defmodule Gitsudo.Labels do
     do: Repo.get_by!(Label, owner_id: owner_id, id: id)
 
   @doc """
+  Retrieves a single organization label by name
+  """
+  @spec get_label_by_name(owner_id :: integer(), name :: String.t()) :: Ecto.Schema.t() | term()
+  def get_label_by_name(owner_id, name),
+    do:
+      Repo.get_by(Label, owner_id: owner_id, name: name)
+      |> Repo.preload([:owner, :repositories, collaborator_policies: [:collaborator]])
+
+  @doc """
   Creates a label.
 
   ## Examples

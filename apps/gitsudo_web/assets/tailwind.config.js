@@ -37,10 +37,8 @@ module.exports = {
       pattern: /^btn/,
     },
     {
-      pattern: /^checked:/,
-    },
-    {
       pattern: /label-.+/,
+      variants: ['checked']
     },
   ],
   plugins: [

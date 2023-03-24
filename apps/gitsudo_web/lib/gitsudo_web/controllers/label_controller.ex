@@ -42,7 +42,7 @@ defmodule GitsudoWeb.LabelController do
   def show(%{assigns: %{organization: organization}} = conn, %{
         "name" => name
       }) do
-    label = Labels.get_label!(organization.id, name)
+    label = Labels.get_label_by_name(organization.id, name)
     render(conn, :show, label: label)
   end
 

@@ -1,7 +1,7 @@
-<h1><%= link(@organization.login, to: ~p[/#{@organization.login}]) %></h1>
 <.header>
+  <h1><%= link(@organization.login, to: ~p[/#{@organization.login}/labels]) %></h1>
   New Label
-  <:subtitle>Use this form to manage label records in your database.</:subtitle>
+  <:subtitle>Create a new label</:subtitle>
 </.header>
 
 <.label_form changeset={@changeset} action={~p"/#{@organization.login}/labels"} />

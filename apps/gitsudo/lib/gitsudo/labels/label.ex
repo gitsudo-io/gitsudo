@@ -14,6 +14,8 @@ defmodule Gitsudo.Labels.Label do
     many_to_many :repositories, Gitsudo.Repositories.Repository,
       join_through: "repositories_labels"
 
+    has_many :collaborator_policies, Gitsudo.Policies.CollaboratorPolicy
+
     timestamps()
   end
 

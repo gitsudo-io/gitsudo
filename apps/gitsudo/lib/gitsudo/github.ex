@@ -10,7 +10,10 @@ defmodule Gitsudo.GitHub do
 
   require Logger
 
-  @spec create_app_installation(map) :: any
+  @doc """
+  Persist a GitHub App installation record.
+  """
+  @spec create_app_installation(data :: map) :: {:ok, AppInstallation} | {:error, any}
   def create_app_installation(
         %{"action" => "created", "installation" => %{"id" => installation_id} = installation} =
           _data
