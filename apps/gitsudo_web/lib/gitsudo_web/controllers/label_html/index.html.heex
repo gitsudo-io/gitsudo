@@ -15,9 +15,11 @@
         <%= for label <- @labels do %>
           <%= content_tag("tr", "data-id": label.id) do %>
             <td>
-              <%= content_tag("div", label.name,
-                class: "badge badge-lg border-#{label.color} bg-#{label.color}"
-              ) %>
+              <%= link to: ~p[/#{@organization.login}/labels/#{label.name}] do %>
+                <%= content_tag("div", label.name,
+                  class: "badge badge-lg border-#{label.color} bg-#{label.color}"
+                ) %>
+              <% end %>
             </td>
             <td><%= label.description %></td>
             <td></td>
