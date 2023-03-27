@@ -32,9 +32,11 @@ defmodule GitsudoWeb.LabelControllerTest do
     setup [:create_label]
 
     test "lists all labels", %{conn: conn, label: label} do
-      conn = get(conn, ~p"/gitsudo-io/labels")
+      use_cassette "get_home_works" do
+        conn = get(conn, ~p"/gitsudo-io/labels")
 
-      assert html_response(conn, 200) =~ label.name
+        assert html_response(conn, 200) =~ label.name
+      end
     end
   end
 
@@ -50,9 +52,11 @@ defmodule GitsudoWeb.LabelControllerTest do
     end
 
     test "404 on non-existent label", %{conn: conn} do
-      conn = get(conn, ~p"/gitsudo-io/labels/not-a-label")
+      use_cassette "get_home_works" do
+        conn = get(conn, ~p"/gitsudo-io/labels/not-a-label")
 
-      assert response(conn, 404)
+        assert response(conn, 404)
+      end
     end
   end
 
