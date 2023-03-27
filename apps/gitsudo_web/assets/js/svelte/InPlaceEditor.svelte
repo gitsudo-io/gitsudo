@@ -29,19 +29,22 @@
 <div class="align-top">
     <h1>
         {#if editing}
-            <input type="text" class="input input-bordered" bind:value={text} />
-            <button
-                class="btn btn-xs btn-circle btn-confirm"
-                on:click={renameLabel}
-            >
-                <span class="hero-check-circle" />
-            </button>
-            <button
-                class="btn btn-xs btn-circle btn-cancel"
-                on:click={toggleEditing}
-            >
-                <span class="hero-x-circle" />
-            </button>
+            <form on:submit|preventDefault={renameLabel}>
+                <input
+                    type="text"
+                    class="input input-bordered"
+                    bind:value={text}
+                />
+                <button type="submit" class="btn btn-xs btn-circle btn-confirm">
+                    <span class="hero-check-circle" />
+                </button>
+                <button
+                    class="btn btn-xs btn-circle btn-cancel"
+                    on:click={toggleEditing}
+                >
+                    <span class="hero-x-circle" />
+                </button>
+            </form>
         {:else}
             {text}
             <button
