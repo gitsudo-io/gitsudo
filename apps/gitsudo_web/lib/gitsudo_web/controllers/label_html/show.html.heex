@@ -1,5 +1,5 @@
 <.header>
-  <h1><%= link(@organization.login, to: ~p[/#{@organization.login}/labels]) %></h1>
+  <p><%= link(@organization.login, to: ~p[/#{@organization.login}/labels]) %></p>
   <%= content_tag("div", nil,
     id: "label-#{@label.id}",
     "phx-hook": "InPlaceEditorHook",
