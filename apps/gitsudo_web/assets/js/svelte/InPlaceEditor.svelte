@@ -3,55 +3,74 @@
     export let org;
     export let id;
     export let text;
+    let value = text;
+    let submitDisabled = true;
 
     function toggleEditing(e) {
         editing = !editing;
     }
+
+    function textChanged(e) {
+        submitDisabled = !(editing && e.target.value != text);
+        console.log(submitDisabled);
+    }
+
     async function renameLabel(e) {
-        const url = location.origin + "/api/org/" + org + "/labels/" + id;
-        const body = JSON.stringify({
-            label: {
-                name: text,
-            },
-        });
-        console.log(body);
-        const data = await fetch(url, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body,
-        }).then((resp) => resp.json());
-        console.log(JSON.stringify(data));
-        window.location = location.origin + "/" + org + "/labels/" + text;
+        if (value != text) {
+            const url = location.origin + "/api/org/" + org + "/labels/" + id;
+            const body = JSON.stringify({
+                label: {
+                    name: value,
+                },
+            });
+            console.log(body);
+            const data = await fetch(url, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body,
+            }).then((resp) => {
+                let data = resp.json();
+                console.log(JSON.stringify(data));
+                data;
+            });
+            console.log(JSON.stringify(data));
+            window.location = location.origin + "/" + org + "/labels/" + value;
+        }
         editing = !editing;
     }
 </script>
 
-<div class="align-top">
-    <h1>
-        {#if editing}
-            <form on:submit|preventDefault={renameLabel}>
-                <input
-                    type="text"
-                    class="input input-bordered"
-                    bind:value={text}
-                />
-                <button type="submit" class="btn btn-xs btn-circle btn-confirm">
-                    <span class="hero-check-circle" />
-                </button>
-                <button
-                    class="btn btn-xs btn-circle btn-cancel"
-                    on:click={toggleEditing}
-                >
-                    <span class="hero-x-circle" />
-                </button>
-            </form>
-        {:else}
-            {text}
+<div class="align-bottom">
+    {#if editing}
+        <form on:submit|preventDefault={renameLabel}>
+            <input
+                type="text"
+                on:input={textChanged}
+                class="input input-bordered"
+                bind:value
+            />
             <button
-                class="btn btn-xs btn-circle btn-ghost text-neutral-focus hover:bg-transparent"
-                on:click={toggleEditing}
-                ><span class="hero-pencil-square" />
+                type="submit"
+                disabled={submitDisabled}
+                class="btn btn-xs btn-circle {submitDisabled
+                    ? 'btn-ghost bg-transparent hover:bg-transparent'
+                    : 'btn-confirm'}"
+            >
+                <span class="hero-check-circle text-gray-400" />
             </button>
-        {/if}
-    </h1>
+            <button
+                class="btn btn-xs btn-circle btn-cancel"
+                on:click={toggleEditing}
+            >
+                <span class="hero-x-circle" />
+            </button>
+        </form>
+    {:else}
+        <span class="text-2xl">{text}</span>
+        <button
+            class="btn btn-xs btn-circle btn-ghost text-neutral hover:bg-transparent"
+            on:click={toggleEditing}
+            ><span class="hero-pencil-square" />
+        </button>
+    {/if}
 </div>
