@@ -3,7 +3,7 @@ defmodule GitsudoWeb.WebhookControllerTest do
 
   require Logger
 
-  test "installation created event", %{conn: conn} do
+  test "installation created event" do
     path =
       Path.expand(
         "../../../fixtures/installation-created-webhook-payload.json",
