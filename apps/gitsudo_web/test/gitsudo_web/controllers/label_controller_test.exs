@@ -1,11 +1,17 @@
 defmodule GitsudoWeb.LabelControllerTest do
   use GitsudoWeb.ConnCase
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Finch
 
   import Gitsudo.LabelsFixtures
 
   alias Gitsudo.Labels.Label
 
   require Logger
+
+  setup do
+    ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
+    :ok
+  end
 
   @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
 
@@ -36,9 +42,11 @@ defmodule GitsudoWeb.LabelControllerTest do
     setup [:create_label]
 
     test "shows a label", %{conn: conn, label: label} do
-      conn = get(conn, ~p"/gitsudo-io/labels/#{label.name}")
+      use_cassette "get_home_works" do
+        conn = get(conn, ~p"/gitsudo-io/labels/#{label.name}")
 
-      assert html_response(conn, 200) =~ label.name
+        assert html_response(conn, 200) =~ label.name
+      end
     end
 
     test "404 on non-existent label", %{conn: conn} do

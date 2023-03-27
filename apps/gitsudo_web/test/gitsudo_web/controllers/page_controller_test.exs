@@ -1,6 +1,6 @@
 defmodule GitsudoWeb.PageControllerTest do
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Finch
   use GitsudoWeb.ConnCase
+  use ExVCR.Mock, adapter: ExVCR.Adapter.Finch
 
   setup do
     ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
@@ -10,9 +10,9 @@ defmodule GitsudoWeb.PageControllerTest do
   @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
 
   setup do
+    # credo:disable-for-next-line
     {:ok, _account} =
-      # credo:disable-for-next-line
-      Gitsudo.Accounts.find_or_create_account(121780924, %{
+      Gitsudo.Accounts.find_or_create_account(121_780_924, %{
         "login" => "gitsudo-io",
         "type" => "Organization"
       })
