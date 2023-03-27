@@ -4,6 +4,8 @@
     id: "label-#{@label.id}",
     "phx-hook": "InPlaceEditorHook",
     "phx-update": "ignore",
+    "data-org": @organization.login,
+    "data-id": @label.id,
     "data-text": @label.name
   ) %>
 </.header>
