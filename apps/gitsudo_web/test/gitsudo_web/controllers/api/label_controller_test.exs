@@ -71,6 +71,20 @@ defmodule GitsudoWeb.API.LabelControllerTest do
   describe "update label" do
     setup [:create_label]
 
+    test "rename label", %{conn: conn, label: %Label{id: id} = label} do
+      conn = put(conn, ~p"/api/org/gitsudo-io/labels/#{label}", label: %{name: "new-name"})
+      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+
+      conn = get(conn, ~p"/api/org/gitsudo-io/labels/#{label}")
+
+      assert %{
+               "id" => ^id,
+               "color" => "label-red",
+               "name" => "new-name",
+               "owner_id" => 42
+             } = json_response(conn, 200)["data"]
+    end
+
     test "renders label when data is valid", %{conn: conn, label: %Label{id: id} = label} do
       conn = put(conn, ~p"/api/org/gitsudo-io/labels/#{label}", label: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]

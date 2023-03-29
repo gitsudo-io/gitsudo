@@ -42,8 +42,11 @@ defmodule GitsudoWeb.LabelController do
   def show(%{assigns: %{organization: organization}} = conn, %{
         "name" => name
       }) do
-    label = Labels.get_label_by_name(organization.id, name)
-    render(conn, :show, label: label)
+    if label = Labels.get_label_by_name(organization.id, name) do
+      render(conn, :show, label: label)
+    else
+      conn |> send_resp(:not_found, "Not found") |> halt
+    end
   end
 
   def update(%{assigns: %{organization: organization}} = conn, %{

@@ -1,17 +1,39 @@
+<div class="text-sm breadcrumbs">
+  <ul>
+    <li>
+      <%= link("#{@organization.login}", to: ~p[/#{@organization.login}]) %>
+    </li>
+    <li>
+      <%= link("labels",
+        to: ~p[/#{@organization.login}/labels]
+      ) %>
+    </li>
+    <li><%= @label.name %></li>
+  </ul>
+</div>
+
 <.header>
-  <h1><%= link(@organization.login, to: ~p[/#{@organization.login}/labels]) %></h1>
-  <%= @label.name %>
+  <%= content_tag("div", nil,
+    id: "label-#{@label.id}",
+    "phx-hook": "InPlaceEditorHook",
+    "phx-update": "ignore",
+    "data-org": @organization.login,
+    "data-id": @label.id,
+    "data-text": @label.name
+  ) %>
 </.header>
 
 <div>
-  <h2 class="pt-2">Repositories</h2>
+  <h2>Repositories</h2>
   <ul>
     <%= for repository <- @label.repositories do %>
       <%= content_tag("li", repository.name, class: "") %>
     <% end %>
   </ul>
 
-  <h2 class="pt-2">Collaborators</h2>
+  <h1>Policies</h1>
+
+  <h2>Collaborators</h2>
   <ul class="list-disc pl-4">
     <%= for collaborator_policy <- @label.collaborator_policies do %>
       <li>

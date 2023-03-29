@@ -9,6 +9,7 @@ const path = require("path")
 module.exports = {
   content: [
     "./js/**/*.js",
+    "./js/svelte/**/*.svelte",
     "../lib/*_web.ex",
     "../lib/*_web/**/*.*ex"
   ],
@@ -37,8 +38,11 @@ module.exports = {
       pattern: /^btn/,
     },
     {
+      pattern: /^hero-(pencil-square|x-circle)/,
+    },
+    {
       pattern: /label-.+/,
-      variants: ['checked']
+      variants: ["checked"]
     },
   ],
   plugins: [
