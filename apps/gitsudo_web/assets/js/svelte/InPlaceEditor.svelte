@@ -58,14 +58,16 @@
             />
             <button
                 type="submit"
+                title="Save changes"
                 disabled={submitDisabled}
                 class="btn btn-xs btn-circle {submitDisabled
                     ? 'btn-ghost bg-transparent hover:bg-transparent'
                     : 'btn-confirm'}"
             >
-                <span class="hero-check-circle text-gray-400" />
+                <span class="hero-check-circle" />
             </button>
             <button
+                title="Cancel"
                 class="btn btn-xs btn-circle btn-cancel"
                 on:click={toggleEditing}
             >
@@ -82,10 +84,10 @@
                 {#await submitPromise}
                     <Spinner />
                 {:then}
-                    <span class="hero-pencil-square" />
+                    <span title="Edit name" class="hero-pencil-square" />
                 {/await}
             {:else}
-                <span class="hero-pencil-square" />
+                <span title="Edit name" class="hero-pencil-square" />
             {/if}
         </button>
     {/if}
