@@ -53,15 +53,13 @@ defmodule GitsudoWeb.Router do
     pipe_through :api
 
     post "/webhook", WebhookController, :webhook
-  end
 
-  scope "/api", GitsudoWeb do
-    pipe_through :api
+    scope "/api" do
+      resources "/org/", API.OrganizationController, name: "organization", param: "name", only: [] do
+        pipe_through :org
 
-    resources "/org/", API.OrganizationController, name: "organization", param: "name", only: [] do
-      pipe_through :org
-
-      resources "/labels", API.LabelController
+        resources "/labels", API.LabelController
+      end
     end
   end
 
