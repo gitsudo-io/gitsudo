@@ -8,7 +8,17 @@
 </div>
 
 <.header>
-  <h1><%= @repository.name %></h1>
+  <h1>
+    <%= @repository.name %>
+  </h1>
+  <p>
+    <%= link(to: @repository.html_url, class: "inline-flex items-center") do %>
+      View on GitHub
+      <span class="pl-1 inline-flex">
+        <span class="hero-arrow-top-right-on-square w-4 h-4" />
+      </span>
+    <% end %>
+  </p>
 </.header>
 
 <.back navigate={~p"/#{@organization.login}"}>

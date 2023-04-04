@@ -9,6 +9,7 @@ defmodule Gitsudo.Repositories.Repository do
   schema "repositories" do
     belongs_to :owner, Gitsudo.Accounts.Account
     field :name, :string
+    field :html_url, :string
 
     many_to_many :labels, Gitsudo.Labels.Label, join_through: "repositories_labels"
 
@@ -26,7 +27,7 @@ defmodule Gitsudo.Repositories.Repository do
   @doc false
   def changeset(repository, attrs) do
     repository
-    |> cast(attrs, [:id, :owner_id, :name])
-    |> validate_required([:id, :owner_id, :name])
+    |> cast(attrs, [:id, :owner_id, :name, :html_url])
+    |> validate_required([:id, :owner_id, :name, :html_url])
   end
 end
