@@ -121,7 +121,7 @@ defmodule GitHub.Client do
   List all the repos under the given organization visible to the given access token.
 
   ```
-    GET /org/:org/repos
+    GET /org/{owner}/repos
   ```
   """
   @spec list_org_repos(access_token :: String.t(), organization_name :: String.t()) ::
@@ -163,6 +163,17 @@ defmodule GitHub.Client do
           {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_user_orgs(access_token) do
     http_get_and_decode(access_token, "user/orgs")
+  end
+
+  @doc """
+  List workflow runs for a given repository
+
+  ```
+    GET /repos/{owner}/{repo}/actions/runs
+  ```
+  """
+  def list_workflow_runs(access_token, owner, repo) do
+    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs")
   end
 
   @spec http_get_and_decode(binary, binary) ::

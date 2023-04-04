@@ -8,18 +8,48 @@
 </div>
 
 <.header>
-  <h1>
+  <h1 class="inline-flex items-baseline">
     <%= @repository.name %>
+    <span class="pl-1 text-sm text-gray-600">
+      (<%= link(to: @repository.html_url, class: "inline-flex items-center") do %>
+        View on GitHub
+        <span class="pl-1 inline-flex">
+          <span class="hero-arrow-top-right-on-square w-4 h-4" />
+        </span>
+      <% end %>)
+    </span>
   </h1>
-  <p>
-    <%= link(to: @repository.html_url, class: "inline-flex items-center") do %>
-      View on GitHub
-      <span class="pl-1 inline-flex">
-        <span class="hero-arrow-top-right-on-square w-4 h-4" />
-      </span>
-    <% end %>
-  </p>
 </.header>
+
+<%= if !Enum.empty?(@workflow_runs) do %>
+  <section>
+    <h2>Workflows</h2>
+    <div class="stats shadow">
+      <div class="stat">
+        <div class="stat-figure">
+          <div class="stat-title">Total Runs</div>
+          <div class="stat-value"><%= @total_count %></div>
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-figure">
+          <div class="stat-title">Completed</div>
+          <div class="stat-value"><%= @completed_count %></div>
+        </div>
+      </div>
+      <div class="stat">
+        <%= content_tag(:div, class: "stat-figure #{if @success_percentage > 90, do: "text-green-500", else: "text-error"}") do %>
+          <div class="stat-title">Succeeded</div>
+          <div class="stat-value">
+            <%= @success_count %> ( <%= content_tag(:span, "#{@success_percentage}%",
+              class: "#{if @success_percentage > 90, do: "text-green-500", else: "text-error"}"
+            ) %> )
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>
 
 <.back navigate={~p"/#{@organization.login}"}>
   Back to <%= @organization.login %>
