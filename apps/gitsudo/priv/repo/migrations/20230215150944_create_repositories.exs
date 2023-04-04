@@ -9,6 +9,7 @@ defmodule Gitsudo.Repo.Migrations.CreateRepositories do
           references(:accounts, type: :integer, on_delete: :nothing, null: false)
 
       add :name, :string, null: false
+      add :html_url, :string, null: false
 
       timestamps()
     end
