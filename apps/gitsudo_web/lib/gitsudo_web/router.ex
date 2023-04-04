@@ -35,12 +35,12 @@ defmodule GitsudoWeb.Router do
     get "/logout", PageController, :logout
 
     get "/:organization_name", OrganizationController, :show
-  end
 
-  scope "/:organization_name", GitsudoWeb do
-    pipe_through [:browser, :require_authenticated_user, :org]
+    scope "/:organization_name" do
+      pipe_through [:org]
 
-    resources "/labels", LabelController, param: "name"
+      resources "/labels", LabelController, param: "name"
+    end
   end
 
   scope "/", GitsudoWeb do
