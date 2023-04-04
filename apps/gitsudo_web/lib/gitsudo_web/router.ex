@@ -29,6 +29,12 @@ defmodule GitsudoWeb.Router do
   end
 
   scope "/", GitsudoWeb do
+    pipe_through [:browser]
+
+    get "/oauth/callback", OauthController, :callback
+  end
+
+  scope "/", GitsudoWeb do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/", PageController, :home
@@ -43,12 +49,6 @@ defmodule GitsudoWeb.Router do
 
       resources "/", RepositoryController, param: "name", only: [:show]
     end
-  end
-
-  scope "/", GitsudoWeb do
-    pipe_through [:browser]
-
-    get "/oauth/callback", OauthController, :callback
   end
 
   scope "/", GitsudoWeb do
