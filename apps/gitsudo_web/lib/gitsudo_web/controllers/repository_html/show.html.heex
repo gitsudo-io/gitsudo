@@ -1,0 +1,16 @@
+<div class="text-sm breadcrumbs">
+  <ul>
+    <li>
+      <%= link("#{@organization.login}", to: ~p[/#{@organization.login}]) %>
+    </li>
+    <li><%= @repository.name %></li>
+  </ul>
+</div>
+
+<.header>
+  <h1><%= @repository.name %></h1>
+</.header>
+
+<.back navigate={~p"/#{@organization.login}"}>
+  Back to <%= @organization.login %>
+</.back>

@@ -40,6 +40,8 @@ defmodule GitsudoWeb.Router do
       pipe_through [:org]
 
       resources "/labels", LabelController, param: "name"
+
+      resources "/", RepositoryController, param: "name", only: [:show]
     end
   end
 
