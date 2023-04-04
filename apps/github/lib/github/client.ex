@@ -124,10 +124,10 @@ defmodule GitHub.Client do
     GET /org/:org/repos
   ```
   """
-  @spec list_org_repos(binary, any) ::
+  @spec list_org_repos(access_token :: String.t(), organization_name :: String.t()) ::
           {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def list_org_repos(access_token, org) do
-    http_get_and_decode(access_token, "orgs/#{org}/repos")
+  def list_org_repos(access_token, organization_name) do
+    http_get_and_decode(access_token, "orgs/#{organization_name}/repos")
   end
 
   @doc """

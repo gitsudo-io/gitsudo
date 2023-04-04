@@ -1,2 +1,38 @@
 <h1><%= @organization.login %></h1>
-<p>Lorem ipsum</p>
+
+<div class="container">
+  <table class="table table-fixed min-w-full">
+    <thead>
+      <tr class="align-bottom">
+        <th scope="col" class="w-2/5">Repository</th>
+        <th scope="col" class="w-2/5">Labels</th>
+        <th scope="col" class="w-1/5">ConfigSets Applied</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for repository <- @repositories do %>
+        <tr>
+          <td>
+            <%= link("#{repository.owner.login}/#{repository.name}",
+              to: ~p"/#{repository.owner.login}/#{repository.name}",
+              class: "link-primary link-hover"
+            ) %>
+          </td>
+          <td class="flex items-start">
+            <div class="pr-1">
+              <%= for label <- repository.labels do %>
+                <%= content_tag("div", label.name,
+                  class: "badge badge-lg border-#{label.color} bg-#{label.color}"
+                ) %>
+              <% end %>
+            </div>
+            <span class="hero-plus-circle h-6 w-6 text-slate-400" />
+          </td>
+          <td>
+            <span class="italic text-slate-400">none</span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

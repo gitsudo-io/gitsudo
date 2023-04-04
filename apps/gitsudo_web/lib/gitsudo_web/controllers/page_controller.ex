@@ -5,10 +5,6 @@ defmodule GitsudoWeb.PageController do
 
   @spec home(Plug.Conn.t(), any) :: Plug.Conn.t()
   def home(conn, _params) do
-    if user = conn.assigns[:current_user] do
-      Logger.debug(inspect(user["login"]))
-    end
-
     conn |> list_repositories |> render(:home)
   end
 
@@ -16,8 +12,6 @@ defmodule GitsudoWeb.PageController do
   def list_repositories(conn) do
     with user <- conn.assigns[:current_user],
          access_token <- get_session(conn, :access_token) do
-      Logger.debug("access_token: #{access_token}")
-
       case Gitsudo.Repositories.list_user_repositories(user, access_token) do
         {:ok, repositories} ->
           Logger.debug("list_user_repositories() found: #{length(repositories)}")

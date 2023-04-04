@@ -26,7 +26,7 @@ defmodule Gitsudo.Repositories do
 
   @spec list_user_repositories_for_orgs(access_token :: String.t(), orgs :: list()) ::
           {:ok, list()} | {:error, any()}
-  def list_user_repositories_for_orgs(access_token, orgs) do
+  defp list_user_repositories_for_orgs(access_token, orgs) do
     Logger.debug("Found #{length(orgs)} user orgs")
 
     Enum.reduce_while(orgs, {:ok, []}, fn org, {:ok, repos} ->
@@ -35,7 +35,7 @@ defmodule Gitsudo.Repositories do
     end)
   end
 
-  def list_user_repositories_for_org(access_token, repos, org) do
+  defp list_user_repositories_for_org(access_token, repos, org) do
     case GitHub.Client.list_org_repos(access_token, org) do
       {:ok, org_repos} ->
         Logger.debug(~s'Found #{length(org_repos)} repos under "#{org}"}')
