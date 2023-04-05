@@ -2,7 +2,6 @@ defmodule GitHub.TokenCache do
   @moduledoc """
   Caches GitHub app installation tokens
   """
-  alias ExActor.GenServer
   use GenServer
 
   require Logger

@@ -13,9 +13,9 @@ defmodule Gitsudo.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Gitsudo.PubSub},
       # Start Finch
-      {Finch, name: Gitsudo.Finch}
+      {Finch, name: Gitsudo.Finch},
       # Start a worker by calling: Gitsudo.Worker.start_link(arg)
-      # {Gitsudo.Worker, arg}
+      Gitsudo.Events.AsyncWorker
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Gitsudo.Supervisor)

@@ -14,10 +14,7 @@ defmodule Gitsudo.GitHub do
   Persist a GitHub App installation record.
   """
   @spec create_app_installation(data :: map) :: {:ok, AppInstallation} | {:error, any}
-  def create_app_installation(
-        %{"action" => "created", "installation" => %{"id" => installation_id} = installation} =
-          _data
-      )
+  def create_app_installation(%{"id" => installation_id} = installation)
       when is_integer(installation_id) and is_map(installation) do
     Logger.debug("create_app_installation(id: #{installation_id})")
     Logger.debug(inspect(installation))

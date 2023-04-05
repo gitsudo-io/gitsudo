@@ -41,7 +41,9 @@
         <%= content_tag(:div, class: "stat-figure #{if @success_percentage > 90, do: "text-green-500", else: "text-error"}") do %>
           <div class="stat-title">Succeeded</div>
           <div class="stat-value">
-            <%= @success_count %> ( <%= content_tag(:span, "#{@success_percentage}%",
+            <%= @success_count %> ( <%= content_tag(
+              :span,
+              "#{:erlang.float_to_binary(@success_percentage, decimals: 1)}%",
               class: "#{if @success_percentage > 90, do: "text-green-500", else: "text-error"}"
             ) %> )
           </div>

@@ -4,14 +4,12 @@ defmodule GitsudoWeb.WebhookController do
   """
   use GitsudoWeb, :controller
 
-  alias Gitsudo.GitHub
-
   require Logger
 
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
   def webhook(conn, %{"action" => "created"} = params) do
     Logger.debug(Jason.encode!(params))
-    created = GitHub.create_app_installation(params)
+    created = Gitsudo.Events.app_installation_created(params)
     Logger.debug("created: #{inspect(created)}")
     send_resp(conn, :no_content, "")
   end
