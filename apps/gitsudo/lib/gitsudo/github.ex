@@ -14,37 +14,17 @@ defmodule Gitsudo.GitHub do
   Persist a GitHub App installation record.
   """
   @spec create_app_installation(data :: map) :: {:ok, AppInstallation} | {:error, any}
-  def create_app_installation(%{"id" => installation_id} = installation)
-      when is_integer(installation_id) and is_map(installation) do
-    Logger.debug("create_app_installation(id: #{installation_id})")
+  def create_app_installation(%{"id" => app_installation_id} = installation)
+      when is_integer(app_installation_id) and is_map(installation) do
+    Logger.debug("create_app_installation(id: #{app_installation_id})")
     Logger.debug(inspect(installation))
 
     with %{
            "account" => account,
            "access_tokens_url" => access_tokens_url
          } <-
-           installation,
-         {:ok, app_installation} <-
-           create_app_installation_and_account(installation_id, account, access_tokens_url) do
-      Logger.debug("app_installation: #{inspect(app_installation)}")
-
-      case GitHub.TokenCache.get_or_refresh_token(installation_id) do
-        {:ok, token} ->
-          Logger.debug("token: #{inspect(token)}")
-
-          case GitHub.Client.list_org_repos(token, account["login"]) do
-            {:ok, repos} ->
-              Enum.each(repos, &Gitsudo.Repositories.create_repository/1)
-
-            {:error, reason} ->
-              Logger.error(reason)
-          end
-
-        {:error, reason} ->
-          Logger.error(reason)
-      end
-
-      {:ok, app_installation}
+           installation do
+      create_app_installation_and_account(app_installation_id, account, access_tokens_url)
     end
   end
 

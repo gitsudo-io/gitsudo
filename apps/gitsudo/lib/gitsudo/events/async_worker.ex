@@ -30,8 +30,55 @@ defmodule Gitsudo.Events.AsyncWorker do
   Actually handle the app_installation_created event.
   """
   @spec handle_app_installation_created(any) :: any
-  def handle_app_installation_created(%{"installation" => installation}) do
+  def handle_app_installation_created(%{
+        "installation" =>
+          %{
+            "account" => %{"login" => owner}
+          } = installation
+      }) do
     Logger.debug("handle_app_installation_created(#{inspect(installation)})")
-    Gitsudo.GitHub.create_app_installation(installation)
+
+    case Gitsudo.GitHub.create_app_installation(installation) do
+      {:ok, app_installation} ->
+        Logger.debug("app_installation: #{inspect(app_installation)}")
+
+        case GitHub.TokenCache.get_or_refresh_token(app_installation.id) do
+          {:ok, access_token} ->
+            Logger.debug("token: #{inspect(access_token)}")
+
+            case GitHub.Client.list_org_repos(access_token, owner) do
+              {:ok, repos} ->
+                Logger.debug("Found #{length(repos)} repos under #{owner}")
+                Enum.each(repos, &{create_repository(access_token, owner, &1)})
+
+              {:error, reason} ->
+                Logger.error(reason)
+            end
+
+          {:error, reason} ->
+            Logger.error(reason)
+        end
+
+      {:error, reason} ->
+        Logger.error(reason)
+    end
+  end
+
+  def create_repository(access_token, owner, repo_data) do
+    repository = Gitsudo.Repositories.find_or_create_repository(repo_data)
+    Logger.debug("repository: #{inspect(repository)}")
+
+    with {:ok, %{"workflow_runs" => workflow_runs} = data} <-
+           GitHub.Client.list_workflow_runs(access_token, owner, repository.name) do
+      Logger.debug(
+        ~s'Found #{data["total_count"]} workflow runs for "#{owner}/#{repository.name}"'
+      )
+
+      for workflow_run <- workflow_runs do
+        Logger.debug("workflow_run: #{inspect(workflow_run)}")
+      end
+
+      {:ok, repository}
+    end
   end
 end
