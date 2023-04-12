@@ -130,13 +130,18 @@ defmodule Gitsudo.Events.AsyncWorker do
         access_token,
         owner,
         repo,
-        %{"workflow_job" => %{"run_id" => workflow_run_id} = workflow_run} = _params
+        %{
+          "workflow" => %{"id" => workflow_id},
+          "workflow_run" => %{"id" => workflow_run_id} = workflow_run
+        } = _params
       ) do
     Logger.debug("handle_workflow_run_completed(#{inspect(workflow_run)})")
 
     case GitHub.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
       {:ok, workflow_run} ->
-        Gitsudo.Workflows.create_workflow_run(workflow_run)
+        workflow_run
+        |> Map.put("workflow_id", workflow_id)
+        |> Gitsudo.Workflows.create_workflow_run()
 
       {:error, reason} ->
         Logger.error(reason)
