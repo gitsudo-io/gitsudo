@@ -159,10 +159,23 @@ defmodule GitHub.Client do
     GET /user/orgs
   ```
   """
-  @spec list_user_orgs(binary) ::
+  @spec list_user_orgs(access_token :: String.t()) ::
           {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_user_orgs(access_token) do
     http_get_and_decode(access_token, "user/orgs")
+  end
+
+  @doc """
+  List workflows for a given repository
+
+  ```
+    GET /repos/{owner}/{repo}/actions/workflows
+  ```
+  """
+  @spec list_workflows(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
+          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def list_workflows(access_token, owner, repo) do
+    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/workflows")
   end
 
   @doc """
@@ -172,6 +185,8 @@ defmodule GitHub.Client do
     GET /repos/{owner}/{repo}/actions/runs
   ```
   """
+  @spec list_workflow_runs(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
+          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_workflow_runs(access_token, owner, repo) do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs")
   end

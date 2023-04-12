@@ -2,6 +2,7 @@ defmodule Gitsudo.Events.AsyncWorker do
   @moduledoc """
   The AsyncWorker GenServer is responsible for handling asynchronous events.
   """
+  alias Gitsudo.Workflows
 
   use GenServer
 
@@ -68,12 +69,29 @@ defmodule Gitsudo.Events.AsyncWorker do
     repository = Gitsudo.Repositories.find_or_create_repository(repo_data)
     Logger.debug("repository: #{inspect(repository)}")
 
+    with {:ok, %{"total_count" => total_count, "workflows" => workflows}} <-
+           GitHub.Client.list_workflows(access_token, owner, repository.name) do
+      Logger.debug(~s'Found #{total_count} workflows for "#{owner}/#{repository.name}"')
+
+      for workflow <- workflows do
+        Logger.debug("workflow: #{inspect(workflow)}")
+
+        with {:ok, workflow} <- Workflows.create_workflow(repository.id, workflow) do
+          Logger.debug("Created workflow: #{inspect(workflow)}")
+        end
+      end
+    end
+
     with {:ok, %{"total_count" => total_count, "workflow_runs" => workflow_runs} = _data} <-
            GitHub.Client.list_workflow_runs(access_token, owner, repository.name) do
       Logger.debug(~s'Found #{total_count} workflow runs for "#{owner}/#{repository.name}"')
 
       for workflow_run <- workflow_runs do
         Logger.debug("workflow_run: #{inspect(workflow_run)}")
+
+        with {:ok, workflow_run} <- Workflows.create_workflow_run(workflow_run) do
+          Logger.debug("Created workflow_run: #{inspect(workflow_run)}")
+        end
       end
 
       {:ok, repository}

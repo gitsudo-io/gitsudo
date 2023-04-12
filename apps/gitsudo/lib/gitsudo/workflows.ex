@@ -4,7 +4,31 @@ defmodule Gitsudo.Workflows do
   """
   import Ecto.Query, warn: false
 
+  alias Gitsudo.Workflows.Workflow
+  alias Gitsudo.Workflows.WorkflowRun
+  alias Gitsudo.Repo
+
   require Logger
+
+  @spec create_workflow(repository_id :: integer, params :: map()) ::
+          {:ok, Workflow.t()}
+          | {:error, Ecto.Changeset.t()}
+  def create_workflow(repository_id, params) do
+    %Workflow{
+      repository_id: repository_id
+    }
+    |> Workflow.changeset(params)
+    |> Repo.insert()
+  end
+
+  @spec create_workflow_run(params :: map()) ::
+          {:ok, WorkflowRun.t()}
+          | {:error, Ecto.Changeset.t()}
+  def create_workflow_run(params) do
+    %WorkflowRun{}
+    |> WorkflowRun.changeset(params)
+    |> Repo.insert()
+  end
 
   @spec list_workflow_runs(binary, any, any) ::
           {:error,
