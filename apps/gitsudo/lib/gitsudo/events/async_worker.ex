@@ -20,9 +20,37 @@ defmodule Gitsudo.Events.AsyncWorker do
   end
 
   @impl true
+  @doc """
+  Handle the :app_installation_created event specifically.
+  """
+  def handle_cast({:app_installation_created, data}, state) do
+    handle_app_installation_created(data)
+
+    {:noreply, state}
+  end
+
   def handle_cast({event_name, data}, state) do
     Logger.debug("handle_cast({:#{event_name}, #{inspect(data)}}, state)")
-    apply(__MODULE__, :"handle_#{event_name}", [data])
+
+    case data do
+      %{
+        "installation" =>
+          %{
+            "account" => %{"login" => owner}
+          } = installation,
+        "repository" => %{"name" => repo}
+      } ->
+        case GitHub.TokenCache.get_or_refresh_token(installation["id"]) do
+          {:ok, access_token} ->
+            apply(__MODULE__, :"handle_#{event_name}", [access_token, owner, repo, data])
+
+          {:error, reason} ->
+            Logger.error(reason)
+        end
+
+      _ ->
+        Logger.error("No \"installation\" found in #{inspect(data)}, don't know what to do!")
+    end
 
     {:noreply, state}
   end
@@ -42,8 +70,6 @@ defmodule Gitsudo.Events.AsyncWorker do
     with {:ok, app_installation} <- Gitsudo.GitHub.create_app_installation(installation) do
       case GitHub.TokenCache.get_or_refresh_token(app_installation.id) do
         {:ok, access_token} ->
-          Logger.debug("token: #{inspect(access_token)}")
-
           case GitHub.Client.list_org_repos(access_token, owner) do
             {:ok, repos} ->
               Logger.debug("Found #{length(repos)} repos under #{owner}")
@@ -89,6 +115,29 @@ defmodule Gitsudo.Events.AsyncWorker do
       end
 
       {:ok, repository}
+    end
+  end
+
+  @spec handle_workflow_job_completed(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          any
+        ) :: any
+  def handle_workflow_job_completed(
+        access_token,
+        owner,
+        repo,
+        %{"workflow_run" => %{"id" => workflow_run_id} = workflow_run} = _params
+      ) do
+    Logger.debug("handle_workflow_job_completed(#{inspect(workflow_run)})")
+
+    case GitHub.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
+      {:ok, workflow_run} ->
+        Gitsudo.Workflows.create_workflow_run(workflow_run)
+
+      {:error, reason} ->
+        Logger.error(reason)
     end
   end
 end

@@ -14,4 +14,12 @@ defmodule Gitsudo.Events do
   def app_installation_created(data) do
     GenServer.cast(AsyncWorker, {:app_installation_created, data})
   end
+
+  @doc """
+  Dispatch the `workflow_job_completed` event.
+  """
+  @spec workflow_job_completed(any) :: :ok
+  def workflow_job_completed(data) do
+    GenServer.cast(AsyncWorker, {:workflow_job_completed, data})
+  end
 end

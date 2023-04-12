@@ -9,13 +9,23 @@ defmodule GitsudoWeb.WebhookController do
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
   def webhook(conn, %{"action" => "created"} = params) do
     Logger.debug(Jason.encode!(params))
-    created = Gitsudo.Events.app_installation_created(params)
-    Logger.debug("created: #{inspect(created)}")
+    Gitsudo.Events.app_installation_created(params)
+    send_resp(conn, :no_content, "")
+  end
+
+  def webhook(conn, %{"action" => "completed", "workflow_job" => workflow_job} = params) do
+    Logger.debug(Jason.encode!(workflow_job))
+    Gitsudo.Events.workflow_job_completed(params)
     send_resp(conn, :no_content, "")
   end
 
   def webhook(conn, params) do
-    params |> Map.delete("installation") |> Jason.encode!() |> Logger.debug()
+    params
+    |> Map.delete("installation")
+    |> Map.delete("organization")
+    |> Jason.encode!()
+    |> Logger.debug()
+
     send_resp(conn, :no_content, "")
   end
 end
