@@ -7,25 +7,30 @@ defmodule GitsudoWeb.WebhookController do
   require Logger
 
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def webhook(conn, %{"action" => "created"} = params) do
+  def webhook(conn, params) do
+    Logger.debug(
+      params
+      |> Map.delete("installation")
+      |> Map.delete("organization")
+      |> Jason.encode!()
+    )
+
+    handle_payload(params)
+
+    send_resp(conn, :no_content, "")
+  end
+
+  def handle_payload(%{"action" => "created"} = params) do
     Logger.debug(Jason.encode!(params))
     Gitsudo.Events.app_installation_created(params)
-    send_resp(conn, :no_content, "")
   end
 
-  def webhook(conn, %{"action" => "completed", "workflow_run" => workflow_run} = params) do
+  def handle_payload(%{"action" => "completed", "workflow_run" => workflow_run} = params) do
     Logger.debug(Jason.encode!(workflow_run))
     Gitsudo.Events.workflow_run_completed(params)
-    send_resp(conn, :no_content, "")
   end
 
-  def webhook(conn, params) do
-    params
-    |> Map.delete("installation")
-    |> Map.delete("organization")
-    |> Jason.encode!()
-    |> Logger.debug()
-
-    send_resp(conn, :no_content, "")
+  def handle_payload(%{"action" => "completed", "workflow_job" => workflow_job} = _params) do
+    Logger.debug(Jason.encode!(workflow_job))
   end
 end
