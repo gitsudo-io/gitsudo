@@ -15,7 +15,7 @@ defmodule GitsudoWeb.WebhookController do
   end
 
   def webhook(conn, params) do
-    Logger.debug(Jason.encode!(params))
+    params |> Map.delete("installation") |> Jason.encode!() |> Logger.debug()
     send_resp(conn, :no_content, "")
   end
 end
