@@ -120,19 +120,19 @@ defmodule Gitsudo.Events.AsyncWorker do
     end
   end
 
-  @spec handle_workflow_job_completed(
+  @spec handle_workflow_run_completed(
           access_token :: String.t(),
           owner :: String.t(),
           repo :: String.t(),
           any
         ) :: any
-  def handle_workflow_job_completed(
+  def handle_workflow_run_completed(
         access_token,
         owner,
         repo,
         %{"workflow_job" => %{"run_id" => workflow_run_id} = workflow_run} = _params
       ) do
-    Logger.debug("handle_workflow_job_completed(#{inspect(workflow_run)})")
+    Logger.debug("handle_workflow_run_completed(#{inspect(workflow_run)})")
 
     case GitHub.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
       {:ok, workflow_run} ->

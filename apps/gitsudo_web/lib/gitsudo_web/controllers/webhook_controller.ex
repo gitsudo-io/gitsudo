@@ -13,9 +13,9 @@ defmodule GitsudoWeb.WebhookController do
     send_resp(conn, :no_content, "")
   end
 
-  def webhook(conn, %{"action" => "completed", "workflow_job" => workflow_job} = params) do
-    Logger.debug(Jason.encode!(workflow_job))
-    Gitsudo.Events.workflow_job_completed(params)
+  def webhook(conn, %{"action" => "completed", "workflow_run" => workflow_run} = params) do
+    Logger.debug(Jason.encode!(workflow_run))
+    Gitsudo.Events.workflow_run_completed(params)
     send_resp(conn, :no_content, "")
   end
 

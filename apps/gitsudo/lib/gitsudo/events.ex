@@ -16,10 +16,10 @@ defmodule Gitsudo.Events do
   end
 
   @doc """
-  Dispatch the `workflow_job_completed` event.
+  Dispatch the `workflow_run_completed` event.
   """
-  @spec workflow_job_completed(any) :: :ok
-  def workflow_job_completed(data) do
-    GenServer.cast(AsyncWorker, {:workflow_job_completed, data})
+  @spec workflow_run_completed(any) :: :ok
+  def workflow_run_completed(data) do
+    GenServer.cast(AsyncWorker, {:workflow_run_completed, data})
   end
 end
