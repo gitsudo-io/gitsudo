@@ -11,7 +11,7 @@ defmodule Gitsudo.Workflows do
   require Logger
 
   @spec create_workflow(repository_id :: integer, params :: map()) ::
-          {:ok, Workflow.t()}
+          {:ok, %Workflow{}}
           | {:error, Ecto.Changeset.t()}
   def create_workflow(repository_id, params) do
     %Workflow{
@@ -22,7 +22,7 @@ defmodule Gitsudo.Workflows do
   end
 
   @spec create_workflow_run(params :: map()) ::
-          {:ok, WorkflowRun.t()}
+          {:ok, %WorkflowRun{}}
           | {:error, Ecto.Changeset.t()}
   def create_workflow_run(params) do
     %WorkflowRun{}

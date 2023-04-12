@@ -1,4 +1,7 @@
 defmodule Gitsudo.Workflows.Workflow do
+  @moduledoc """
+  The Workflow schema.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

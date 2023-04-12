@@ -173,7 +173,7 @@ defmodule GitHub.Client do
   ```
   """
   @spec list_workflows(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
-          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_workflows(access_token, owner, repo) do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/workflows")
   end
@@ -186,7 +186,7 @@ defmodule GitHub.Client do
   ```
   """
   @spec list_workflow_runs(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
-          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_workflow_runs(access_token, owner, repo) do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs")
   end

@@ -39,29 +39,23 @@ defmodule Gitsudo.Events.AsyncWorker do
       }) do
     Logger.debug("handle_app_installation_created(#{inspect(installation)})")
 
-    case Gitsudo.GitHub.create_app_installation(installation) do
-      {:ok, app_installation} ->
-        Logger.debug("app_installation: #{inspect(app_installation)}")
+    with {:ok, app_installation} <- Gitsudo.GitHub.create_app_installation(installation) do
+      case GitHub.TokenCache.get_or_refresh_token(app_installation.id) do
+        {:ok, access_token} ->
+          Logger.debug("token: #{inspect(access_token)}")
 
-        case GitHub.TokenCache.get_or_refresh_token(app_installation.id) do
-          {:ok, access_token} ->
-            Logger.debug("token: #{inspect(access_token)}")
+          case GitHub.Client.list_org_repos(access_token, owner) do
+            {:ok, repos} ->
+              Logger.debug("Found #{length(repos)} repos under #{owner}")
+              Enum.each(repos, &{create_repository(access_token, owner, &1)})
 
-            case GitHub.Client.list_org_repos(access_token, owner) do
-              {:ok, repos} ->
-                Logger.debug("Found #{length(repos)} repos under #{owner}")
-                Enum.each(repos, &{create_repository(access_token, owner, &1)})
+            {:error, reason} ->
+              Logger.error(reason)
+          end
 
-              {:error, reason} ->
-                Logger.error(reason)
-            end
-
-          {:error, reason} ->
-            Logger.error(reason)
-        end
-
-      {:error, reason} ->
-        Logger.error(reason)
+        {:error, reason} ->
+          Logger.error(reason)
+      end
     end
   end
 
