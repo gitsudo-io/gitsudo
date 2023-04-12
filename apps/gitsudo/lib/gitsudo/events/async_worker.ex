@@ -34,13 +34,15 @@ defmodule Gitsudo.Events.AsyncWorker do
 
     case data do
       %{
-        "installation" =>
-          %{
-            "account" => %{"login" => owner}
-          } = installation,
-        "repository" => %{"name" => repo}
+        "installation" => %{
+          "id" => installation_id
+        },
+        "repository" => %{
+          "owner" => %{"login" => owner},
+          "name" => repo
+        }
       } ->
-        case GitHub.TokenCache.get_or_refresh_token(installation["id"]) do
+        case GitHub.TokenCache.get_or_refresh_token(installation_id) do
           {:ok, access_token} ->
             apply(__MODULE__, :"handle_#{event_name}", [access_token, owner, repo, data])
 
