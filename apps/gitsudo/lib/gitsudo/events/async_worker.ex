@@ -68,11 +68,9 @@ defmodule Gitsudo.Events.AsyncWorker do
     repository = Gitsudo.Repositories.find_or_create_repository(repo_data)
     Logger.debug("repository: #{inspect(repository)}")
 
-    with {:ok, %{"workflow_runs" => workflow_runs} = data} <-
+    with {:ok, %{"total_count" => total_count, "workflow_runs" => workflow_runs} = _data} <-
            GitHub.Client.list_workflow_runs(access_token, owner, repository.name) do
-      Logger.debug(
-        ~s'Found #{data["total_count"]} workflow runs for "#{owner}/#{repository.name}"'
-      )
+      Logger.debug(~s'Found #{total_count} workflow runs for "#{owner}/#{repository.name}"')
 
       for workflow_run <- workflow_runs do
         Logger.debug("workflow_run: #{inspect(workflow_run)}")
