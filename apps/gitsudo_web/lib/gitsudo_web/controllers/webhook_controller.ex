@@ -33,4 +33,8 @@ defmodule GitsudoWeb.WebhookController do
   def handle_payload(%{"action" => "completed", "workflow_job" => workflow_job} = _params) do
     Logger.debug(Jason.encode!(workflow_job))
   end
+
+  def handle_payload(params) do
+    Logger.debug(Jason.encode!(params))
+  end
 end
