@@ -8,6 +8,7 @@ defmodule Gitsudo.Repo.Migrations.CreateWorkflowJobs do
       add :workflow_run_id,
           references(:workflow_runs, type: :bigint, on_delete: :delete_all, null: false)
 
+      add :name, :string
       add :started_at, :utc_datetime
       add :completed_at, :utc_datetime
       add :status, :string

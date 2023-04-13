@@ -9,6 +9,7 @@ defmodule Gitsudo.Workflows.WorkflowJob do
   schema "workflow_jobs" do
     belongs_to :workflow_run, Gitsudo.Workflows.WorkflowRun
 
+    field :name, :string
     field :started_at, :utc_datetime
     field :completed_at, :utc_datetime
     field :status, :string
@@ -22,7 +23,23 @@ defmodule Gitsudo.Workflows.WorkflowJob do
   @doc false
   def changeset(workflow_job, attrs) do
     workflow_job
-    |> cast(attrs, [:id, :started_at, :completed_at, :status, :conclusion])
-    |> validate_required([:id, :started_at, :completed_at, :status, :conclusion])
+    |> cast(attrs, [
+      :id,
+      :workflow_run_id,
+      :name,
+      :started_at,
+      :completed_at,
+      :status,
+      :conclusion
+    ])
+    |> validate_required([
+      :id,
+      :workflow_run_id,
+      :name,
+      :started_at,
+      :completed_at,
+      :status,
+      :conclusion
+    ])
   end
 end
