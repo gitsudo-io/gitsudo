@@ -307,6 +307,17 @@ defmodule GitHub.Client do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs/#{run_id}")
   end
 
+  @spec list_workflow_run_jobs(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          run_id :: integer()
+        ) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def list_workflow_run_jobs(access_token, owner, repo, run_id) do
+    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs/#{run_id}/jobs")
+  end
+
   @spec http_get_and_decode(access_token :: String.t(), path :: String.t(), params :: map()) ::
           {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   defp http_get_and_decode(access_token, path, params \\ %{})

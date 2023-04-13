@@ -32,20 +32,24 @@ defmodule Gitsudo.Workflows do
     |> Repo.insert()
   end
 
-  @spec create_workflow_job(params :: map()) ::
+  @spec create_workflow_job(workflow_run_id :: integer, params :: map()) ::
           {:ok, %WorkflowJob{}}
           | {:error, Ecto.Changeset.t()}
-  def create_workflow_job(params) do
-    %WorkflowJob{}
+  def create_workflow_job(workflow_run_id, params) do
+    %WorkflowJob{
+      workflow_run_id: workflow_run_id
+    }
     |> WorkflowJob.changeset(params)
     |> Repo.insert()
   end
 
-  @spec create_workflow_job_step(params :: map()) ::
+  @spec create_workflow_job_step(workflow_job_id :: integer, params :: map()) ::
           {:ok, %WorkflowJobStep{}}
           | {:error, Ecto.Changeset.t()}
-  def create_workflow_job_step(params) do
-    %WorkflowJobStep{}
+  def create_workflow_job_step(workflow_job_id, params) do
+    %WorkflowJobStep{
+      workflow_job_id: workflow_job_id
+    }
     |> WorkflowJobStep.changeset(params)
     |> Repo.insert()
   end
