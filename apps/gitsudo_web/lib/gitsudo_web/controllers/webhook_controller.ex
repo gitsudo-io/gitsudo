@@ -36,6 +36,14 @@ defmodule GitsudoWeb.WebhookController do
   end
 
   def handle_payload(params) do
-    Logger.debug(Jason.encode!(params))
+    Logger.debug(
+      Jason.encode!(
+        params
+        |> Map.delete("installation")
+        |> Map.delete("organization")
+        |> Map.delete("repository")
+        |> Map.delete("sender")
+      )
+    )
   end
 end
