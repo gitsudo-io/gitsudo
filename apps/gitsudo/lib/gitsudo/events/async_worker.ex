@@ -91,6 +91,54 @@ defmodule Gitsudo.Events.AsyncWorker do
     repository = Gitsudo.Repositories.find_or_create_repository(repo_data)
     Logger.debug("repository: #{inspect(repository)}")
 
+    fetch_and_store_all_workflows(access_token, owner, repository)
+
+    case GitHub.Client.with_all_workflow_runs(
+           access_token,
+           owner,
+           repository.name,
+           {:ok, []},
+           &with_each_workflow_run_page/2
+         ) do
+      {:ok, all_workflow_runs} ->
+        Logger.debug("Fetched and stored a total of #{length(all_workflow_runs)} workflow_runs")
+
+      {:error, reason} ->
+        Logger.error(reason)
+    end
+  end
+
+  @spec with_each_workflow_run_page(map(), {:ok, list(map())} | {:error, any}) ::
+          {:cont, {:ok, list(map())}} | {:halt, {:error, any}}
+  defp with_each_workflow_run_page(_, {:error, reason}), do: {:halt, {:error, reason}}
+
+  defp with_each_workflow_run_page(page, {:ok, results}) do
+    case Enum.reduce_while(page["workflow_runs"], {:ok, []}, &with_each_workflow_run/2) do
+      {:ok, workflow_runs} ->
+        {:cont, {:ok, results ++ Enum.reverse(workflow_runs)}}
+
+      {:error, reason} ->
+        {:halt, {:error, reason}}
+    end
+  end
+
+  @spec with_each_workflow_run(map(), {:ok, list(map())} | {:error, any}) ::
+          {:cont, {:ok, list(map())}} | {:halt, {:error, any}}
+  defp with_each_workflow_run(_, {:error, reason}), do: {:halt, {:error, reason}}
+
+  defp with_each_workflow_run(workflow_run, {:ok, results}) do
+    case Gitsudo.Workflows.create_workflow_run(workflow_run) do
+      {:ok, created} ->
+        Logger.debug("Created workflow_run: #{inspect(created)}")
+        {:cont, {:ok, [workflow_run | results]}}
+
+      {:error, reason} ->
+        Logger.error(reason)
+        {:halt, {:error, reason}}
+    end
+  end
+
+  defp fetch_and_store_all_workflows(access_token, owner, repository) do
     with {:ok, %{"total_count" => total_count, "workflows" => workflows}} <-
            GitHub.Client.list_workflows(access_token, owner, repository.name) do
       Logger.debug(~s'Found #{total_count} workflows for "#{owner}/#{repository.name}"')
@@ -102,21 +150,6 @@ defmodule Gitsudo.Events.AsyncWorker do
           Logger.debug("Created workflow: #{inspect(workflow)}")
         end
       end
-    end
-
-    with {:ok, %{"total_count" => total_count, "workflow_runs" => workflow_runs} = _data} <-
-           GitHub.Client.list_all_workflow_runs(access_token, owner, repository.name) do
-      Logger.debug(~s'Found #{total_count} workflow runs for "#{owner}/#{repository.name}"')
-
-      for workflow_run <- workflow_runs do
-        Logger.debug("workflow_run: #{inspect(workflow_run)}")
-
-        with {:ok, workflow_run} <- Workflows.create_workflow_run(workflow_run) do
-          Logger.debug("Created workflow_run: #{inspect(workflow_run)}")
-        end
-      end
-
-      {:ok, repository}
     end
   end
 
