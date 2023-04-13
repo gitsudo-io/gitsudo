@@ -65,7 +65,14 @@ defmodule Gitsudo.Workflows do
           nil
 
         {started_at, completed_at} ->
-          DateTime.diff(completed_at, started_at, :second)
+          with {:ok, started_at, 0} <- DateTime.from_iso8601(started_at),
+               {:ok, completed_at, 0} <- DateTime.from_iso8601(completed_at) do
+            DateTime.diff(completed_at, started_at, :second)
+          else
+            _ ->
+              Logger.error("Failed to parse started_at or completed_at")
+              nil
+          end
       end
 
     %WorkflowJobStep{
