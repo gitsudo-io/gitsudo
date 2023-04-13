@@ -29,7 +29,10 @@ defmodule GitsudoWeb.RepositoryController do
   def populate_workflows(conn, repository) do
     workflow_runs = Workflows.list_workflow_runs_for_repository(repository.id)
     total_count = Enum.count(workflow_runs)
-    completed_count = Enum.count(workflow_runs, &(&1.status == "completed"))
+
+    completed_count =
+      Enum.count(workflow_runs, &(&1.status == "completed" && &1.conclusion != "cancelled"))
+
     success_count = Enum.count(workflow_runs, &(&1.conclusion == "success"))
 
     success_percentage =

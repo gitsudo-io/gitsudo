@@ -9,11 +9,13 @@ defmodule GitsudoWeb.WebhookController do
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
   def webhook(conn, params) do
     if req_headers = conn.req_headers do
-      for {key, value} <- req_headers, do: Logger.debug("#{key}: #{value}")
+      for {key, value} <- req_headers,
+          do: if(String.starts_with?(key, "x-github"), do: Logger.debug("#{key}: #{value}"))
+    end
 
-      if guid = req_headers["x-github-delivery"] do
-        File.write("tmp/#{guid}.json", Jason.encode!(params))
-      end
+    case get_req_header(conn, "x-github-delivery") do
+      [] -> Logger.warn("No x-github-delivery header found")
+      [guid | _] -> File.write("tmp/#{guid}.json", Jason.encode!(params))
     end
 
     handle_payload(params)

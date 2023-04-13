@@ -184,15 +184,17 @@ defmodule Gitsudo.Events.AsyncWorker do
                access_token,
                owner,
                repository.name,
-               workflow_run.id
+               workflow_run["id"]
              ) do
-        Logger.debug(~s'Found #{total_count} workflow_jobs for workflow_run "#{workflow_run.id}"')
+        Logger.debug(
+          ~s'Found #{total_count} workflow_jobs for workflow_run "#{workflow_run["id"]}"'
+        )
 
         for workflow_job_data <- workflow_jobs do
           Logger.debug("workflow_job: #{inspect(workflow_job_data)}")
 
           with {:ok, workflow_job} <-
-                 Workflows.create_workflow_job(workflow_run.id, workflow_job_data) do
+                 Workflows.create_workflow_job(workflow_run["id"], workflow_job_data) do
             Logger.debug("Created workflow_job: #{inspect(workflow_job)}")
             store_workflow_job_steps(workflow_job_data)
           end
@@ -291,13 +293,13 @@ defmodule Gitsudo.Events.AsyncWorker do
   end
 
   defp store_workflow_job_steps(
-         %{"run_id" => workflow_run_id, "steps" => workflow_job_steps_data} = _workflow_job_data
+         %{"id" => workflow_job_id, "steps" => workflow_job_steps_data} = _workflow_job_data
        ) do
     for workflow_job_step_data <- workflow_job_steps_data do
       Logger.debug("workflow_job_step: #{inspect(workflow_job_step_data)}")
 
       case Gitsudo.Workflows.create_workflow_job_step(
-             workflow_run_id,
+             workflow_job_id,
              workflow_job_step_data
            ) do
         {:ok, workflow_job_step} ->

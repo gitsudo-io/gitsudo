@@ -3,7 +3,8 @@ defmodule Gitsudo.Repo.Migrations.CreateWorkflowJobSteps do
 
   def change do
     create table(:workflow_job_steps) do
-      add :workflow_job_id, references(:workflow_jobs, on_delete: :delete_all, null: false)
+      add :workflow_job_id,
+          references(:workflow_jobs, type: :bigint, on_delete: :delete_all, null: false)
 
       add :number, :integer
       add :name, :string
