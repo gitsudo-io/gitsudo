@@ -30,21 +30,11 @@ defmodule Gitsudo.Workflows do
     |> Repo.insert()
   end
 
-  @spec list_workflow_runs(binary, any, any) ::
-          {:error,
-           nonempty_binary | %{:__exception__ => true, :__struct__ => atom, optional(atom) => any}}
-          | {:ok, any}
-  def list_workflow_runs(access_token, organization, repository) do
-    case GitHub.Client.list_workflow_runs(access_token, organization, repository) do
-      {:ok, data} ->
-        Logger.debug(
-          ~s'Found #{data["total_count"]} workflow runs for "#{organization}/#{repository}"'
-        )
-
-        {:ok, data["workflow_runs"]}
-
-      {:error, reason} ->
-        {:error, reason}
-    end
+  def list_workflow_runs_for_repository(repository_id) do
+    Repo.all(from w in Workflow, where: w.repository_id == ^repository_id)
+    |> Enum.reduce([], fn workflow, acc ->
+      workflow_runs = Repo.all(from wr in WorkflowRun, where: wr.workflow_id == ^workflow.id)
+      acc ++ workflow_runs
+    end)
   end
 end
