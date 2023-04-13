@@ -324,8 +324,9 @@ defmodule GitHub.Client do
   @doc """
   URI encode parameters and return them as a query string.
   """
+  @spec encode_query_parameters(params :: map()) :: String.t()
   def encode_query_parameters(params) do
-    params |> Enum.map(fn {k, v} -> "#{encode(k)}=#{encode(v)}" end) |> Enum.join("&")
+    params |> Enum.map_join("&", fn {k, v} -> "#{encode(k)}=#{encode(v)}" end)
   end
 
   defp encode(t), do: URI.encode(to_string(t))

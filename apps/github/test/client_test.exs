@@ -23,7 +23,7 @@ defmodule GitHub.ClientTest do
 
         assert 1 == Enum.count(installations)
         # credo:disable-for-next-line
-        assert 34_222_363 == first["id"]
+        assert 34222363 == first["id"]
       end
     end
 
@@ -82,6 +82,7 @@ defmodule GitHub.ClientTest do
           )
 
         assert 44 == Enum.count(workflow_runs)
+        # credo:disable-for-next-line
         assert 4490840000 == Enum.at(workflow_runs, 43)["id"]
       end
     end
