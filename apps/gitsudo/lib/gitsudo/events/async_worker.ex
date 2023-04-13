@@ -278,7 +278,7 @@ defmodule Gitsudo.Events.AsyncWorker do
         _access_token,
         _owner,
         _repo,
-        %{"run_id" => workflow_run_id, "workflow_job" => workflow_job_data} = _params
+        %{"workflow_job" => %{"run_id" => workflow_run_id} = workflow_job_data} = _params
       ) do
     Logger.debug("handle_workflow_job_completed(#{inspect(workflow_job_data)})")
 
