@@ -16,6 +16,14 @@ defmodule Gitsudo.Events do
   end
 
   @doc """
+  Dispatch the `workflow_run_in_progress` event.
+  """
+  @spec workflow_run_in_progress(data :: map()) :: :ok
+  def workflow_run_in_progress(%{"action" => "in_progress", "workflow_run" => _} = data) do
+    GenServer.cast(AsyncWorker, {:workflow_run_in_progress, data})
+  end
+
+  @doc """
   Dispatch the `workflow_run_completed` event.
   """
   @spec workflow_run_completed(data :: map()) :: :ok

@@ -202,6 +202,37 @@ defmodule Gitsudo.Events.AsyncWorker do
   end
 
   @doc """
+  Actually handle the workflow_run_in_progress event.
+  """
+  @spec handle_workflow_run_in_progress(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          map()
+        ) :: any
+  def handle_workflow_run_in_progress(
+        _access_token,
+        _owner,
+        _repo,
+        %{
+          "workflow" => %{"id" => workflow_id},
+          "workflow_run" => workflow_run_data
+        } = _params
+      ) do
+    Logger.debug("handle_workflow_run_in_progress(#{inspect(workflow_run_data)})")
+
+    case workflow_run_data
+         |> Map.put("workflow_id", workflow_id)
+         |> Gitsudo.Workflows.create_workflow_run() do
+      {:ok, workflow_run} ->
+        Logger.debug("Created workflow_run: #{inspect(workflow_run)}")
+
+      {:error, reason} ->
+        Logger.error(reason)
+    end
+  end
+
+  @doc """
   Actually handle the workflow_run_completed event.
   """
   @spec handle_workflow_run_completed(
@@ -245,9 +276,7 @@ defmodule Gitsudo.Events.AsyncWorker do
         _access_token,
         _owner,
         _repo,
-        %{
-          "workflow_job" => %{"run_id" => workflow_run_id} = workflow_job_data
-        } = _params
+        %{"run_id" => workflow_run_id, "workflow_job" => workflow_job_data} = _params
       ) do
     Logger.debug("handle_workflow_job_completed(#{inspect(workflow_job_data)})")
 

@@ -7,7 +7,11 @@ defmodule GitsudoWeb.WebhookController do
   require Logger
 
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def webhook(conn, params) do
+  def webhook(%{"req_headers" => req_headers} = conn, params) do
+    if guid = req_headers["x-github-delivery"] do
+      File.write("tmp/#{guid}.json", Jason.encode!(params))
+    end
+
     handle_payload(params)
 
     send_resp(conn, :no_content, "")
@@ -16,6 +20,11 @@ defmodule GitsudoWeb.WebhookController do
   def handle_payload(%{"action" => "created", "installation" => installation} = params) do
     Logger.debug(Jason.encode!(installation))
     Gitsudo.Events.app_installation_created(params)
+  end
+
+  def handle_payload(%{"action" => "in_progress", "workflow_run" => workflow_run} = params) do
+    Logger.debug(Jason.encode!(workflow_run))
+    Gitsudo.Events.workflow_run_in_progress(params)
   end
 
   def handle_payload(%{"action" => "completed", "workflow_run" => workflow_run} = params) do
