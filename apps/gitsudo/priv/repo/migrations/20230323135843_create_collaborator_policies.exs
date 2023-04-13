@@ -12,7 +12,7 @@ defmodule Gitsudo.Repo.Migrations.CreateCollaboratorPolicies do
     execute(create_query, drop_query)
 
     create table(:collaborator_policies) do
-      add :label_id, references(:labels, on_delete: :delete_all)
+      add :label_id, references(:labels, on_delete: :delete_all, null: false)
       add :collaborator_id, references(:accounts, on_delete: :nothing)
       add :permission, :collaborator_permission, null: false
 

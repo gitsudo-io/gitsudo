@@ -14,6 +14,8 @@ defmodule Gitsudo.Workflows.WorkflowRun do
     field :status, :string
     field :conclusion, :string
 
+    has_many :workflow_jobs, Gitsudo.Workflows.WorkflowJob
+
     timestamps()
   end
 

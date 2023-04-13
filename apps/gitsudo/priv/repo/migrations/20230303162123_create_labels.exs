@@ -4,7 +4,7 @@ defmodule Gitsudo.Repo.Migrations.CreateLabels do
   def change do
     create table(:labels) do
       add :owner_id,
-          references(:accounts, type: :integer, on_delete: :nothing, null: false)
+          references(:accounts, type: :integer, on_delete: :delete_all, null: false)
 
       add :name, :string, null: false
       add :color, :string, null: false

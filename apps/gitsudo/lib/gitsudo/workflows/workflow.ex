@@ -12,6 +12,8 @@ defmodule Gitsudo.Workflows.Workflow do
     field :name, :string
     field :path, :string
 
+    has_many :workflow_runs, Gitsudo.Workflows.WorkflowRun
+
     timestamps()
   end
 
