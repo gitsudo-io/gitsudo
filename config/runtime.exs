@@ -5,6 +5,23 @@ import Config
 # system starts, so it is typically used to load production configuration
 # and secrets from environment variables or elsewhere. Do not define
 # any compile-time configuration in here, as it won't be applied.
+
+# Configures Elixir's Logger
+level =
+  case String.downcase(System.get_env("ELIXIR_LOG_LEVEL", "")) do
+    "debug" -> :debug
+    "info" -> :info
+    "warn" -> :warn
+    "error" -> :error
+    0 -> :debug
+    1 -> :info
+    2 -> :warn
+    3 -> :error
+    _ -> :info
+  end
+
+config :logger, :console, level: level
+
 # The block below contains prod specific runtime configuration.
 if config_env() == :prod do
   database_url =
