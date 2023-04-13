@@ -13,8 +13,6 @@ defmodule GitsudoWeb.OrgScope do
   Fetch the /{org}, or 404
   """
   def fetch_org(conn, _opts) do
-    Logger.debug(conn.params)
-
     if organization_name = conn.params["organization_name"] do
       if organization = Gitsudo.Organizations.get_organization(organization_name) do
         conn |> assign(:organization, organization)

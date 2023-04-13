@@ -84,7 +84,8 @@ defmodule Gitsudo.Repositories do
   @doc """
   Get repository by owner_id and name
   """
-  @spec get_repository_by_owner_id_and_name(owner_id :: integer(), name :: String.t()) :: any
+  @spec get_repository_by_owner_id_and_name(owner_id :: integer(), name :: String.t()) ::
+          nil | %Repository{}
   def get_repository_by_owner_id_and_name(owner_id, name) do
     Repo.get_by(Repository, owner_id: owner_id, name: name)
   end

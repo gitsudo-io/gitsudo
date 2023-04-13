@@ -25,11 +25,12 @@ defmodule GitsudoWeb.RepositoryController do
     end
   end
 
+  @spec populate_workflows(Plug.Conn.t(), any()) :: Plug.Conn.t()
   def populate_workflows(conn, repository) do
     workflow_runs = Workflows.list_workflow_runs_for_repository(repository.id)
     total_count = Enum.count(workflow_runs)
-    completed_count = Enum.count(workflow_runs, fn run -> run.status == "completed" end)
-    success_count = Enum.count(workflow_runs, fn run -> run.conclusion == "success" end)
+    completed_count = Enum.count(workflow_runs, &(&1.status == "completed"))
+    success_count = Enum.count(workflow_runs, &(&1.conclusion == "success"))
 
     success_percentage =
       if completed_count > 0, do: success_count / completed_count * 100, else: 0
