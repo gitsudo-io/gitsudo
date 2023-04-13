@@ -4,6 +4,8 @@ defmodule GitHub.ClientTest do
 
   alias GitHub.Client
 
+  require Logger
+
   setup do
     ExVCR.Config.cassette_library_dir("fixture/vcr_cassettes")
     :ok
@@ -56,14 +58,31 @@ defmodule GitHub.ClientTest do
     end
 
     test "get_user/1 works" do
-      access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN", @dummy_personal_access_token)
-      ExVCR.Config.filter_sensitive_data(access_token, @dummy_personal_access_token)
-
       use_cassette "client_get_user_works" do
         {:ok, user} = Client.get_user(@dummy_personal_access_token)
         assert "aisrael" == user["login"]
         # credo:disable-for-next-line
         assert 89215 == user["id"]
+      end
+    end
+
+    test "with_all_workflow_runs/5 works do" do
+      use_cassette "with_all_workflow_runs_works", match_requests_on: [:query] do
+        fun = fn page, results ->
+          {:cont, results ++ page["workflow_runs"]}
+        end
+
+        workflow_runs =
+          Client.with_all_workflow_runs(
+            @dummy_personal_access_token,
+            "gitsudo-io",
+            "gitsudo",
+            [],
+            fun
+          )
+
+        assert 44 == Enum.count(workflow_runs)
+        assert 4490840000 == Enum.at(workflow_runs, 43)["id"]
       end
     end
   end

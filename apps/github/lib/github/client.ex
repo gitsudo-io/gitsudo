@@ -215,7 +215,7 @@ defmodule GitHub.Client do
         ) ::
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def list_all_workflow_runs(access_token, owner, repo) do
-    with {:ok, init} <- list_workflow_runs(access_token, owner, repo, page: 1) do
+    with {:ok, init} <- list_workflow_runs(access_token, owner, repo) do
       if init["total_count"] > @default_per_page do
         list_rest_of_workflow_runs(access_token, owner, repo, init, 2)
       else
@@ -243,6 +243,57 @@ defmodule GitHub.Client do
     init
     |> Map.delete("workflow_runs")
     |> Map.put("workflow_runs", init_workflow_runs ++ rest_workflow_runs)
+  end
+
+  @doc """
+  Fetches all workflow runs for a given repository, and calls the given function with each page of results.
+  The given function _must_ accept `(acc, page)` and return either `{:cont, acc}` or `{:halt, acc}`
+  (similar to &Enum.reduce_while/3).
+
+  Calls Client.list_workflow_runs/4 to retrieve each page.
+
+  ```
+    GET /repos/{owner}/{repo}/actions/runs
+  ```
+  """
+  @spec with_all_workflow_runs(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          acc :: any,
+          fun :: function()
+        ) ::
+          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def with_all_workflow_runs(access_token, owner, repo, acc, fun) do
+    with {:ok, results} <- list_workflow_runs(access_token, owner, repo) do
+      case apply(fun, [results, acc]) do
+        {:cont, new_acc} ->
+          if results["total_count"] > @default_per_page do
+            with_rest_of_workflow_runs(access_token, owner, repo, 2, new_acc, fun)
+          else
+            new_acc
+          end
+
+        {:halt, new_acc} ->
+          new_acc
+      end
+    end
+  end
+
+  defp with_rest_of_workflow_runs(access_token, owner, repo, page, acc, fun) do
+    with {:ok, results} <- list_workflow_runs(access_token, owner, repo, page: page) do
+      case apply(fun, [results, acc]) do
+        {:cont, new_acc} ->
+          if results["total_count"] > page * @default_per_page do
+            with_rest_of_workflow_runs(access_token, owner, repo, page + 1, new_acc, fun)
+          else
+            new_acc
+          end
+
+        {:halt, new_acc} ->
+          new_acc
+      end
+    end
   end
 
   @spec get_workflow_run(
