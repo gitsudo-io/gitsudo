@@ -105,7 +105,7 @@ defmodule Gitsudo.Events.AsyncWorker do
     end
 
     with {:ok, %{"total_count" => total_count, "workflow_runs" => workflow_runs} = _data} <-
-           GitHub.Client.list_workflow_runs(access_token, owner, repository.name) do
+           GitHub.Client.list_all_workflow_runs(access_token, owner, repository.name) do
       Logger.debug(~s'Found #{total_count} workflow runs for "#{owner}/#{repository.name}"')
 
       for workflow_run <- workflow_runs do

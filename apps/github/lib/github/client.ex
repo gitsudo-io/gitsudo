@@ -178,6 +178,8 @@ defmodule GitHub.Client do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/workflows")
   end
 
+  @default_per_page 30
+
   @doc """
   List workflow runs for a given repository
 
@@ -185,10 +187,62 @@ defmodule GitHub.Client do
     GET /repos/{owner}/{repo}/actions/runs
   ```
   """
-  @spec list_workflow_runs(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
+  @spec list_workflow_runs(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          opts :: Keyword.t()
+        ) ::
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def list_workflow_runs(access_token, owner, repo) do
-    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs")
+  def list_workflow_runs(access_token, owner, repo, opts \\ []) do
+    path = "repos/#{owner}/#{repo}/actions/runs"
+    params = %{"page" => Keyword.get(opts, :page, 1)}
+    http_get_and_decode(access_token, path, params)
+  end
+
+  @doc """
+  List all workflow runs for a given repository. Calls Client.list_workflow_runs/4
+  repeatedly until all pages have been retrieved.
+
+  ```
+    GET /repos/{owner}/{repo}/actions/runs
+  ```
+  """
+  @spec list_all_workflow_runs(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t()
+        ) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def list_all_workflow_runs(access_token, owner, repo) do
+    with {:ok, init} <- list_workflow_runs(access_token, owner, repo, page: 1) do
+      if init["total_count"] > @default_per_page do
+        list_rest_of_workflow_runs(access_token, owner, repo, init, 2)
+      else
+        {:ok, init}
+      end
+    end
+  end
+
+  defp list_rest_of_workflow_runs(access_token, owner, repo, list, page) do
+    with {:ok, rest} <- list_workflow_runs(access_token, owner, repo, page: page) do
+      result = combine_workflow_run_results(list, rest)
+
+      if list["total_count"] > page * @default_per_page do
+        list_rest_of_workflow_runs(access_token, owner, repo, result, page + 1)
+      else
+        {:ok, result}
+      end
+    end
+  end
+
+  defp combine_workflow_run_results(init, rest) do
+    init_workflow_runs = init["workflow_runs"]
+    rest_workflow_runs = rest["workflow_runs"]
+
+    init
+    |> Map.delete("workflow_runs")
+    |> Map.put("workflow_runs", init_workflow_runs ++ rest_workflow_runs)
   end
 
   @spec get_workflow_run(
@@ -202,10 +256,11 @@ defmodule GitHub.Client do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs/#{run_id}")
   end
 
-  @spec http_get_and_decode(binary, binary) ::
+  @spec http_get_and_decode(access_token :: String.t(), path :: String.t(), params :: map()) ::
           {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  defp http_get_and_decode(access_token, path) when is_binary(access_token) and is_binary(path) do
-    with {:ok, resp} <- http_get_api(access_token, path) do
+  defp http_get_and_decode(access_token, path, params \\ %{})
+       when is_binary(access_token) and is_binary(path) do
+    with {:ok, resp} <- http_get_api(access_token, path, params) do
       if 200 == resp.status do
         Jason.decode(resp.body)
       else
@@ -215,14 +270,29 @@ defmodule GitHub.Client do
     end
   end
 
+  @doc """
+  URI encode parameters and return them as a query string.
+  """
+  def encode_query_parameters(params) do
+    params |> Enum.map(fn {k, v} -> "#{encode(k)}=#{encode(v)}" end) |> Enum.join("&")
+  end
+
+  defp encode(t), do: URI.encode(to_string(t))
+
   # Construct an HTTPoison.get request to the given path with the given access token
   # as the `Authorization: Bearer` token.
-  @spec http_get_api(access_token :: String.t(), path :: String.t()) ::
+  @spec http_get_api(access_token :: String.t(), path :: String.t(), params :: map()) ::
           {:ok, Finch.Response.t()} | {:error, Exception.t()}
-  defp http_get_api(access_token, path)
+  defp http_get_api(access_token, path, params \\ %{})
        when is_binary(access_token) and
               is_binary(path) do
-    url = "https://api.github.com/#{path}"
+    url =
+      if Enum.empty?(params) do
+        "https://api.github.com/#{path}"
+      else
+        "https://api.github.com/#{path}?#{encode_query_parameters(params)}"
+      end
+
     Logger.debug("GET #{url}")
 
     Finch.build(:get, url, [
