@@ -6,6 +6,8 @@ defmodule Gitsudo.Workflows do
 
   alias Gitsudo.Workflows.Workflow
   alias Gitsudo.Workflows.WorkflowRun
+  alias Gitsudo.Workflows.WorkflowJob
+  alias Gitsudo.Workflows.WorkflowJobStep
   alias Gitsudo.Repo
 
   require Logger
@@ -27,6 +29,24 @@ defmodule Gitsudo.Workflows do
   def create_workflow_run(params) do
     %WorkflowRun{}
     |> WorkflowRun.changeset(params)
+    |> Repo.insert()
+  end
+
+  @spec create_workflow_job(params :: map()) ::
+          {:ok, %WorkflowJob{}}
+          | {:error, Ecto.Changeset.t()}
+  def create_workflow_job(params) do
+    %WorkflowJob{}
+    |> WorkflowJob.changeset(params)
+    |> Repo.insert()
+  end
+
+  @spec create_workflow_job_step(params :: map()) ::
+          {:ok, %WorkflowJobStep{}}
+          | {:error, Ecto.Changeset.t()}
+  def create_workflow_job_step(params) do
+    %WorkflowJobStep{}
+    |> WorkflowJobStep.changeset(params)
     |> Repo.insert()
   end
 

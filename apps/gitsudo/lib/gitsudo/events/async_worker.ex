@@ -168,28 +168,76 @@ defmodule Gitsudo.Events.AsyncWorker do
     end
   end
 
+  @doc """
+  Actually handle the workflow_run_completed event.
+  """
   @spec handle_workflow_run_completed(
           access_token :: String.t(),
           owner :: String.t(),
           repo :: String.t(),
-          any
+          map()
         ) :: any
   def handle_workflow_run_completed(
-        access_token,
-        owner,
-        repo,
+        _access_token,
+        _owner,
+        _repo,
         %{
           "workflow" => %{"id" => workflow_id},
-          "workflow_run" => %{"id" => workflow_run_id} = workflow_run
+          "workflow_run" => workflow_run_data
         } = _params
       ) do
-    Logger.debug("handle_workflow_run_completed(#{inspect(workflow_run)})")
+    Logger.debug("handle_workflow_run_completed(#{inspect(workflow_run_data)})")
 
-    case GitHub.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
+    case workflow_run_data
+         |> Map.put("workflow_id", workflow_id)
+         |> Gitsudo.Workflows.create_workflow_run() do
       {:ok, workflow_run} ->
-        workflow_run
-        |> Map.put("workflow_id", workflow_id)
-        |> Gitsudo.Workflows.create_workflow_run()
+        Logger.debug("Created workflow_run: #{inspect(workflow_run)}")
+
+      {:error, reason} ->
+        Logger.error(reason)
+    end
+  end
+
+  @doc """
+  Actually handle the workflow_job_completed event.
+  """
+  @spec handle_workflow_job_completed(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          map()
+        ) :: any
+  def handle_workflow_job_completed(
+        _access_token,
+        _owner,
+        _repo,
+        %{
+          "run_id" => workflow_run_id,
+          "workflow_job" => workflow_job_data
+        } = _params
+      ) do
+    Logger.debug("handle_workflow_job_completed(#{inspect(workflow_job_data)})")
+
+    case workflow_job_data
+         |> Map.put("workflow_run_id", workflow_run_id)
+         |> Gitsudo.Workflows.create_workflow_job() do
+      {:ok, workflow_job} ->
+        Logger.debug("Created workflow_job: #{inspect(workflow_job)}")
+
+        for workflow_job_step_data <- workflow_job["steps"] do
+          Logger.debug("workflow_job_step: #{inspect(workflow_job_step_data)}")
+
+          case workflow_job_step_data
+               |> Map.put("workflow_job_id", workflow_job.id)
+               |> Gitsudo.Workflows.create_workflow_job_step() do
+            {:ok, workflow_job_step} ->
+              Logger.debug("Created workflow_job_step: #{inspect(workflow_job_step)}")
+
+            {:error, reason} ->
+              Logger.error(reason)
+          end
+        end
 
       {:error, reason} ->
         Logger.error(reason)

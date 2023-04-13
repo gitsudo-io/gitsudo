@@ -21,7 +21,23 @@ defmodule Gitsudo.Workflows.WorkflowJobStep do
   @doc false
   def changeset(workflow_job_step, attrs) do
     workflow_job_step
-    |> cast(attrs, [:number, :name, :started_at, :completed_at, :status, :conclusion])
-    |> validate_required([:number, :name, :started_at, :completed_at, :status, :conclusion])
+    |> cast(attrs, [
+      :workflow_job_id,
+      :number,
+      :name,
+      :started_at,
+      :completed_at,
+      :status,
+      :conclusion
+    ])
+    |> validate_required([
+      :workflow_job_id,
+      :number,
+      :name,
+      :started_at,
+      :completed_at,
+      :status,
+      :conclusion
+    ])
   end
 end

@@ -20,8 +20,8 @@ defmodule GitsudoWeb.WebhookController do
     send_resp(conn, :no_content, "")
   end
 
-  def handle_payload(%{"action" => "created"} = params) do
-    Logger.debug(Jason.encode!(params))
+  def handle_payload(%{"action" => "created", "installation" => installation} = params) do
+    Logger.debug(Jason.encode!(installation))
     Gitsudo.Events.app_installation_created(params)
   end
 
@@ -30,8 +30,9 @@ defmodule GitsudoWeb.WebhookController do
     Gitsudo.Events.workflow_run_completed(params)
   end
 
-  def handle_payload(%{"action" => "completed", "workflow_job" => workflow_job} = _params) do
+  def handle_payload(%{"action" => "completed", "workflow_job" => workflow_job} = params) do
     Logger.debug(Jason.encode!(workflow_job))
+    Gitsudo.Events.workflow_job_completed(params)
   end
 
   def handle_payload(params) do
