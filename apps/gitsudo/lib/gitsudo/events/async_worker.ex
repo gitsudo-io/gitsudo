@@ -87,21 +87,36 @@ defmodule Gitsudo.Events.AsyncWorker do
     end
   end
 
+  @doc """
+  Create and store a Gitsudo.Repositories.Repository record for the given `repo_data` (fetched using
+  GitHub.Client.list_org_repos/2).
+
+  Then, fetches and stores all workflows and workflow runs for the given repository.
+  """
+  @spec create_repository(access_token :: String.t(), owner :: String.t(), repo_data :: map()) ::
+          :ok
   def create_repository(access_token, owner, repo_data) do
-    repository = Gitsudo.Repositories.find_or_create_repository(repo_data)
-    Logger.debug("repository: #{inspect(repository)}")
+    case Gitsudo.Repositories.find_or_create_repository(repo_data) do
+      {:ok, repository} ->
+        Logger.debug("repository: #{inspect(repository)}")
 
-    fetch_and_store_all_workflows(access_token, owner, repository)
+        fetch_and_store_all_workflows(access_token, owner, repository)
 
-    case GitHub.Client.with_all_workflow_runs(
-           access_token,
-           owner,
-           repository.name,
-           {:ok, []},
-           &with_each_workflow_run_page/2
-         ) do
-      {:ok, all_workflow_runs} ->
-        Logger.debug("Fetched and stored a total of #{length(all_workflow_runs)} workflow_runs")
+        case GitHub.Client.with_all_workflow_runs(
+               access_token,
+               owner,
+               repository.name,
+               {:ok, []},
+               &with_each_workflow_run_page/2
+             ) do
+          {:ok, all_workflow_runs} ->
+            Logger.debug(
+              "Fetched and stored a total of #{length(all_workflow_runs)} workflow_runs"
+            )
+
+          {:error, reason} ->
+            Logger.error(reason)
+        end
 
       {:error, reason} ->
         Logger.error(reason)

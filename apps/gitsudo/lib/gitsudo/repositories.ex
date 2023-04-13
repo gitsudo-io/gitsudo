@@ -57,22 +57,26 @@ defmodule Gitsudo.Repositories do
 
   @spec enrich_repos_with_labels_and_config_sets(list()) :: list()
   def enrich_repos_with_labels_and_config_sets(repos) do
-    Enum.map(repos, &Repositories.find_or_create_repository/1)
+    Enum.map(repos, fn repo_data ->
+      with {:ok, repository} <- Repositories.find_or_create_repository(repo_data) do
+        repository
+      end
+    end)
   end
 
-  @spec find_or_create_repository(map()) :: map()
+  @spec find_or_create_repository(map()) :: {:ok, %Repository{}} | {:error, any()}
   def find_or_create_repository(%{"id" => id, "owner" => owner} = repo) do
     Logger.debug("repo: #{inspect(repo)}")
 
     if repository = Repo.get(Repository, id) |> Repo.preload([:owner, :labels]) do
       Logger.debug("Found repository: #{inspect(repository)}")
-      repository
+      {:ok, repository}
     else
       with {:ok, repository} <-
              %Repository{id: id, owner_id: owner["id"]}
              |> Repository.changeset(repo)
              |> Repo.insert() do
-        Repo.preload(repository, [:owner, :labels])
+        {:ok, Repo.preload(repository, [:owner, :labels])}
       end
     end
   end
