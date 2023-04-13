@@ -7,9 +7,13 @@ defmodule GitsudoWeb.WebhookController do
   require Logger
 
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def webhook(%{"req_headers" => req_headers} = conn, params) do
-    if guid = req_headers["x-github-delivery"] do
-      File.write("tmp/#{guid}.json", Jason.encode!(params))
+  def webhook(conn, params) do
+    if req_headers = conn["req_headers"] do
+      for {key, value} <- req_headers, do: Logger.debug("#{key}: #{value}")
+
+      if guid = req_headers["x-github-delivery"] do
+        File.write("tmp/#{guid}.json", Jason.encode!(params))
+      end
     end
 
     handle_payload(params)
