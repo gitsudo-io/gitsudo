@@ -256,9 +256,9 @@ defmodule Gitsudo.Events.AsyncWorker do
 
     case workflow_run_data
          |> Map.put("workflow_id", workflow_id)
-         |> Gitsudo.Workflows.create_workflow_run() do
+         |> Gitsudo.Workflows.insert_or_update_workflow_run() do
       {:ok, workflow_run} ->
-        Logger.debug("Created workflow_run: #{inspect(workflow_run)}")
+        Logger.debug("Created/updated workflow_run: #{inspect(workflow_run)}")
 
       {:error, reason} ->
         Logger.error(reason)
