@@ -56,8 +56,21 @@ defmodule Gitsudo.Workflows do
           {:ok, %WorkflowJobStep{}}
           | {:error, Ecto.Changeset.t()}
   def create_workflow_job_step(workflow_job_id, params) do
+    elapsed_seconds =
+      case {params["started_at"], params["completed_at"]} do
+        {nil, _} ->
+          nil
+
+        {_, nil} ->
+          nil
+
+        {started_at, completed_at} ->
+          DateTime.diff(completed_at, started_at, :second)
+      end
+
     %WorkflowJobStep{
-      workflow_job_id: workflow_job_id
+      workflow_job_id: workflow_job_id,
+      elapsed_seconds: elapsed_seconds
     }
     |> WorkflowJobStep.changeset(params)
     |> Repo.insert()

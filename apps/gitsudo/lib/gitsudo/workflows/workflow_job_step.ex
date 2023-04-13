@@ -12,6 +12,7 @@ defmodule Gitsudo.Workflows.WorkflowJobStep do
     field :name, :string
     field :started_at, :utc_datetime
     field :completed_at, :utc_datetime
+    field :elapsed_seconds, :integer
     field :status, :string
     field :conclusion, :string
 
@@ -27,6 +28,7 @@ defmodule Gitsudo.Workflows.WorkflowJobStep do
       :name,
       :started_at,
       :completed_at,
+      :elapsed_seconds,
       :status,
       :conclusion
     ])
@@ -36,6 +38,7 @@ defmodule Gitsudo.Workflows.WorkflowJobStep do
       :name,
       :started_at,
       :completed_at,
+      :elapsed_seconds,
       :status,
       :conclusion
     ])

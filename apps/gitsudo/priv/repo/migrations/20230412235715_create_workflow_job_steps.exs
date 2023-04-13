@@ -10,6 +10,7 @@ defmodule Gitsudo.Repo.Migrations.CreateWorkflowJobSteps do
       add :name, :string
       add :started_at, :utc_datetime
       add :completed_at, :utc_datetime
+      add :elapsed_seconds, :integer
       add :status, :string
       add :conclusion, :string
 
