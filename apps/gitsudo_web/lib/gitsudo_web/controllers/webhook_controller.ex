@@ -8,13 +8,6 @@ defmodule GitsudoWeb.WebhookController do
 
   @spec webhook(Plug.Conn.t(), any) :: Plug.Conn.t()
   def webhook(conn, params) do
-    Logger.debug(
-      params
-      |> Map.delete("installation")
-      |> Map.delete("organization")
-      |> Jason.encode!()
-    )
-
     handle_payload(params)
 
     send_resp(conn, :no_content, "")
@@ -37,13 +30,12 @@ defmodule GitsudoWeb.WebhookController do
 
   def handle_payload(params) do
     Logger.debug(
-      Jason.encode!(
-        params
-        |> Map.delete("installation")
-        |> Map.delete("organization")
-        |> Map.delete("repository")
-        |> Map.delete("sender")
-      )
+      params
+      |> Map.delete("installation")
+      |> Map.delete("organization")
+      |> Map.delete("repository")
+      |> Map.delete("sender")
+      |> Jason.encode!()
     )
   end
 end
