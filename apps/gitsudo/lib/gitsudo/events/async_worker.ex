@@ -299,7 +299,7 @@ defmodule Gitsudo.Events.AsyncWorker do
       {:ok, workflow_run}
     else
       with {:ok, workflow_run_data} <-
-             Github.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
+             GitHub.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
         Workflows.insert_or_update_workflow_run(workflow_run_data)
       end
     end

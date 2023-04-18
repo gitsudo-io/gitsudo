@@ -291,7 +291,7 @@ defmodule GitHub.Client do
         ) ::
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def get_workflow_run(access_token, owner, repo, run_id) do
-    http_get_and_decode(access_token, "/repos/#{owner}/#{repo}/actions/runs/#{run_id}")
+    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs/#{run_id}")
   end
 
   @doc """
@@ -407,10 +407,17 @@ defmodule GitHub.Client do
   ###########################################################################
 
   defp url_for(path, params \\ %{}) do
+    base_url =
+      if String.starts_with?(path, "/") do
+        "https://api.github.com"
+      else
+        "https://api.github.com/"
+      end
+
     if Enum.empty?(params) do
-      "https://api.github.com/#{path}"
+      "#{base_url}#{path}"
     else
-      "https://api.github.com/#{path}?#{encode_query_parameters(params)}"
+      "#{base_url}#{path}?#{encode_query_parameters(params)}"
     end
   end
 
@@ -445,13 +452,7 @@ defmodule GitHub.Client do
   defp http_get_api(access_token, path, params \\ %{})
        when is_binary(access_token) and
               is_binary(path) do
-    url =
-      if Enum.empty?(params) do
-        "https://api.github.com/#{path}"
-      else
-        "https://api.github.com/#{path}?#{encode_query_parameters(params)}"
-      end
-
+    url = url_for(path, params)
     Logger.debug("GET #{url}")
 
     Finch.build(:get, url, [
