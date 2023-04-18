@@ -32,6 +32,11 @@ defmodule Gitsudo.Workflows do
     |> Repo.insert()
   end
 
+  @spec get_workflow_run(workflow_run_id :: integer) :: %WorkflowRun{} | nil
+  def get_workflow_run(workflow_run_id) do
+    Repo.get(WorkflowRun, workflow_run_id)
+  end
+
   @spec insert_or_update_workflow_run(params :: map()) ::
           {:ok, %WorkflowRun{}}
           | {:error, Ecto.Changeset.t()}
@@ -84,9 +89,9 @@ defmodule Gitsudo.Workflows do
   end
 
   def list_workflow_runs_for_repository(repository_id) do
-    Repo.all(from w in Workflow, where: w.repository_id == ^repository_id)
+    Repo.all(from(w in Workflow, where: w.repository_id == ^repository_id))
     |> Enum.reduce([], fn workflow, acc ->
-      workflow_runs = Repo.all(from wr in WorkflowRun, where: wr.workflow_id == ^workflow.id)
+      workflow_runs = Repo.all(from(wr in WorkflowRun, where: wr.workflow_id == ^workflow.id))
       acc ++ workflow_runs
     end)
   end
