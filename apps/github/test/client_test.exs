@@ -6,12 +6,15 @@ defmodule GitHub.ClientTest do
 
   require Logger
 
+  @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
+
   setup do
     ExVCR.Config.cassette_library_dir("fixture/vcr_cassettes")
+    if test_access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN") do
+      ExVCR.Config.filter_sensitive_data(test_access_token, @dummy_personal_access_token)
+    end
     :ok
   end
-
-  @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
 
   describe "client" do
     test "list_app_installations/2 works" do
@@ -54,6 +57,17 @@ defmodule GitHub.ClientTest do
           Client.exchange_code_for_access_token(client_id, client_secret, code)
 
         assert @dummy_personal_access_token == access_token
+      end
+    end
+
+    test "get_repo/3 works" do
+      use_cassette "client_get_repo_works" do
+        {:ok, repo} = Client.get_repo(@dummy_personal_access_token, "gitsudo-io", "gitsudo")
+        assert "gitsudo" == repo["name"]        
+        # credo:disable-for-next-line
+        assert 596202192 == repo["id"]
+        # credo:disable-for-next-line
+        assert 121780924 == repo["owner"]["id"]
       end
     end
 

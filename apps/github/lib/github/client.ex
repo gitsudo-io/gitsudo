@@ -5,6 +5,10 @@ defmodule GitHub.Client do
 
   require Logger
 
+  ###########################################################################
+  # App Installation
+  ###########################################################################
+
   @doc """
   List app installations
   """
@@ -86,6 +90,10 @@ defmodule GitHub.Client do
     end
   end
 
+  ###########################################################################
+  # OAuth
+  ###########################################################################
+
   @doc """
   Exchange the temporary OAuth redirect code for an access token.
   """
@@ -117,6 +125,10 @@ defmodule GitHub.Client do
     end
   end
 
+  ###########################################################################
+  # Repositories
+  ###########################################################################
+
   @doc """
   List all the repos under the given organization visible to the given access token.
 
@@ -131,39 +143,19 @@ defmodule GitHub.Client do
   end
 
   @doc """
-  Get the logged in user associated with an access token, if available.
+  Get a repository
 
   ```
-    GET /user
+    GET /repos/{owner}/{repo}
   ```
   """
-  @spec get_user(binary) ::
+  @spec get_repo(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def get_user(access_token) do
-    http_get_and_decode(access_token, "user")
-  end
+  def get_repo(access_token, owner, repo), do: http_get_and_decode(access_token, "repos/#{owner}/#{repo}")
 
-  @doc """
-  ```
-    GET /user/repos
-  ```
-  """
-  @spec list_user_repositories(binary) ::
-          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def list_user_repositories(access_token) do
-    http_get_and_decode(access_token, "user/repos")
-  end
-
-  @doc """
-  ```
-    GET /user/orgs
-  ```
-  """
-  @spec list_user_orgs(access_token :: String.t()) ::
-          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def list_user_orgs(access_token) do
-    http_get_and_decode(access_token, "user/orgs")
-  end
+  ###########################################################################
+  # Workflows
+  ###########################################################################
 
   @doc """
   List workflows for a given repository
@@ -317,6 +309,45 @@ defmodule GitHub.Client do
   def list_workflow_run_jobs(access_token, owner, repo, run_id) do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs/#{run_id}/jobs")
   end
+
+  ###########################################################################
+  # User scope
+  ###########################################################################
+
+  @doc """
+  Get the logged in user associated with an access token, if available.
+
+  ```
+    GET /user
+  ```
+  """
+  @spec get_user(binary) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_user(access_token), do: http_get_and_decode(access_token, "user")
+
+  @doc """
+  ```
+    GET /user/repos
+  ```
+  """
+  @spec list_user_repositories(binary) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def list_user_repositories(access_token), do: http_get_and_decode(access_token, "user/repos")
+
+  @doc """
+  ```
+    GET /user/orgs
+  ```
+  """
+  @spec list_user_orgs(access_token :: String.t()) ::
+          {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def list_user_orgs(access_token) do
+    http_get_and_decode(access_token, "user/orgs")
+  end
+
+  ###########################################################################
+  # Helper functions
+  ###########################################################################
 
   @spec http_get_and_decode(access_token :: String.t(), path :: String.t(), params :: map()) ::
           {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
