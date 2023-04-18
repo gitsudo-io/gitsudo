@@ -21,6 +21,22 @@
   </h1>
 </.header>
 
+<h2>
+  Labels:
+  <%= if !Enum.empty?(@repository.labels) do %>
+    <span class="items-start">
+      <%= for label <- @repository.labels do %>
+        <%= content_tag("span", label.name,
+          class: "badge badge-lg border-#{label.color} bg-#{label.color}"
+        ) %>
+      <% end %>
+      <span class="hero-plus-circle h-6 w-6 text-slate-400" />
+    </span>
+  <% else %>
+    No labels found.
+  <% end %>
+</h2>
+
 <%= if !Enum.empty?(@workflow_runs) do %>
   <section>
     <h2>Workflows</h2>

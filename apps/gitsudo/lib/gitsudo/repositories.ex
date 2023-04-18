@@ -87,7 +87,9 @@ defmodule Gitsudo.Repositories do
   @spec get_repository_by_owner_id_and_name(owner_id :: integer(), name :: String.t()) ::
           nil | %Repository{}
   def get_repository_by_owner_id_and_name(owner_id, name) do
-    Repo.get_by(Repository, owner_id: owner_id, name: name)
+    Repository
+    |> Repo.get_by(owner_id: owner_id, name: name)
+    |> Repo.preload([:owner, :labels])
   end
 
   @doc """
