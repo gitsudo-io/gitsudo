@@ -67,7 +67,7 @@ defmodule GitHub.ClientTest do
         org = "gitsudo-io"
         team_slug = "test-team-a"
         owner = "gitsudo-io"
-        repo = "gitsudo"
+        repo = "test-repo-alpha"
         permission = "push"
 
         {:ok, nil} =

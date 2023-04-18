@@ -10,7 +10,7 @@
       "method": "put",
       "options": [],
       "request_body": "",
-      "url": "https://api.github.com/orgs/gitsudo-io/teams/test-team-a/repos/gitsudo-io/gitsudo"
+      "url": "https://api.github.com/orgs/gitsudo-io/teams/test-team-a/repos/gitsudo-io/test-repo-alpha"
     },
     "response": {
       "binary": false,
