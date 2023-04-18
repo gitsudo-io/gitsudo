@@ -149,7 +149,7 @@ defmodule Gitsudo.Events.AsyncWorker do
   defp with_each_workflow_run(_, {:error, reason}), do: {:halt, {:error, reason}}
 
   defp with_each_workflow_run(workflow_run, {:ok, results}) do
-    case Gitsudo.Workflows.create_workflow_run(workflow_run) do
+    case Workflows.create_workflow_run(workflow_run) do
       {:ok, created} ->
         Logger.debug("Created workflow_run: #{inspect(created)}")
         {:cont, {:ok, [workflow_run | results]}}
@@ -225,7 +225,7 @@ defmodule Gitsudo.Events.AsyncWorker do
 
     case workflow_run_data
          |> Map.put("workflow_id", workflow_id)
-         |> Gitsudo.Workflows.create_workflow_run() do
+         |> Workflows.create_workflow_run() do
       {:ok, workflow_run} ->
         Logger.debug("Created workflow_run: #{inspect(workflow_run)}")
 
@@ -256,7 +256,7 @@ defmodule Gitsudo.Events.AsyncWorker do
 
     case workflow_run_data
          |> Map.put("workflow_id", workflow_id)
-         |> Gitsudo.Workflows.insert_or_update_workflow_run() do
+         |> Workflows.insert_or_update_workflow_run() do
       {:ok, workflow_run} ->
         Logger.debug("Created/updated workflow_run: #{inspect(workflow_run)}")
 
@@ -275,20 +275,46 @@ defmodule Gitsudo.Events.AsyncWorker do
           map()
         ) :: any
   def handle_workflow_job_completed(
-        _access_token,
-        _owner,
-        _repo,
+        access_token,
+        owner,
+        repo,
         %{"workflow_job" => %{"run_id" => workflow_run_id} = workflow_job_data} = _params
       ) do
     Logger.debug("handle_workflow_job_completed(#{inspect(workflow_job_data)})")
 
-    case Gitsudo.Workflows.create_workflow_job(workflow_run_id, workflow_job_data) do
-      {:ok, workflow_job} ->
-        Logger.debug("Created workflow_job: #{inspect(workflow_job)}")
-        store_workflow_job_steps(workflow_job_data)
+    with {:ok, _workflow_run} <-
+           ensure_workflow_run_exists(access_token, owner, repo, workflow_run_id) do
+      case Gitsudo.Workflows.create_workflow_job(workflow_run_id, workflow_job_data) do
+        {:ok, workflow_job} ->
+          Logger.debug("Created workflow_job: #{inspect(workflow_job)}")
+          store_workflow_job_steps(workflow_job_data)
 
-      {:error, reason} ->
-        Logger.error(reason)
+        {:error, reason} ->
+          Logger.error(reason)
+      end
+    end
+  end
+
+  def ensure_workflow_run_exists(access_token, owner, repo, workflow_run_id) do
+    case Workflows.get_workflow_run(workflow_run_id) do
+      nil ->
+        case Github.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
+          {:ok, workflow_run_data} ->
+            case workflow_run_data
+                 |> Workflows.insert_or_update_workflow_run() do
+              {:ok, workflow_run} ->
+                workflow_run
+
+              {:error, reason} ->
+                Logger.error(reason)
+            end
+
+          {:error, reason} ->
+            Logger.error(reason)
+        end
+
+      workflow_run ->
+        {:ok, workflow_run}
     end
   end
 

@@ -277,6 +277,24 @@ defmodule GitHub.Client do
   end
 
   @doc """
+  Get a workflow run
+
+  ```
+  GET /repos/{owner}/{repo}/actions/runs/{run_id}
+  ```
+  """
+  @spec get_workflow_run(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          run_id :: String.t()
+        ) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_workflow_run(access_token, owner, repo, run_id) do
+    http_get_and_decode(access_token, "/repos/#{owner}/#{repo}/actions/runs/#{run_id}")
+  end
+
+  @doc """
   Fetches all workflow runs for a given repository, and calls the given function with each page of results.
   The given function _must_ accept `(acc, page)` and return either `{:cont, acc}` or `{:halt, acc}`
   (similar to &Enum.reduce_while/3).
