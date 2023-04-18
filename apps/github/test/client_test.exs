@@ -10,9 +10,11 @@ defmodule GitHub.ClientTest do
 
   setup do
     ExVCR.Config.cassette_library_dir("fixture/vcr_cassettes")
+
     if test_access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN") do
       ExVCR.Config.filter_sensitive_data(test_access_token, @dummy_personal_access_token)
     end
+
     :ok
   end
 
@@ -26,7 +28,7 @@ defmodule GitHub.ClientTest do
 
         assert 1 == Enum.count(installations)
         # credo:disable-for-next-line
-        assert 34222363 == first["id"]
+        assert 34_222_363 == first["id"]
       end
     end
 
@@ -60,14 +62,34 @@ defmodule GitHub.ClientTest do
       end
     end
 
+    test "put_team_repository_permission/4 works" do
+      use_cassette "client_put_team_repository_permission_works" do
+        org = "gitsudo-io"
+        team_slug = "test-team-a"
+        owner = "gitsudo-io"
+        repo = "gitsudo"
+        permission = "push"
+
+        {:ok, nil} =
+          Client.put_team_repository_permission(
+            @dummy_personal_access_token,
+            org,
+            team_slug,
+            owner,
+            repo,
+            permission
+          )
+      end
+    end
+
     test "get_repo/3 works" do
       use_cassette "client_get_repo_works" do
         {:ok, repo} = Client.get_repo(@dummy_personal_access_token, "gitsudo-io", "gitsudo")
-        assert "gitsudo" == repo["name"]        
+        assert "gitsudo" == repo["name"]
         # credo:disable-for-next-line
-        assert 596202192 == repo["id"]
+        assert 596_202_192 == repo["id"]
         # credo:disable-for-next-line
-        assert 121780924 == repo["owner"]["id"]
+        assert 121_780_924 == repo["owner"]["id"]
       end
     end
 
@@ -97,7 +119,7 @@ defmodule GitHub.ClientTest do
 
         assert 44 == Enum.count(workflow_runs)
         # credo:disable-for-next-line
-        assert 4490840000 == Enum.at(workflow_runs, 43)["id"]
+        assert 4_490_840_000 == Enum.at(workflow_runs, 43)["id"]
       end
     end
   end

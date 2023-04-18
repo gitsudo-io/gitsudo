@@ -126,7 +126,7 @@ defmodule GitHub.Client do
   end
 
   ###########################################################################
-  # Repositories
+  # Organization
   ###########################################################################
 
   @doc """
@@ -136,11 +136,49 @@ defmodule GitHub.Client do
     GET /org/{owner}/repos
   ```
   """
-  @spec list_org_repos(access_token :: String.t(), organization_name :: String.t()) ::
+  @spec list_org_repos(access_token :: String.t(), org :: String.t()) ::
           {:ok, list()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def list_org_repos(access_token, organization_name) do
-    http_get_and_decode(access_token, "orgs/#{organization_name}/repos")
+  def list_org_repos(access_token, org) do
+    http_get_and_decode(access_token, "orgs/#{org}/repos")
   end
+
+  @doc """
+  Add or update team repository permissions
+
+  ```
+  PUT /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}
+  ```
+  """
+  @spec put_team_repository_permission(
+          access_token :: String.t(),
+          org :: String.t(),
+          team_slug :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          permission :: String.t()
+        ) ::
+          {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def put_team_repository_permission(access_token, org, team_slug, owner, repo, permission)
+      when is_binary(access_token) and is_binary(org) and is_binary(owner) and is_binary(repo) and
+             is_binary(permission) do
+    url = url_for("orgs/#{org}/teams/#{team_slug}/repos/#{owner}/#{repo}")
+    body = %{"permission" => permission}
+
+    with {:ok, resp} <- http_put(access_token, url, body) do
+      if 204 == resp.status do
+        {:ok, nil}
+      else
+        Logger.debug("resp.status: #{resp.status}")
+        reason = "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"
+        Logger.error(reason)
+        {:error, reason}
+      end
+    end
+  end
+
+  ###########################################################################
+  # Repositories
+  ###########################################################################
 
   @doc """
   Get a repository
@@ -151,7 +189,8 @@ defmodule GitHub.Client do
   """
   @spec get_repo(access_token :: String.t(), owner :: String.t(), repo :: String.t()) ::
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def get_repo(access_token, owner, repo), do: http_get_and_decode(access_token, "repos/#{owner}/#{repo}")
+  def get_repo(access_token, owner, repo),
+    do: http_get_and_decode(access_token, "repos/#{owner}/#{repo}")
 
   ###########################################################################
   # Workflows
@@ -349,6 +388,14 @@ defmodule GitHub.Client do
   # Helper functions
   ###########################################################################
 
+  defp url_for(path, params \\ %{}) do
+    if Enum.empty?(params) do
+      "https://api.github.com/#{path}"
+    else
+      "https://api.github.com/#{path}?#{encode_query_parameters(params)}"
+    end
+  end
+
   @spec http_get_and_decode(access_token :: String.t(), path :: String.t(), params :: map()) ::
           {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   defp http_get_and_decode(access_token, path, params \\ %{})
@@ -394,6 +441,30 @@ defmodule GitHub.Client do
       {"Content-Type", "application/json"},
       {"Accept", "application/json"}
     ])
+    |> Finch.request(GitHub.Finch)
+  end
+
+  defp http_put(access_token, url, body)
+       when is_binary(access_token) and is_binary(url) and is_map(body) do
+    with {:ok, encoded} <- Jason.encode(body) do
+      http_put(access_token, url, encoded)
+    end
+  end
+
+  defp http_put(access_token, url, body)
+       when is_binary(access_token) and is_binary(url) and is_binary(body) do
+    Logger.debug("POST #{url}: #{inspect(body)}")
+
+    Finch.build(
+      :put,
+      url,
+      [
+        {"Authorization", "Bearer #{access_token}"},
+        {"Content-Type", "application/json"},
+        {"Accept", "application/json"}
+      ],
+      body
+    )
     |> Finch.request(GitHub.Finch)
   end
 
