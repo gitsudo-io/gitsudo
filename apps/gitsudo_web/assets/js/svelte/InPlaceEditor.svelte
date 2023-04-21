@@ -1,13 +1,13 @@
 <script>
     import Spinner from "./Spinner.svelte";
 
-    let editing = false;
     export let org;
     export let id;
     export let text;
+
+    let editing = false;
     let value = text;
     let submitDisabled = true;
-
     let submitPromise = null;
 
     function toggleEditing(e) {
