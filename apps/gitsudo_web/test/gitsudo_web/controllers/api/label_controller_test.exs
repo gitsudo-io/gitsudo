@@ -7,6 +7,8 @@ defmodule GitsudoWeb.API.LabelControllerTest do
 
   require Logger
 
+  @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
+
   @update_attrs %{
     color: "some updated color",
     name: "some updated name"
@@ -20,7 +22,14 @@ defmodule GitsudoWeb.API.LabelControllerTest do
         "type" => "Organization"
       })
 
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN", @dummy_personal_access_token)
+    ExVCR.Config.filter_sensitive_data(access_token, @dummy_personal_access_token)
+
+    {:ok,
+     conn:
+       conn
+       |> put_req_header("accept", "application/json")
+       |> Plug.Test.init_test_session(access_token: access_token)}
   end
 
   describe "index" do
@@ -111,6 +120,7 @@ defmodule GitsudoWeb.API.LabelControllerTest do
 
     test "deletes chosen label", %{conn: conn, label: label} do
       conn = delete(conn, ~p"/api/org/gitsudo-io/labels/#{label}")
+
       assert response(conn, 204)
 
       assert_error_sent 404, fn ->
