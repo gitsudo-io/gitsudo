@@ -9,22 +9,9 @@ const loader = {
     // Add loaders for images/fonts/etc, e.g. { '.svg': 'file' }
 }
 
-const svelteComponentLoaderPlugin = {
-    name: "svelteComponentLoader",
-    setup(build) {
-        build.onResolve({ filter: /\.svelte$/ }, ({ path }) => {
-            console.log(path);
-            {
-                path: path
-            }
-        });
-    }
-}
-
 const plugins = [
     // Add and configure plugins here
     sveltePlugin(),
-    svelteComponentLoaderPlugin,
     // ... other plugins such as postCss, etc.
 ]
 
