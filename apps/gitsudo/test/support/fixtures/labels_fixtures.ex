@@ -15,7 +15,7 @@ defmodule Gitsudo.LabelsFixtures do
         name: "backend"
       })
 
-    {:ok, label} = Gitsudo.Labels.create_label(42, create_attrs)
+    {:ok, label} = Gitsudo.Labels.create_label(121_780_924, create_attrs)
 
     label
   end

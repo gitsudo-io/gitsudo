@@ -17,7 +17,7 @@ defmodule GitsudoWeb.LabelControllerTest do
 
   setup %{conn: conn} do
     {:ok, _account} =
-      Gitsudo.Accounts.find_or_create_account(42, %{
+      Gitsudo.Accounts.find_or_create_account(121_780_924, %{
         "login" => "gitsudo-io",
         "type" => "Organization"
       })
