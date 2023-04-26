@@ -294,6 +294,12 @@ defmodule Gitsudo.Events.AsyncWorker do
     end
   end
 
+  @spec ensure_workflow_run_exists(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          workflow_run_id :: integer()
+        ) :: {:ok, map()} | {:error, any()}
   def ensure_workflow_run_exists(access_token, owner, repo, workflow_run_id) do
     if workflow_run = Workflows.get_workflow_run(workflow_run_id) do
       {:ok, workflow_run}

@@ -287,7 +287,7 @@ defmodule GitHub.Client do
           access_token :: String.t(),
           owner :: String.t(),
           repo :: String.t(),
-          run_id :: String.t()
+          run_id :: integer()
         ) ::
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def get_workflow_run(access_token, owner, repo, run_id) do
@@ -343,17 +343,6 @@ defmodule GitHub.Client do
           new_acc
       end
     end
-  end
-
-  @spec get_workflow_run(
-          access_token :: String.t(),
-          owner :: String.t(),
-          repo :: String.t(),
-          run_id :: integer()
-        ) ::
-          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def get_workflow_run(access_token, owner, repo, run_id) do
-    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/runs/#{run_id}")
   end
 
   @spec list_workflow_run_jobs(

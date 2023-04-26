@@ -19,7 +19,9 @@ defmodule GitsudoWeb.API.LabelJSON do
   @spec show(%{
           :label => map(),
           optional(any) => any
-        }) :: %{data: %{color: any, id: any, name: any, owner_id: any}}
+        }) :: %{
+          data: %{color: any, id: any, name: any, owner_id: any, collaborator_policies: list()}
+        }
   def show(%{label: label}) do
     %{data: data(label)}
   end
@@ -29,7 +31,8 @@ defmodule GitsudoWeb.API.LabelJSON do
       id: label.id,
       owner_id: label.owner_id,
       name: label.name,
-      color: label.color
+      color: label.color,
+      collaborator_policies: label.collaborator_policies
     }
   end
 end
