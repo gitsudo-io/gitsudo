@@ -3,6 +3,7 @@ defmodule GitsudoWeb.Router do
 
   import GitsudoWeb.UserAuth
   import GitsudoWeb.OrgScope
+  import GitsudoWeb.API.RepoScope
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -29,6 +30,10 @@ defmodule GitsudoWeb.Router do
 
   pipeline :org do
     plug :fetch_org
+  end
+
+  pipeline :repo do
+    plug :fetch_repo
   end
 
   scope "/", GitsudoWeb do
@@ -62,6 +67,12 @@ defmodule GitsudoWeb.Router do
     scope "/api" do
       resources "/org/", API.OrganizationController, name: "organization", param: "name", only: [] do
         pipe_through :org
+
+        scope "/:repo_name" do
+          pipe_through :repo
+
+          resources "/labels", API.RepoLabelController
+        end
 
         resources "/labels", API.LabelController
       end
