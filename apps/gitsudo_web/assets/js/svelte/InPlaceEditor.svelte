@@ -2,7 +2,7 @@
     import Spinner from "./Spinner.svelte";
 
     export let org;
-    export let id;
+    export let labelid;
     export let text;
 
     let editing = false;
@@ -22,7 +22,8 @@
     async function submitForm(e) {
         if (value != text) {
             console.log("submitPromise: " + submitPromise);
-            const url = location.origin + "/api/org/" + org + "/labels/" + id;
+            const url =
+                location.origin + "/api/org/" + org + "/labels/" + labelid;
             const body = JSON.stringify({
                 label: {
                     name: value,
