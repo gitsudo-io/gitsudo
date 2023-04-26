@@ -8,6 +8,7 @@ defmodule Gitsudo.Repositories do
   alias Gitsudo.Repositories
   alias Gitsudo.Repo
   alias Gitsudo.Repositories.Repository
+  alias Gitsudo.Labels.Label
 
   require Logger
 
@@ -86,10 +87,12 @@ defmodule Gitsudo.Repositories do
   """
   @spec get_repository_by_owner_id_and_name(owner_id :: integer(), name :: String.t()) ::
           nil | %Repository{}
-  def get_repository_by_owner_id_and_name(owner_id, name) do
+  def get_repository_by_owner_id_and_name(owner_id, name, options \\ [preload: [:owner, :labels]]) do
+    Logger.debug("preload: #{inspect(Keyword.get(options, :preload, [:owner, :labels]))}")
+
     Repository
     |> Repo.get_by(owner_id: owner_id, name: name)
-    |> Repo.preload([:owner, :labels])
+    |> Repo.preload(Keyword.get(options, :preload, [:owner, :labels]))
   end
 
   @doc """
@@ -103,5 +106,22 @@ defmodule Gitsudo.Repositories do
     %Repository{}
     |> Repository.changeset(%{id: id, name: name, owner_id: owner["id"]})
     |> Repo.insert()
+  end
+
+  ########################################################
+  # Labels
+  ########################################################
+
+  @doc """
+  Add a label to a repository.
+  """
+  @spec add_label_to_repository(repository :: %Repository{}, label :: %Label{}) :: any
+  def add_label_to_repository(repository, label) do
+    repository = Repo.preload(repository, [:labels])
+    labels = [label | repository.labels]
+
+    Ecto.Changeset.change(repository)
+    |> Ecto.Changeset.put_assoc(:labels, labels)
+    |> Repo.update()
   end
 end
