@@ -1,7 +1,6 @@
 @tailwind base;
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind components;
+@tailwind utilities;
 
 /* This file is for your main application CSS */
 @layer base {
@@ -18,14 +17,10 @@
     .btn-confirm {
         @apply btn-ghost hover:bg-transparent text-green-700 hover:text-green-600;
     }
+
     .btn-cancel {
         @apply btn-ghost hover:bg-transparent text-red-600 hover:text-red-500;
     }
-}
-
-/* This to override the checked radio button styling that TailwindCSS forms does */
-[type='radio']:checked {
-    background-image: none;
 }
 
 /* The following checked classes are dynamically used, so Tailwind's JIT doesn't output them */
