@@ -19,6 +19,9 @@ defmodule GitsudoWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_session
     plug :fetch_current_user
+  end
+
+  pipeline :api_auth do
     plug GitsudoWeb.ApiAuth
   end
 
@@ -63,19 +66,21 @@ defmodule GitsudoWeb.Router do
     pipe_through :api
 
     post "/webhook", WebhookController, :webhook
+  end
 
-    scope "/api" do
-      resources "/org/", API.OrganizationController, name: "organization", param: "name", only: [] do
-        pipe_through :org
+  scope "/api", GitsudoWeb do
+    pipe_through [:api, :api_auth]
 
-        scope "/:repo_name" do
-          pipe_through :repo
+    resources "/org/", API.OrganizationController, name: "organization", param: "name", only: [] do
+      pipe_through :org
 
-          resources "/labels", API.RepoLabelController
-        end
+      scope "/:repo_name" do
+        pipe_through :repo
 
-        resources "/labels", API.LabelController
+        resources "/labels", API.RepoLabelController
       end
+
+      resources "/labels", API.LabelController
     end
   end
 
