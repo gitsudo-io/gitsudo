@@ -1,5 +1,10 @@
+<.breadcrumbs>
+  <:crumb label={@organization.login} link={~p[/#{@organization.login}]} />
+  <:crumb label="labels" link={~p[/#{@organization.login}/labels]} />
+  <:crumb label="New Label" />
+</.breadcrumbs>
+
 <.header>
-  <h1><%= link(@organization.login, to: ~p[/#{@organization.login}/labels]) %></h1>
   New Label
   <:subtitle>Create a new label</:subtitle>
 </.header>

@@ -391,6 +391,7 @@ defmodule GitsudoWeb.CoreComponents do
         id={@id || @name}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
+          "form-input",
           "mt-2 block w-full rounded-lg border-zinc-300 py-[7px] px-[11px]",
           "text-zinc-900 focus:outline-none focus:ring-4 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400 phx-no-feedback:focus:ring-zinc-800/5",
@@ -693,5 +694,31 @@ defmodule GitsudoWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  @doc """
+  Renders breadcrumbs.
+  """
+  slot :crumb, doc: "A breadcrumb item" do
+    attr :label, :string, required: true, doc: "The label of the breadcrumb"
+    attr :link, :string, doc: "The link for the breadcrumb"
+  end
+
+  def breadcrumbs(assigns) do
+    ~H"""
+    <div class="text-sm breadcrumbs">
+      <ul>
+        <%= for crumb <- @crumb do %>
+          <li>
+            <%= if Map.has_key?(crumb, :link) do %>
+              <%= Phoenix.HTML.Link.link(crumb.label, to: crumb.link) %>
+            <% else %>
+              <%= crumb.label %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    """
   end
 end

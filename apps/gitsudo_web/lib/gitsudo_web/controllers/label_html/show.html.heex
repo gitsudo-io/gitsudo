@@ -1,37 +1,32 @@
-<div class="text-sm breadcrumbs">
-  <ul>
-    <li>
-      <%= link("#{@organization.login}", to: ~p[/#{@organization.login}]) %>
-    </li>
-    <li>
-      <%= link("labels",
-        to: ~p[/#{@organization.login}/labels]
-      ) %>
-    </li>
-    <li><%= @label.name %></li>
-  </ul>
-</div>
+<.breadcrumbs>
+  <:crumb label={@organization.login} link={~p[/#{@organization.login}]} />
+  <:crumb label="labels" link={~p[/#{@organization.login}/labels]} />
+  <:crumb label={@label.name} />
+</.breadcrumbs>
 
 <.header>
-  <%= content_tag("div", nil,
+  <%= content_tag("svelte-in-place-editor", nil,
     id: "label-#{@label.id}",
-    "phx-hook": "InPlaceEditorHook",
-    "phx-update": "ignore",
-    "data-org": @organization.login,
-    "data-id": @label.id,
-    "data-text": @label.name
+    labelid: @label.id,
+    org: @organization.login,
+    text: @label.name
   ) %>
 </.header>
 
 <div>
   <h2>Repositories</h2>
-  <ul>
+  <ul class="list-disc pl-4">
     <%= for repository <- @label.repositories do %>
-      <%= content_tag("li", repository.name, class: "") %>
+      <li>
+        <%= link(repository.name,
+          to: ~p[/#{@organization.login}/#{repository.name}],
+          class: "link"
+        ) %>
+      </li>
     <% end %>
   </ul>
 
-  <h1>Policies</h1>
+  <h1 class="pt-8">Policies</h1>
 
   <h2>Collaborators</h2>
   <ul class="list-disc pl-4">
