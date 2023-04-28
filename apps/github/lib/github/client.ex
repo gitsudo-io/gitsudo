@@ -142,40 +142,6 @@ defmodule GitHub.Client do
     http_get_and_decode(access_token, "orgs/#{org}/repos")
   end
 
-  @doc """
-  Add or update team repository permissions
-
-  ```
-  PUT /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}
-  ```
-  """
-  @spec put_team_repository_permission(
-          access_token :: String.t(),
-          org :: String.t(),
-          team_slug :: String.t(),
-          owner :: String.t(),
-          repo :: String.t(),
-          permission :: String.t()
-        ) ::
-          {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  def put_team_repository_permission(access_token, org, team_slug, owner, repo, permission)
-      when is_binary(access_token) and is_binary(org) and is_binary(owner) and is_binary(repo) and
-             is_binary(permission) do
-    url = url_for("orgs/#{org}/teams/#{team_slug}/repos/#{owner}/#{repo}")
-    body = %{"permission" => permission}
-
-    with {:ok, resp} <- http_put(access_token, url, body) do
-      if 204 == resp.status do
-        {:ok, nil}
-      else
-        Logger.debug("resp.status: #{resp.status}")
-        reason = "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"
-        Logger.error(reason)
-        {:error, reason}
-      end
-    end
-  end
-
   ###########################################################################
   # Repositories
   ###########################################################################
@@ -191,6 +157,87 @@ defmodule GitHub.Client do
           {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
   def get_repo(access_token, owner, repo),
     do: http_get_and_decode(access_token, "repos/#{owner}/#{repo}")
+
+  @doc """
+  Get a repository by id
+  """
+  @spec get_repository_by_id(access_token :: String.t(), id :: integer()) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_repository_by_id(access_token, id),
+    do: http_get_and_decode(access_token, "repositories/#{id}")
+
+  ###########################################################################
+  # Teams
+  ###########################################################################
+
+  @doc """
+  Get a team by slug
+
+  ```
+    GET /orgs/{org}/teams/{team_slug}
+  ```
+  """
+  @spec get_team(access_token :: String.t(), org :: String.t(), team_slug :: String.t()) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_team(access_token, org, team_slug),
+    do: http_get_and_decode(access_token, "orgs/#{org}/teams/#{team_slug}")
+
+  @doc """
+  Check team permissions for a repository
+
+  ```
+  GET /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}
+  ```
+  """
+  @spec get_team_repository_permissions(
+          access_token :: String.t(),
+          org :: String.t(),
+          team_slug :: String.t(),
+          owner :: String.t(),
+          repo :: String.t()
+        ) :: {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_team_repository_permissions(access_token, org, team_slug, owner, repo),
+    do:
+      http_get_and_decode(
+        access_token,
+        "orgs/#{org}/teams/#{team_slug}/repos/#{owner}/#{repo}",
+        %{},
+        headers: %{"Accept" => "application/vnd.github.v3.repository+json"}
+      )
+
+  @doc """
+  Add or update team repository permissions
+
+  ```
+  PUT /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}
+  ```
+  """
+  @spec put_team_repository_permissions(
+          access_token :: String.t(),
+          org :: String.t(),
+          team_slug :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          permission :: String.t()
+        ) ::
+          {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def put_team_repository_permissions(access_token, org, team_slug, owner, repo, permission)
+      when is_binary(access_token) and is_binary(org) and is_binary(owner) and is_binary(repo) and
+             is_binary(permission) do
+    url = url_for("orgs/#{org}/teams/#{team_slug}/repos/#{owner}/#{repo}")
+    body = %{"permission" => permission}
+
+    with {:ok, resp} <- http_put(access_token, url, body) do
+      if 204 == resp.status do
+        {:ok, resp}
+      else
+        Logger.debug("resp.status: #{resp.status}")
+        reason = "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"
+        Logger.error(reason)
+        {:error, reason}
+      end
+    end
+  end
 
   ###########################################################################
   # Workflows
@@ -412,9 +459,9 @@ defmodule GitHub.Client do
 
   @spec http_get_and_decode(access_token :: String.t(), path :: String.t(), params :: map()) ::
           {:ok, any} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
-  defp http_get_and_decode(access_token, path, params \\ %{})
-       when is_binary(access_token) and is_binary(path) do
-    with {:ok, resp} <- http_get_api(access_token, path, params) do
+  defp http_get_and_decode(access_token, path, params \\ %{}, opts \\ [])
+       when is_binary(access_token) and is_binary(path) and is_map(params) do
+    with {:ok, resp} <- http_get_api(access_token, path, params, opts) do
       if 200 == resp.status do
         Jason.decode(resp.body)
       else
@@ -434,23 +481,44 @@ defmodule GitHub.Client do
 
   defp encode(t), do: URI.encode(to_string(t))
 
+  @default_get_headers_map %{
+    "Content-Type" => "application/json",
+    "Accept" => "application/vnd.github+json"
+  }
+
   # Construct an HTTPoison.get request to the given path with the given access token
   # as the `Authorization: Bearer` token.
-  @spec http_get_api(access_token :: String.t(), path :: String.t(), params :: map()) ::
+  @spec http_get_api(
+          access_token :: String.t(),
+          path :: String.t(),
+          params :: map(),
+          opts :: keyword()
+        ) ::
           {:ok, Finch.Response.t()} | {:error, Exception.t()}
-  defp http_get_api(access_token, path, params \\ %{})
+  defp http_get_api(access_token, path, params \\ %{}, opts \\ [])
        when is_binary(access_token) and
-              is_binary(path) do
+              is_binary(path) and is_map(params) do
     url = url_for(path, params)
     Logger.debug("GET #{url}")
 
+    headers = build_get_headers(opts)
+
     Finch.build(:get, url, [
-      {"Authorization", "Bearer #{access_token}"},
-      {"Content-Type", "application/json"},
-      {"Accept", "application/json"}
+      {"Authorization", "Bearer #{access_token}"}
+      | headers
     ])
     |> Finch.request(GitHub.Finch)
   end
+
+  def build_get_headers(headers: headers) do
+    headers
+    |> Enum.reduce(@default_get_headers_map, fn {k, v}, headers ->
+      Map.put(headers, to_string(k), v)
+    end)
+    |> Map.to_list()
+  end
+
+  def build_get_headers(_), do: Map.to_list(@default_get_headers_map)
 
   defp http_put(access_token, url, body)
        when is_binary(access_token) and is_binary(url) and is_map(body) do
@@ -461,7 +529,7 @@ defmodule GitHub.Client do
 
   defp http_put(access_token, url, body)
        when is_binary(access_token) and is_binary(url) and is_binary(body) do
-    Logger.debug("POST #{url}: #{inspect(body)}")
+    Logger.debug("PUT #{url}: #{inspect(body)}")
 
     Finch.build(
       :put,
