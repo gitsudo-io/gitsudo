@@ -27,7 +27,7 @@ defmodule GitsudoWeb.PageControllerTest do
 
     use_cassette "get_home_works" do
       conn =
-        build_conn()
+        conn
         |> Plug.Test.init_test_session(access_token: access_token)
         |> get(~p"/")
 
