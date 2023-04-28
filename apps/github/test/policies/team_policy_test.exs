@@ -25,7 +25,7 @@ defmodule GitHub.Policies.TeamPolicyTest do
         permission: "maintain"
       }
 
-      {:ok, %{status: 204} = result} =
+      {:ok, %{status: 204} = _result} =
         GitHub.Policies.TeamPolicy.apply(access_token, policy, 621_016_081)
 
       {:ok,

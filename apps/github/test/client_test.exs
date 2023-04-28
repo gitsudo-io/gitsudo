@@ -62,16 +62,16 @@ defmodule GitHub.ClientTest do
       end
     end
 
-    test "put_team_repository_permission/4 works" do
-      use_cassette "client_put_team_repository_permission_works" do
+    test "put_team_repository_permissions/4 works" do
+      use_cassette "client_put_team_repository_permissions_works" do
         org = "gitsudo-io"
         team_slug = "test-team-a"
         owner = "gitsudo-io"
         repo = "test-repo-alpha"
         permission = "push"
 
-        {:ok, nil} =
-          Client.put_team_repository_permission(
+        {:ok, %{status: 204}} =
+          Client.put_team_repository_permissions(
             @dummy_personal_access_token,
             org,
             team_slug,
