@@ -9,7 +9,11 @@
   <:subtitle>Use this form to manage label records in your database.</:subtitle>
 </.header>
 
-<.label_form changeset={@changeset} action={~p"/#{@organization.login}/labels/#{@label.name}"} />
+<.label_form
+  changeset={@changeset}
+  label={@label}
+  action={~p"/#{@organization.login}/labels/#{@label.name}"}
+/>
 
 <.back navigate={~p"/#{@organization.login}/labels/#{@label.name}"}>
   Back to <%= @label.name %>

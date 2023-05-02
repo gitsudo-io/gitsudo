@@ -41,11 +41,13 @@ window.liveSocket = liveSocket
 
 import InPlaceEditor from "./svelte/InPlaceEditor.svelte"
 import RepoLabels from "./svelte/RepoLabels.svelte"
+import TeamPermissionsEditor from "./svelte/TeamPermissionsEditor.svelte"
 
 import component from "svelte-tag"
 
 new component({ component: InPlaceEditor, tagname: "svelte-in-place-editor", attributes: ["org", "id", "text"] });
 new component({ component: RepoLabels, tagname: "svelte-repo-labels", attributes: ["org", "repo"] });
+new component({ component: TeamPermissionsEditor, tagname: "svelte-team-permissions-editor", attributes: ["org", "id", "text"] });
 
 window.replace = (elementId, component) => {
     el = document.getElementById(elementId)
