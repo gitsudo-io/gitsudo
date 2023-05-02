@@ -30,7 +30,7 @@ defmodule Gitsudo.Labels.Label do
   @doc false
   def changeset(label, attrs) do
     label
-    |> cast(attrs, [:owner_id, :name, :color])
+    |> cast(attrs, [:owner_id, :name, :color, :description])
     |> validate_required([:owner_id, :name, :color])
     |> unique_constraint(:name, name: :labels_owner_id_name_index)
   end

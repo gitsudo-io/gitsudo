@@ -49,14 +49,28 @@ defmodule GitsudoWeb.LabelController do
     end
   end
 
+  def edit(%{assigns: %{organization: organization}} = conn, %{
+        "name" => name
+      }) do
+    if label = Labels.get_label_by_name(organization.id, name) do
+      changeset = Labels.change_label(label)
+
+      render(conn, :edit, label: label, changeset: changeset)
+    else
+      conn |> send_resp(:not_found, "Not found") |> halt
+    end
+  end
+
   def update(%{assigns: %{organization: organization}} = conn, %{
         "name" => name,
         "label" => label_params
       }) do
-    label = Labels.get_label!(organization.id, name)
-
-    with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
-      render(conn, :show, label: label)
+    if label = Labels.get_label_by_name(organization.id, name) do
+      with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
+        render(conn, :show, label: label)
+      end
+    else
+      conn |> send_resp(:not_found, "Not found") |> halt
     end
   end
 

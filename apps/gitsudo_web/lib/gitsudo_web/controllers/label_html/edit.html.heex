@@ -1,0 +1,16 @@
+<.breadcrumbs>
+  <:crumb label={@organization.login} link={~p[/#{@organization.login}]} />
+  <:crumb label="labels" link={~p[/#{@organization.login}/labels]} />
+  <:crumb label={@label.name} />
+</.breadcrumbs>
+
+<.header>
+  Edit Label "<%= @label.name %>"
+  <:subtitle>Use this form to manage label records in your database.</:subtitle>
+</.header>
+
+<.label_form changeset={@changeset} action={~p"/#{@organization.login}/labels/#{@label.name}"} />
+
+<.back navigate={~p"/#{@organization.login}/labels/#{@label.name}"}>
+  Back to <%= @label.name %>
+</.back>

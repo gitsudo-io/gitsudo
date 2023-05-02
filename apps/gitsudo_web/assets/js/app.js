@@ -22,29 +22,8 @@ import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
-import InPlaceEditor from "./svelte/InPlaceEditor.svelte"
-
-export const InPlaceEditorHook = {
-    async mounted() {
-        let props = {}
-        this.el.getAttributeNames().filter(attr => attr.startsWith("data-"))
-            .forEach(attr => {
-                const name = attr.substring(5);
-                props[name] = this.el.getAttribute(attr)
-            })
-        this._instance = new InPlaceEditor({
-            target: this.el,
-            props
-        })
-    },
-
-    destroyed() {
-        this._instance?.$destroy()
-    },
-}
-
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken }, hooks: { InPlaceEditorHook } })
+let liveSocket = new LiveSocket("/live", Socket, { params: { _csrf_token: csrfToken }, hooks: {} })
 
 // Show progress bar on live navigation and form submits
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" })
@@ -59,3 +38,22 @@ liveSocket.connect()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
+
+import InPlaceEditor from "./svelte/InPlaceEditor.svelte"
+import RepoLabels from "./svelte/RepoLabels.svelte"
+
+import component from "svelte-tag"
+
+new component({ component: InPlaceEditor, tagname: "svelte-in-place-editor", attributes: ["org", "id", "text"] });
+new component({ component: RepoLabels, tagname: "svelte-repo-labels", attributes: ["org", "repo"] });
+
+window.replace = (elementId, component) => {
+    el = document.getElementById(elementId)
+    replacement = document.createElement("svelte-in-place-editor")
+    el.getAttributeNames().filter(attr => attr.startsWith("data-"))
+        .forEach(attr => {
+            const name = attr.substring(5);
+            replacement.setAttribute(name, el.getAttribute(attr))
+        });
+    el.replaceWith(replacement);
+}

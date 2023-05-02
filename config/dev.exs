@@ -35,7 +35,12 @@ config :gitsudo_web, GitsudoWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "SPzie6yA1t6HaF+lmlONy01MM10H81+z0FctD0aM/uMCKocoIFhUKp01EXq/K4JH",
   watchers: [
-    node: ["build.js", "--watch", cd: Path.expand("../apps/gitsudo_web/assets", __DIR__)],
+    node: [
+      "build.js",
+      "--summary",
+      "--watch",
+      cd: Path.expand("../apps/gitsudo_web/assets", __DIR__)
+    ],
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 

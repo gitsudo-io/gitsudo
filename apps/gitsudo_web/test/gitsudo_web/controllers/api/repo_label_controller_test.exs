@@ -4,17 +4,9 @@ defmodule GitsudoWeb.API.RepoLabelControllerTest do
 
   import Gitsudo.LabelsFixtures
 
-  alias Gitsudo.Labels.Label
-
   require Logger
 
   @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
-
-  @update_attrs %{
-    color: "some updated color",
-    name: "some updated name"
-  }
-  @invalid_attrs %{color: nil, name: nil}
 
   setup %{conn: conn} do
     {:ok, _account} =

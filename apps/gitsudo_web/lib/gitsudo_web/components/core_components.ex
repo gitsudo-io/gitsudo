@@ -376,6 +376,7 @@ defmodule GitsudoWeb.CoreComponents do
       id={@id || @name}
       name={@name}
       value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      checked={@checked}
       {@rest}
     />
     """

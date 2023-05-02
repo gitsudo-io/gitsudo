@@ -9,10 +9,20 @@ defmodule GitsudoWeb.API.LabelController do
   action_fallback GitsudoWeb.FallbackController
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def index(%{assigns: %{organization: organization}} = conn, _params) do
-    labels = Labels.list_organization_labels(organization.id)
-    render(conn, :index, labels: labels)
+  def index(%{assigns: %{organization: organization}} = conn, params) do
+    labels = Labels.list_organization_labels(organization.id) |> filter_labels(params)
+
+    conn
+    |> render(:index, labels: labels)
   end
+
+  defp filter_labels(labels, %{"s" => s}) do
+    Enum.filter(labels, fn label ->
+      label.name |> String.downcase() |> String.contains?(String.downcase(s))
+    end)
+  end
+
+  defp filter_labels(labels, _), do: labels
 
   @spec create(
           %{

@@ -21,7 +21,7 @@
           <td class="flex items-start">
             <div class="pr-1">
               <%= for label <- repository.labels do %>
-                <%= content_tag("div", label.name,
+                <%= content_tag("span", label.name,
                   class: "badge badge-lg border-#{label.color} bg-#{label.color}"
                 ) %>
               <% end %>
