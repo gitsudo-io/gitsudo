@@ -72,21 +72,10 @@ defmodule GitsudoWeb.LabelController do
         } = params
       ) do
     if label = Labels.get_label_by_name(organization.id, name) do
-      team_permission_ids = params["team_permissions_ids"]
-      team_permissions_teams = params["team_permissions_teams"]
-      team_permissions_permissions = params["team_permissions_permissions"]
+      team_policies = build_team_policies(params)
+      Logger.debug("team_policies => #{inspect(team_policies)}}")
 
-      team_permissions =
-        Enum.zip([team_permission_ids, team_permissions_teams, team_permissions_permissions])
-        |> Enum.map(fn {id, team, permission} ->
-          %{
-            id: id,
-            team_id: team,
-            permission: permission
-          }
-        end)
-
-      attrs = Map.put(label_params, "team_policies", team_permissions)
+      attrs = Map.put(label_params, "team_policies", team_policies)
 
       with {:ok, %Label{} = label} <- Labels.update_label(label, attrs) do
         redirect(conn, to: ~p"/#{organization.login}/labels/#{label.name}")
@@ -95,6 +84,60 @@ defmodule GitsudoWeb.LabelController do
       conn |> send_resp(:not_found, "Not found") |> halt
     end
   end
+
+  defp build_team_policies(params) do
+    Logger.debug("params => #{inspect(params)}")
+    extract_existing_team_permissions(params) ++ build_new_team_permissions(params)
+  end
+
+  defp extract_existing_team_permissions(%{
+         "team_permissions_ids" => team_permission_ids,
+         "team_permissions_teams" => team_permissions_teams,
+         "team_permissions_permissions" => team_permissions_permissions
+       }) do
+    Logger.debug("team_permissions_ids => #{inspect(team_permission_ids)}")
+    Logger.debug("team_permissions_teams => #{inspect(team_permissions_teams)}")
+    Logger.debug("team_permissions_permissions => #{inspect(team_permissions_permissions)}")
+
+    Enum.zip([
+      team_permission_ids,
+      team_permissions_teams,
+      team_permissions_permissions
+    ])
+    |> Enum.map(fn {id, team_slug, permission} ->
+      %{
+        id: id,
+        team_slug: team_slug,
+        permission: permission
+      }
+    end)
+  end
+
+  defp extract_existing_team_permissions(label_params), do: []
+
+  defp build_new_team_permissions(%{
+         "new_team_permissions_teams" => new_team_permissions_teams,
+         "new_team_permissions_permissions" => new_team_permissions_permissions
+       }) do
+    Logger.debug("new_team_permissions_teams => #{inspect(new_team_permissions_teams)}")
+
+    Logger.debug(
+      "new_team_permissions_permissions => #{inspect(new_team_permissions_permissions)}"
+    )
+
+    Enum.zip([
+      new_team_permissions_teams,
+      new_team_permissions_permissions
+    ])
+    |> Enum.map(fn {team_slug, permission} ->
+      %{
+        team_slug: team_slug,
+        permission: permission
+      }
+    end)
+  end
+
+  defp build_new_team_permissions(label_params), do: []
 
   def delete(%{assigns: %{organization: organization}} = conn, %{
         "name" => name

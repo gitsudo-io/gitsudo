@@ -15,7 +15,7 @@ defmodule Gitsudo.Labels.Label do
       join_through: "repositories_labels"
 
     has_many :collaborator_policies, Gitsudo.Policies.CollaboratorPolicy
-    has_many :team_policies, Gitsudo.Policies.TeamPolicy
+    has_many :team_policies, Gitsudo.Policies.TeamPolicy, on_replace: :delete
 
     timestamps()
   end

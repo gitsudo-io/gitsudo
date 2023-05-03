@@ -9,8 +9,7 @@
 
   let permissions = [];
   let team_slugs_for_deletion = [];
-
-  let adding_team = false;
+  let new_permissions = [];
 
   onMount(async () => {
     permissions = JSON.parse(teampermissions);
@@ -18,7 +17,16 @@
   });
 
   const addTeam = () => {
-    adding_team = true;
+    new_permissions = new_permissions.concat({
+      team_slug: "",
+      permission: "pull",
+    });
+  };
+
+  const removeNewTeamPermission = (i) => {
+    console.log("removeNewTeamPermission(" + i + ")");
+    new_permissions.splice(i, 1);
+    new_permissions = new_permissions;
   };
 
   const markTeamForDeletion = (team_slug) => {
@@ -80,33 +88,47 @@
     </tr>
   {/each}
 
-  <tr>
-    {#if adding_team}
-      <td class="w-2/6">
+  {#each new_permissions as permission, i}
+    <tr>
+      <td>
         <input
           type="text"
           name="new_team_permissions_teams[]"
-          class="input input-bordered input-sm"
+          bind:value={new_permissions[i].team_slug}
+          class="input input-sm input-bordered"
         />
       </td>
-      <td class="w-1/6">
-        <select name="new_team_permissions_permissions[]" class="select">
+      <td>
+        <select
+          name="new_team_permissions_permissions[]"
+          bind:value={new_permissions[i].permission}
+          class="select"
+        >
           {#each permission_values as value}
             <option {value}>{value}</option>
           {/each}
         </select>
       </td>
-    {:else}
-      <td class="w-2/6">
+      <td>
         <button
-          class="btn btn-sm btn-primary"
-          alt="Add a team..."
-          on:click|preventDefault={addTeam}
+          class="btn btn-sm btn-ghost"
+          on:click|preventDefault={() => removeNewTeamPermission(i)}
         >
-          <span class="hero-plus-circle" />
+          <span class="hero-minus-circle" />
         </button>
       </td>
-    {/if}
+    </tr>
+  {/each}
+  <tr>
+    <td class="w-2/6">
+      <button
+        class="btn btn-sm btn-primary"
+        alt="Add a team..."
+        on:click|preventDefault={addTeam}
+      >
+        <span class="hero-plus-circle" />
+      </button>
+    </td>
   </tr>
 </table>
 
