@@ -61,12 +61,34 @@ defmodule GitsudoWeb.LabelController do
     end
   end
 
-  def update(%{assigns: %{organization: organization}} = conn, %{
-        "name" => name,
-        "label" => label_params
-      }) do
+  @doc """
+  POST /:owner/:repo/labels
+  """
+  def update(
+        %{assigns: %{organization: organization}} = conn,
+        %{
+          "name" => name,
+          "label" => label_params
+        } = params
+      ) do
     if label = Labels.get_label_by_name(organization.id, name) do
-      with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
+      team_permission_ids = params["team_permissions_ids"]
+      team_permissions_teams = params["team_permissions_teams"]
+      team_permissions_permissions = params["team_permissions_permissions"]
+
+      team_permissions =
+        Enum.zip([team_permission_ids, team_permissions_teams, team_permissions_permissions])
+        |> Enum.map(fn {id, team, permission} ->
+          %{
+            id: id,
+            team_id: team,
+            permission: permission
+          }
+        end)
+
+      attrs = Map.put(label_params, "team_policies", team_permissions)
+
+      with {:ok, %Label{} = label} <- Labels.update_label(label, attrs) do
         redirect(conn, to: ~p"/#{organization.login}/labels/#{label.name}")
       end
     else

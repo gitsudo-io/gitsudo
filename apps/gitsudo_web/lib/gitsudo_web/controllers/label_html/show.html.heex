@@ -38,6 +38,24 @@
     <h1 class="pt-8">Policies</h1>
 
     <h2>Collaborators</h2>
+    <table class="table">
+      <tr>
+        <th>Team</th>
+        <th>Permission</th>
+      </tr>
+      <%= for team_policy <- @label.team_policies do %>
+        <tr>
+          <td>
+            <%= team_policy.team_slug %>
+            <%= link(to: "https://github.com/orgs/#{@organization.login}/teams/#{team_policy.team_slug}", target: "_blank") do %>
+              <span class="hero-arrow-top-right-on-square" />
+            <% end %>
+          </td>
+          <td><%= team_policy.permission %></td>
+        </tr>
+      <% end %>
+    </table>
+
     <ul class="list-disc pl-4">
       <%= for collaborator_policy <- @label.collaborator_policies do %>
         <li>

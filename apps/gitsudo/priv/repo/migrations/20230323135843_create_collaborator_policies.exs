@@ -20,5 +20,6 @@ defmodule Gitsudo.Repo.Migrations.CreateCollaboratorPolicies do
     end
 
     create index(:collaborator_policies, [:label_id])
+    create unique_index(:collaborator_policies, [:label_id, :collaborator_id])
   end
 end

@@ -7,6 +7,8 @@ defmodule Gitsudo.Labels do
 
   import Ecto.Query, warn: false
 
+  require Logger
+
   @doc """
   Returns the labels for an organization.
 
@@ -34,7 +36,12 @@ defmodule Gitsudo.Labels do
   def get_label_by_name(owner_id, name),
     do:
       Repo.get_by(Label, owner_id: owner_id, name: name)
-      |> Repo.preload([:owner, :repositories, collaborator_policies: [:collaborator]])
+      |> Repo.preload([
+        :owner,
+        :repositories,
+        :team_policies,
+        collaborator_policies: [:collaborator]
+      ])
 
   @doc """
   Creates a label.
@@ -73,6 +80,8 @@ defmodule Gitsudo.Labels do
 
   """
   def update_label(%Label{} = label, attrs) do
+    Logger.debug(inspect(attrs))
+
     label
     |> Label.changeset(attrs)
     |> Repo.update()

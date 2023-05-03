@@ -19,7 +19,7 @@ defmodule Gitsudo.Policies.CollaboratorPolicy do
   @doc false
   def changeset(collaborator_policy, attrs) do
     collaborator_policy
-    |> cast(attrs, [:owner_id, :label_id, :collaborator_id, :permission])
+    |> cast(attrs, [:label_id, :collaborator_id, :permission])
     |> validate_required([])
   end
 end

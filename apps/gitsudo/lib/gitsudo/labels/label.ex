@@ -15,6 +15,7 @@ defmodule Gitsudo.Labels.Label do
       join_through: "repositories_labels"
 
     has_many :collaborator_policies, Gitsudo.Policies.CollaboratorPolicy
+    has_many :team_policies, Gitsudo.Policies.TeamPolicy
 
     timestamps()
   end
@@ -31,6 +32,7 @@ defmodule Gitsudo.Labels.Label do
   def changeset(label, attrs) do
     label
     |> cast(attrs, [:owner_id, :name, :color, :description])
+    |> cast_assoc(:team_policies, with: &Gitsudo.Policies.TeamPolicy.changeset/2)
     |> validate_required([:owner_id, :name, :color])
     |> unique_constraint(:name, name: :labels_owner_id_name_index)
   end

@@ -43,8 +43,13 @@
         id: "label-#{@label.id}-team-permissions",
         labelid: @label.id,
         org: @label.owner.login,
-        text: @label.name,
-        teampermissions: Jason.encode!(%{"a-team" => "maintain"})
+        teampermissions:
+          Jason.encode!(
+            Enum.map(
+              @label.team_policies,
+              &%{id: &1.id, team_slug: &1.team_slug, permission: &1.permission}
+            )
+          )
       ) %>
     </div>
   </div>
