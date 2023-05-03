@@ -67,7 +67,7 @@ defmodule GitsudoWeb.LabelController do
       }) do
     if label = Labels.get_label_by_name(organization.id, name) do
       with {:ok, %Label{} = label} <- Labels.update_label(label, label_params) do
-        render(conn, :show, label: label)
+        redirect(conn, to: ~p"/#{organization.login}/labels/#{label.name}")
       end
     else
       conn |> send_resp(:not_found, "Not found") |> halt
