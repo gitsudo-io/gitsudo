@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
 
   export let org;
-  export let labelid;
   export let teampermissions;
 
   const permission_values = ["pull", "triage", "push", "maintain", "admin"];
@@ -68,7 +67,7 @@
       <td>
         <select
           name="team_permissions_permissions[]"
-          value={permission.permission}
+          bind:value={permission.permission}
           class="select"
         >
           {#each permission_values as value}
@@ -91,16 +90,17 @@
   {#each new_permissions as permission, i}
     <tr>
       <td>
+        <input type="hidden" name="team_permissions_ids[]" value="" />
         <input
           type="text"
-          name="new_team_permissions_teams[]"
+          name="team_permissions_teams[]"
           bind:value={new_permissions[i].team_slug}
           class="input input-sm input-bordered"
         />
       </td>
       <td>
         <select
-          name="new_team_permissions_permissions[]"
+          name="team_permissions_permissions[]"
           bind:value={new_permissions[i].permission}
           class="select"
         >
