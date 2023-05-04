@@ -302,8 +302,10 @@ defmodule GitsudoWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+
   attr :rest, :global, include: ~w(autocomplete cols disabled form max maxlength min minlength
                                    pattern placeholder readonly required rows size step)
+
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
@@ -387,6 +389,7 @@ defmodule GitsudoWeb.CoreComponents do
       name={@name}
       value={Phoenix.HTML.Form.normalize_value(@type, @value)}
       checked={@checked}
+      class={@class}
       {@rest}
     />
     """
@@ -619,6 +622,21 @@ defmodule GitsudoWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
+    """
+  end
+
+  @doc """
+  Renders a badge.
+  """
+
+  attr :color, :string, required: true
+  attr :label, :string, required: true
+
+  def badge(%{color: color, label: label} = assigns) do
+    ~H"""
+    <span class={"badge bg-#{color} border-#{color} align-top h-6"}>
+      <%= label %>
+    </span>
     """
   end
 

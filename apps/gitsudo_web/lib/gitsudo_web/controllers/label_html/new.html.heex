@@ -9,7 +9,7 @@
   <:subtitle>Create a new label</:subtitle>
 </.header>
 
-<.label_form changeset={@changeset} action={~p"/#{@organization.login}/labels"} />
+<.label_form changeset={@changeset} label={nil} action={~p"/#{@organization.login}/labels"} />
 
 <.back navigate={~p"/#{@organization.login}/labels"}>
   Back to <%= @organization.login %> labels

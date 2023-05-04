@@ -13,8 +13,8 @@
           Color
         </label>
         <%= for color <- ["red", "orange", "yellow", "lime", "green", "teal", "cyan", "blue", "violet", "purple", "pink", "gray"] do %>
-          <div class="inline form-control pr-2">
-            <label>
+          <div class="inline form-control pr-2 align-top">
+            <label class="align-top">
               <.input
                 field={f[:color]}
                 type="radio"
@@ -22,9 +22,7 @@
                 value={"label-#{color}"}
                 checked={f[:color].value == "label-#{color}"}
               />
-              <%= content_tag("span", color,
-                class: "badge bg-label-#{color} border-label-#{color}"
-              ) %>
+              <.badge color={"label-#{color}"} label={color} />
             </label>
           </div>
         <% end %>
@@ -33,26 +31,28 @@
     </div>
   </div>
 
-  <div class="collapse collapse-arrow border border-base-300 rounded-box">
-    <input type="checkbox" checked />
-    <div class="collapse-title text-xl font-medium bg-base-200">
-      Team Permissions
-    </div>
-    <div class="w-full">
-      <%= content_tag("svelte-team-permissions-editor", nil,
-        id: "label-#{@label.id}-team-permissions",
-        labelid: @label.id,
-        org: @label.owner.login,
-        teampermissions:
-          Jason.encode!(
-            Enum.map(
-              @label.team_policies,
-              &%{id: &1.id, team_slug: &1.team_slug, permission: &1.permission}
+  <%= if @label do %>
+    <div class="collapse collapse-arrow border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-xl font-medium bg-base-200">
+        Team Permissions
+      </div>
+      <div class="w-full">
+        <%= content_tag("svelte-team-permissions-editor", nil,
+          id: "label-#{@label.id}-team-permissions",
+          labelid: @label.id,
+          org: @label.owner.login,
+          teampermissions:
+            Jason.encode!(
+              Enum.map(
+                @label.team_policies,
+                &%{id: &1.id, team_slug: &1.team_slug, permission: &1.permission}
+              )
             )
-          )
-      ) %>
+        ) %>
+      </div>
     </div>
-  </div>
+  <% end %>
 
   <:actions>
     <.button class="btn btn-primary">Save Label</.button>
