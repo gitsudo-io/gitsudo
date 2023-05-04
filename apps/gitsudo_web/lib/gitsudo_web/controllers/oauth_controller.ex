@@ -20,9 +20,9 @@ defmodule GitsudoWeb.OauthController do
       Application.fetch_env!(:gitsudo_web, GitsudoWeb.Endpoint)[:github_client_secret]
 
     case Gitsudo.Accounts.handle_user_login(client_id, client_secret, code) do
-      {:ok, %{access_token: access_token, exp: expires_at}} when is_binary(access_token) ->
+      {:ok, %{user_id: user_id, exp: expires_at}} ->
         conn
-        |> put_session(:access_token, access_token)
+        |> put_session(:user_id, user_id)
         |> put_session(:exp, expires_at)
         |> redirect(to: ~p"/")
 
@@ -33,6 +33,12 @@ defmodule GitsudoWeb.OauthController do
 
         conn
         |> put_flash(:error, message)
+        |> redirect(to: ~p"/login")
+        |> halt()
+
+      _ ->
+        conn
+        |> put_flash(:error, "Something went wrong")
         |> redirect(to: ~p"/login")
         |> halt()
     end

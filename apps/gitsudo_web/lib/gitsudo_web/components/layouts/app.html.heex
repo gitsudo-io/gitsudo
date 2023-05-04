@@ -12,11 +12,11 @@
           <div class="inline px-1">
             <div class="avatar inline">
               <div class="w-7 rounded-full">
-                <%= img_tag(@current_user["avatar_url"]) %>
+                <%= img_tag(@current_user.avatar_url) %>
               </div>
             </div>
           </div>
-          <b><%= @current_user["login"] %></b>
+          <b><%= @current_user.login %></b>
         </div>
       <% end %>
       <ul class="menu menu-horizontal px-1 items-end">

@@ -8,6 +8,11 @@ defmodule Gitsudo.Accounts do
 
   require Logger
 
+  @spec get_account(id :: integer()) :: Account | nil
+  def get_account(id) do
+    Repo.get(Account, id)
+  end
+
   @spec get_account_by_login(login :: String.t()) ::
           Account | term() | nil
   def get_account_by_login(login) do
@@ -30,8 +35,7 @@ defmodule Gitsudo.Accounts do
           client_secret :: String.t(),
           code :: String.t()
         ) ::
-          {:ok, %{access_token: String.t(), exp: integer()}}
-          | {:error, Exception.t() | Jason.DecodeError.t()}
+          {:ok, map()} | {:error, Exception.t() | Jason.DecodeError.t()}
   def handle_user_login(client_id, client_secret, code) do
     with {:ok, json} <-
            GitHub.Client.exchange_code_for_access_token(client_id, client_secret, code) do
@@ -52,17 +56,18 @@ defmodule Gitsudo.Accounts do
     with {:ok, expires_at} <- DateTime.from_unix(expires_at_unix),
          {:ok, refresh_token_expires_at} <-
            DateTime.from_unix(refresh_token_expires_at_unix),
-         {:ok, %{"id" => id} = user} <- GitHub.Client.get_user(access_token) do
-      Logger.debug("Found user: #{inspect(user)}")
+         {:ok, %{"id" => id} = github_user} <- GitHub.Client.get_user(access_token) do
+      Logger.debug("Found user: #{inspect(github_user)}")
 
-      with {:ok, _user_session} <-
+      with {:ok, user} <- create_or_update_user(github_user),
+           {:ok, _user_session} <-
              create_or_update_user_session(id, %{
                access_token: access_token,
                expires_at: expires_at,
                refresh_token: refresh_token,
                refresh_token_expires_at: refresh_token_expires_at
              }) do
-        {:ok, %{access_token: access_token, exp: expires_at_unix}}
+        {:ok, %{user_id: user.id, exp: expires_at_unix}}
       end
     end
   end
@@ -72,6 +77,24 @@ defmodule Gitsudo.Accounts do
          "error_description" => error_description
        }),
        do: {:error, error_description}
+
+  @spec create_or_update_user(map) :: {:ok, Account} | {:error, Ecto.Changeset.t()}
+  def create_or_update_user(%{"id" => id, "login" => login, "type" => type} = user_data) do
+    Logger.debug(
+      "create_or_update_user(#{inspect(%{"id" => id, "login" => login, "type" => type})})"
+    )
+
+    account = Repo.get(Account, id) || %Account{id: id}
+
+    account
+    |> Account.changeset(user_data)
+    |> Repo.insert_or_update()
+  end
+
+  @spec get_user_session(user_id :: integer()) :: %UserSession{} | nil
+  def get_user_session(user_id) do
+    Repo.get(UserSession, user_id)
+  end
 
   @spec create_or_update_user_session(
           integer(),

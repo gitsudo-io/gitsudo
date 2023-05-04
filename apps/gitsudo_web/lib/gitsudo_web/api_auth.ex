@@ -19,7 +19,7 @@ defmodule GitsudoWeb.ApiAuth do
           do: Logger.debug("#{key}: #{value}")
     end
 
-    if conn.assigns[:access_token] do
+    if conn.assigns[:current_user] do
       conn
     else
       conn

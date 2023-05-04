@@ -26,8 +26,15 @@ defmodule Gitsudo.Labels do
   @doc """
   Retrieves a single organization label by id
   """
-  def get_label!(owner_id, id),
-    do: Repo.get_by!(Label, owner_id: owner_id, id: id)
+  def get_label!(owner_id, id, opts \\ []) do
+    label = Repo.get_by!(Label, owner_id: owner_id, id: id)
+
+    if Keyword.has_key?(opts, :preload) do
+      Repo.preload(label, opts[:preload])
+    else
+      label
+    end
+  end
 
   @doc """
   Retrieves a single organization label by name
@@ -59,12 +66,20 @@ defmodule Gitsudo.Labels do
           integer(),
           map()
         ) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
-  def create_label(owner_id, attrs) do
-    %Label{
-      owner_id: owner_id
-    }
-    |> Label.changeset(attrs)
-    |> Repo.insert()
+  def create_label(owner_id, attrs, opts \\ []) do
+    with {:ok, label} <-
+           %Label{
+             owner_id: owner_id
+           }
+           |> Label.changeset(attrs)
+           |> Repo.insert() do
+      {:ok,
+       if Keyword.has_key?(opts, :preload) do
+         Repo.preload(label, opts[:preload])
+       else
+         label
+       end}
+    end
   end
 
   @doc """
@@ -79,12 +94,18 @@ defmodule Gitsudo.Labels do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_label(%Label{} = label, attrs) do
-    Logger.debug(inspect(attrs))
-
-    label
-    |> Label.changeset(attrs)
-    |> Repo.update()
+  def update_label(%Label{} = label, attrs, opts \\ []) do
+    with {:ok, label} <-
+           label
+           |> Label.changeset(attrs)
+           |> Repo.update() do
+      {:ok,
+       if Keyword.has_key?(opts, :preload) do
+         Repo.preload(label, opts[:preload])
+       else
+         label
+       end}
+    end
   end
 
   @doc """

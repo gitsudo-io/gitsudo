@@ -7,7 +7,7 @@ defmodule GitHub.Policies.TeamPolicyTest do
   @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
 
   setup do
-    ExVCR.Config.cassette_library_dir("fixture/vcr_cassettes")
+    ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
 
     if test_access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN") do
       ExVCR.Config.filter_sensitive_data(test_access_token, @dummy_personal_access_token)

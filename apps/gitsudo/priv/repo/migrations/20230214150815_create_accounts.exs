@@ -7,6 +7,7 @@ defmodule Gitsudo.Repo.Migrations.CreateAccounts do
 
       add :login, :string, null: false
       add :type, :string, null: false
+      add :avatar_url, :string
 
       timestamps()
     end

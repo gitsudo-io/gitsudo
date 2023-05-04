@@ -36,6 +36,7 @@ defmodule GitsudoWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:exvcr, "~> 0.11", only: [:dev, :test], runtime: false},
       {:github, in_umbrella: true},
       {:secure_random, "~> 0.5"},
       {:phoenix, "~> 1.7.1"},

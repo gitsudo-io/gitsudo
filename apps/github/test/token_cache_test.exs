@@ -10,7 +10,7 @@ defmodule GitHub.TokenCacheTest do
     key_pem = File.read!(System.fetch_env!("GITHUB_APP_PRIVATE_KEY_FILE"))
     GitHub.TokenCache.start_link(app_id: app_id, key_pem: key_pem)
 
-    ExVCR.Config.cassette_library_dir("fixture/vcr_cassettes")
+    ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
     :ok
   end
 

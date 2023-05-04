@@ -1,6 +1,8 @@
 defmodule GitsudoWeb.PageController do
   use GitsudoWeb, :controller
 
+  alias Gitsudo.Accounts
+
   require Logger
 
   @spec home(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -11,8 +13,8 @@ defmodule GitsudoWeb.PageController do
   @spec list_repositories(Plug.Conn.t()) :: Plug.Conn.t()
   def list_repositories(conn) do
     with user <- conn.assigns[:current_user],
-         access_token <- get_session(conn, :access_token) do
-      case Gitsudo.Repositories.list_user_repositories(user, access_token) do
+         user_session <- Accounts.get_user_session(user.id) do
+      case Gitsudo.Repositories.list_user_repositories(user, user_session.access_token) do
         {:ok, repositories} ->
           Logger.debug("list_user_repositories() found: #{length(repositories)}")
           conn |> assign(:repositories, repositories)
@@ -36,7 +38,7 @@ defmodule GitsudoWeb.PageController do
   @spec logout(Plug.Conn.t(), any) :: Plug.Conn.t()
   def logout(conn, _params) do
     conn
-    |> delete_session(:access_token)
+    |> delete_session(:user_id)
     |> redirect(to: ~p"/")
   end
 end

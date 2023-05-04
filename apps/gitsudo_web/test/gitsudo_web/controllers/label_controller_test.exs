@@ -1,42 +1,26 @@
 defmodule GitsudoWeb.LabelControllerTest do
   use GitsudoWeb.ConnCase
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Finch
+  use Gitsudo.VcrCase
 
   import Gitsudo.LabelsFixtures
+  import GitsudoWeb.UserSessionFixtures
 
   alias Gitsudo.Labels.Label
 
   require Logger
 
-  setup do
-    ExVCR.Config.cassette_library_dir("test/fixtures/vcr_cassettes")
-    :ok
-  end
-
-  @dummy_personal_access_token "06d5607433ef55fbfd842fd06ee740eddec4caaf"
-
   setup %{conn: conn} do
-    {:ok, _account} =
-      Gitsudo.Accounts.find_or_create_account(121_780_924, %{
-        "login" => "gitsudo-io",
-        "type" => "Organization"
-      })
-
-    access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN", @dummy_personal_access_token)
-    ExVCR.Config.filter_sensitive_data(access_token, @dummy_personal_access_token)
-
-    {:ok, conn: Plug.Test.init_test_session(conn, access_token: access_token)}
+    user_session = user_session_fixture()
+    {:ok, conn: Plug.Test.init_test_session(conn, user_id: user_session.id)}
   end
 
   describe "index" do
     setup [:create_label]
 
     test "lists all labels", %{conn: conn, label: label} do
-      use_cassette "get_home_works" do
-        conn = get(conn, ~p"/gitsudo-io/labels")
+      conn = get(conn, ~p"/gitsudo-io/labels")
 
-        assert html_response(conn, 200) =~ label.name
-      end
+      assert html_response(conn, 200) =~ label.name
     end
   end
 
@@ -44,19 +28,41 @@ defmodule GitsudoWeb.LabelControllerTest do
     setup [:create_label]
 
     test "shows a label", %{conn: conn, label: label} do
-      use_cassette "get_home_works" do
-        conn = get(conn, ~p"/gitsudo-io/labels/#{label.name}")
+      conn = get(conn, ~p"/gitsudo-io/labels/#{label.name}")
 
-        assert html_response(conn, 200) =~ label.name
-      end
+      assert html_response(conn, 200) =~ label.name
     end
 
     test "404 on non-existent label", %{conn: conn} do
-      use_cassette "get_home_works" do
-        conn = get(conn, ~p"/gitsudo-io/labels/not-a-label")
+      conn = get(conn, ~p"/gitsudo-io/labels/not-a-label")
 
-        assert response(conn, 404)
-      end
+      assert response(conn, 404)
+    end
+  end
+
+  describe "update" do
+    setup [:create_label]
+
+    test "can add a team policy", %{conn: conn, label: %{owner: owner} = label} do
+      conn =
+        put(conn, ~p"/gitsudo-io/labels/#{label.name}", %{
+          label: %{
+            name: label.name,
+            description: label.description,
+            color: label.color
+          },
+          team_permissions_ids: [""],
+          team_permissions_teams: ["a-team"],
+          team_permissions_permissions: ["pull"]
+        })
+
+      assert html_response(conn, 302) =~ "#{owner.login}/labels/#{label.name}"
+
+      updated = Gitsudo.Labels.get_label!(owner.id, label.id, preload: [:team_policies])
+      assert length(updated.team_policies) == 1
+      first_policy = Enum.at(updated.team_policies, 0)
+      assert first_policy.team_slug == "a-team"
+      assert first_policy.permission == :pull
     end
   end
 

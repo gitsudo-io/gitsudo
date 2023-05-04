@@ -1,6 +1,7 @@
 defmodule GitsudoWeb.OrganizationController do
   use GitsudoWeb, :controller
 
+  alias Gitsudo.Accounts
   alias Gitsudo.Organizations
   alias Gitsudo.Repositories
 
@@ -23,9 +24,9 @@ defmodule GitsudoWeb.OrganizationController do
   end
 
   def fetch_repositories(conn, organization) do
-    with _user <- conn.assigns[:current_user],
-         access_token <- get_session(conn, :access_token) do
-      case Organizations.list_repositories(access_token, organization) do
+    with user <- conn.assigns[:current_user],
+         user_session <- Accounts.get_user_session(user.id) do
+      case Organizations.list_repositories(user_session.access_token, organization) do
         {:ok, repositories} ->
           Logger.debug("list_repositories() found: #{length(repositories)}")
           conn |> assign(:repositories, repositories)

@@ -24,12 +24,15 @@ defmodule Gitsudo.LabelsTest do
 
     test "list_labels/0 returns all labels" do
       label = label_fixture()
-      assert Labels.list_organization_labels(@owner_id) == [label]
+
+      assert Labels.list_organization_labels(@owner_id) == [
+               Labels.get_label!(@owner_id, label.id)
+             ]
     end
 
     test "get_label!/1 returns the label with given id" do
       label = label_fixture()
-      assert Labels.get_label!(@owner_id, label.id) == label
+      assert Labels.get_label!(@owner_id, label.id, preload: [:owner]) == label
     end
 
     test "create_label/1 with valid data creates a label" do
@@ -56,7 +59,7 @@ defmodule Gitsudo.LabelsTest do
     test "update_label/2 with invalid data returns error changeset" do
       label = label_fixture()
       assert {:error, %Ecto.Changeset{}} = Labels.update_label(label, @invalid_attrs)
-      assert label == Labels.get_label!(@owner_id, label.id)
+      assert label == Labels.get_label!(@owner_id, label.id, preload: [:owner])
     end
 
     test "delete_label/1 deletes the label" do
