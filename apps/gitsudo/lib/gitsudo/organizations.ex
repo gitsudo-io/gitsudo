@@ -16,13 +16,9 @@ defmodule Gitsudo.Organizations do
   end
 
   def list_repositories(access_token, organization) do
-    case GitHub.Client.list_org_repos(access_token, organization.login) do
-      {:ok, org_repos} ->
-        Logger.debug(~s'Found #{length(org_repos)} repos under "#{organization.login}"}')
-        {:ok, Repositories.enrich_repos_with_labels_and_config_sets(org_repos)}
-
-      {:error, reason} ->
-        {:error, reason}
+    with {:ok, org_repos} <- GitHub.Client.list_org_repos(access_token, organization.login) do
+      Logger.debug(~s'Found #{length(org_repos)} repos under "#{organization.login}"}')
+      {:ok, Repositories.enrich_repos_with_labels_and_config_sets(org_repos)}
     end
   end
 end

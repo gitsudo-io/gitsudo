@@ -17,9 +17,14 @@ defmodule GitsudoWeb.UserAuth do
   """
   def fetch_current_user(conn, _opts) do
     with user_id when user_id != nil <- get_session(conn, :user_id),
-         user when user != nil <- Accounts.get_account(user_id) do
-      Logger.debug("user: #{inspect(user)}")
-      conn |> assign(:current_user, user)
+         user_session when user_session != nil <- Accounts.get_user_session(user_id) do
+      Logger.debug("user: #{inspect(user_session.user)}")
+
+      if user_session.expires_at > DateTime.utc_now() do
+        conn |> assign(:current_user, user_session.user)
+      else
+        conn |> assign(:current_user, nil)
+      end
     else
       {:error, err} ->
         Logger.error(err)
@@ -70,7 +75,6 @@ defmodule GitsudoWeb.UserAuth do
   end
 
   defp maybe_store_return_to(%{method: "GET"} = conn) do
-    Logger.debug("maybe_store_return_to: #{current_path(conn)}")
     put_session(conn, :user_return_to, current_path(conn))
   end
 

@@ -93,7 +93,7 @@ defmodule Gitsudo.Accounts do
 
   @spec get_user_session(user_id :: integer()) :: %UserSession{} | nil
   def get_user_session(user_id) do
-    Repo.get(UserSession, user_id)
+    Repo.get(UserSession, user_id) |> Repo.preload(:user)
   end
 
   @spec create_or_update_user_session(

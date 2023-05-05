@@ -31,10 +31,23 @@ defmodule GitsudoWeb.OrganizationController do
           Logger.debug("list_repositories() found: #{length(repositories)}")
           conn |> assign(:repositories, repositories)
 
+        {:error, "401 Unauthorized"} ->
+          conn
+          |> put_flash(:error, "You must log in to access this page.")
+          |> maybe_store_return_to()
+          |> redirect(to: ~p"/login")
+          |> halt()
+
         {:error, reason} ->
           Logger.error("list_repositories() returned: #{reason}")
           conn
       end
     end
   end
+
+  defp maybe_store_return_to(%{method: "GET"} = conn) do
+    put_session(conn, :user_return_to, current_path(conn))
+  end
+
+  defp maybe_store_return_to(conn), do: conn
 end

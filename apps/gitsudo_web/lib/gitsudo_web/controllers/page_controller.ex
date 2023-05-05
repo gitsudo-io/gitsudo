@@ -19,6 +19,15 @@ defmodule GitsudoWeb.PageController do
           Logger.debug("list_user_repositories() found: #{length(repositories)}")
           conn |> assign(:repositories, repositories)
 
+        {:error, "401 Unauthorized"} ->
+          Logger.error("list_user_repositories() returned: 401 Unauthorized")
+
+          conn
+          |> put_flash(:error, "You must log in to access this page.")
+          |> maybe_store_return_to()
+          |> redirect(to: ~p"/login")
+          |> halt()
+
         {:error, reason} ->
           Logger.error("list_user_repositories() returned: #{reason}")
           conn
@@ -41,4 +50,10 @@ defmodule GitsudoWeb.PageController do
     |> delete_session(:user_id)
     |> redirect(to: ~p"/")
   end
+
+  defp maybe_store_return_to(%{method: "GET"} = conn) do
+    put_session(conn, :user_return_to, current_path(conn))
+  end
+
+  defp maybe_store_return_to(conn), do: conn
 end

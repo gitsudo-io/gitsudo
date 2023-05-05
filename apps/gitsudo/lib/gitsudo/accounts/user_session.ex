@@ -3,10 +3,15 @@ defmodule Gitsudo.Accounts.UserSession do
   A GitHub user session stores the temporary access token and refresh tokens
   """
   use Ecto.Schema
+
+  alias Gitsudo.Accounts.Account
+
   import Ecto.Changeset
 
   @primary_key {:id, :integer, autogenerate: false}
   schema "user_sessions" do
+    belongs_to :user, Account, foreign_key: :id, type: :integer, define_field: false
+
     field :access_token, :string
     field :expires_at, :utc_datetime
     field :refresh_token, :string
