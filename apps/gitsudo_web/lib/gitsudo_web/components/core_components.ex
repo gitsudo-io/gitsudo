@@ -629,14 +629,25 @@ defmodule GitsudoWeb.CoreComponents do
   Renders a badge.
   """
 
-  attr :color, :string, required: true
-  attr :label, :string, required: true
+  attr :color, :string
+  attr :text, :string
+  attr :label, :string
+  attr :title, :string, default: nil
   attr :align, :string, default: "top"
 
-  def badge(%{color: color, label: label, align: align} = assigns) do
+  def badge(%{label: label} = assigns) do
+    badge(
+      Map.merge(
+        %{color: label.color, text: label.name, title: label.description},
+        Map.delete(assigns, :label)
+      )
+    )
+  end
+
+  def badge(assigns) do
     ~H"""
-    <span class={"badge bg-#{color} border-#{color} align-#{align} h-6"}>
-      <%= label %>
+    <span class={"badge bg-#{@color} border-#{@color} align-#{@align} text-sm h-6"} title={@title}>
+      <%= @text %>
     </span>
     """
   end

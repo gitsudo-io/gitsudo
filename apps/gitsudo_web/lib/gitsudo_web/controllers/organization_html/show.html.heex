@@ -1,12 +1,23 @@
-<h1><%= @organization.login %></h1>
+<.header>
+  <h1><%= @organization.login %></h1>
+</.header>
+
+<h2>Labels</h2>
+<ul class="list-disc list-inside">
+  <%= for label <- @labels do %>
+    <li><.badge label={label} /></li>
+  <% end %>
+</ul>
+<p><%= link("Manage labels", to: ~p[/#{@organization.login}/labels]) %></p>
+
+<h2>Repositories</h2>
 
 <div class="container">
   <table class="table table-fixed min-w-full">
     <thead>
       <tr class="align-bottom">
-        <th scope="col" class="w-2/5">Repository</th>
-        <th scope="col" class="w-2/5">Labels</th>
-        <th scope="col" class="w-1/5">ConfigSets Applied</th>
+        <th scope="col" class="w-1/5">Repository</th>
+        <th scope="col">Labels</th>
       </tr>
     </thead>
     <tbody>
@@ -21,15 +32,10 @@
           <td class="flex items-start">
             <div class="pr-1">
               <%= for label <- repository.labels do %>
-                <%= content_tag("span", label.name,
-                  class: "badge badge-lg border-#{label.color} bg-#{label.color}"
-                ) %>
+                <.badge label={label} />
               <% end %>
             </div>
             <span class="hero-plus-circle h-6 w-6 text-slate-400" />
-          </td>
-          <td>
-            <span class="italic text-slate-400">none</span>
           </td>
         </tr>
       <% end %>

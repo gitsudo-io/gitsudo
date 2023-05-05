@@ -14,8 +14,11 @@ defmodule GitsudoWeb.OrganizationController do
   @spec show(Plug.Conn.t(), any) :: Plug.Conn.t()
   def show(conn, %{"organization_name" => organization_name} = _params) do
     if organization = Organizations.get_organization(organization_name) do
+      labels = Gitsudo.Labels.list_organization_labels(organization.id)
+
       conn
       |> assign(:organization, organization)
+      |> assign(:labels, labels)
       |> fetch_repositories(organization)
       |> render(:show)
     else

@@ -20,7 +20,7 @@
           <%= content_tag("tr", "data-id": label.id) do %>
             <td>
               <%= link to: ~p[/#{@organization.login}/labels/#{label.name}] do %>
-                <.badge color={label.color} label={label.name} />
+                <.badge label={label} />
               <% end %>
             </td>
             <td><%= label.description %></td>
