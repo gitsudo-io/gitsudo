@@ -11,6 +11,7 @@ defmodule GitsudoWeb.LabelHTML do
   """
   attr :changeset, Ecto.Changeset, required: true
   attr :action, :string, required: true
+  attr :label, Gitsudo.Labels.Label
 
   def label_form(assigns)
 end

@@ -113,7 +113,7 @@ defmodule GitsudoWeb.LabelController do
     end)
   end
 
-  defp extract_existing_team_permissions(label_params), do: []
+  defp extract_existing_team_permissions(_label_params), do: []
 
   def delete(%{assigns: %{organization: organization}} = conn, %{
         "name" => name

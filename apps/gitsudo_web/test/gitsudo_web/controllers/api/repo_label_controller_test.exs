@@ -3,6 +3,7 @@ defmodule GitsudoWeb.API.RepoLabelControllerTest do
   use GitsudoWeb.ConnCase
 
   import Gitsudo.LabelsFixtures
+  import GitsudoWeb.UserSessionFixtures
 
   require Logger
 
@@ -28,18 +29,15 @@ defmodule GitsudoWeb.API.RepoLabelControllerTest do
       })
 
     label = label_fixture()
-    Logger.debug("label: #{inspect(label)}")
 
-    {:ok, r} = Gitsudo.Repositories.add_label_to_repository(repository, label)
-    Logger.debug("r: #{inspect(r)}")
+    {:ok, _r} = Gitsudo.Repositories.add_label_to_repository(repository, label)
 
-    access_token = System.get_env("TEST_PERSONAL_ACCESS_TOKEN", @dummy_personal_access_token)
-    ExVCR.Config.filter_sensitive_data(access_token, @dummy_personal_access_token)
+    user_session = user_session_fixture()
 
     conn =
       conn
       |> put_req_header("accept", "application/json")
-      |> Plug.Test.init_test_session(user_id: account.id)
+      |> Plug.Test.init_test_session(user_id: user_session.id)
 
     {:ok, conn: conn, label: label}
   end
