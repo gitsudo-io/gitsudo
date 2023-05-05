@@ -631,10 +631,11 @@ defmodule GitsudoWeb.CoreComponents do
 
   attr :color, :string, required: true
   attr :label, :string, required: true
+  attr :align, :string, default: "top"
 
-  def badge(%{color: color, label: label} = assigns) do
+  def badge(%{color: color, label: label, align: align} = assigns) do
     ~H"""
-    <span class={"badge bg-#{color} border-#{color} align-top h-6"}>
+    <span class={"badge bg-#{color} border-#{color} align-#{align} h-6"}>
       <%= label %>
     </span>
     """

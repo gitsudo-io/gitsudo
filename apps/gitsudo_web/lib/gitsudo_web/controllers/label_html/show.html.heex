@@ -10,12 +10,8 @@
       "data-org": @organization.login,
       "data-text": @label.name) do %>
   <.header>
-    <%= content_tag("svelte-in-place-editor", nil,
-      id: "label-#{@label.id}",
-      labelid: @label.id,
-      org: @organization.login,
-      text: @label.name
-    ) %>
+    <h1 class="text-2xl align-baseline"><%= @label.name %>
+      <.badge color={@label.color} label={@label.name} align="middle" /></h1>
     <:subtitle><%= @label.description %></:subtitle>
     <:actions>
       <%= link("Edit", to: ~p[/#{@organization.login}/labels/#{@label.name}/edit], class: "btn") %>

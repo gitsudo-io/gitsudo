@@ -14,7 +14,11 @@ defmodule GitsudoWeb.LabelController do
   end
 
   def fetch_labels(%{assigns: %{organization: organization}} = conn) do
-    assign(conn, :labels, Labels.list_organization_labels(organization.id))
+    assign(
+      conn,
+      :labels,
+      Labels.list_organization_labels(organization.id, preload: [:repositories])
+    )
   end
 
   def new(conn, _params) do

@@ -13,7 +13,6 @@
           <th scope="col" class="w-1/5">Label</th>
           <th scope="col" class="w-2/5">Description</th>
           <th scope="col" class="w-1/5">Repositories</th>
-          <th scope="col" class="w-1/5">ConfigSets</th>
         </tr>
       </thead>
       <tbody>
@@ -25,8 +24,7 @@
               <% end %>
             </td>
             <td><%= label.description %></td>
-            <td></td>
-            <td></td>
+            <td><%= label.repositories |> Enum.map(fn r -> r.name end) |> Enum.join(", ") %></td>
           <% end %>
         <% end %>
       </tbody>

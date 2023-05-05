@@ -18,9 +18,14 @@ defmodule Gitsudo.Labels do
       [%Label{}, ...]
 
   """
-  def list_organization_labels(owner_id) do
+  def list_organization_labels(owner_id, opts \\ []) do
     query = from l in Label, where: l.owner_id == ^owner_id
-    Repo.all(query)
+
+    if Keyword.has_key?(opts, :preload) do
+      Repo.all(query) |> Repo.preload(opts[:preload])
+    else
+      Repo.all(query)
+    end
   end
 
   @doc """
