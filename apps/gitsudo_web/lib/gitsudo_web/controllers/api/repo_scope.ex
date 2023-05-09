@@ -16,9 +16,7 @@ defmodule GitsudoWeb.API.RepoScope do
   def fetch_repo(%{assigns: %{organization: organization}} = conn, _opts) do
     if repo_name = conn.params["repo_name"] do
       if repository =
-           Gitsudo.Repositories.get_repository_by_owner_id_and_name(organization.id, repo_name,
-             preload: [:owner, labels: [:collaborator_policies]]
-           ) do
+           Gitsudo.Repositories.get_repository_by_owner_id_and_name(organization.id, repo_name) do
         conn |> assign(:repository, repository)
       else
         conn |> send_resp(:not_found, "Not found") |> halt

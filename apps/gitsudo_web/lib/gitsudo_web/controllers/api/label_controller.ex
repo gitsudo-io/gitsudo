@@ -57,6 +57,7 @@ defmodule GitsudoWeb.API.LabelController do
         ) :: Plug.Conn.t()
   def show(%{assigns: %{organization: organization}} = conn, %{"id" => id}) do
     label = Labels.get_label!(organization.id, id)
+
     render(conn, :show, label: label)
   end
 

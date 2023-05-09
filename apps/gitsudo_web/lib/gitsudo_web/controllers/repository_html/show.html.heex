@@ -11,21 +11,48 @@
   <h1 class="inline-flex items-baseline">
     <%= @repository.name %>
     <span class="pl-1 text-sm text-gray-600">
-      (<%= link(to: @repository.html_url, class: "inline-flex items-center") do %>
-        View on GitHub
-        <span class="pl-1 inline-flex">
-          <span class="hero-arrow-top-right-on-square w-4 h-4" />
-        </span>
-      <% end %>)
+      <%= link(to: @repository.html_url, class: "inline-flex items-center", title: "View on GitHub") do %>
+        <span class="hero-arrow-top-right-on-square w-4 h-4" />
+      <% end %>
     </span>
   </h1>
 </.header>
 
-<%= content_tag("svelte-repo-labels", nil,
+<h2>Labels</h2>
+<%= content_tag("svelte-repo-labels",
   id: "labels-#{@organization.id}-#{@repository.id}",
   org: @organization.login,
   repo: @repository.name
-) %>
+) do %>
+  <table class="w-full">
+    <tbody>
+      <tr>
+        <td class="w-full">
+          <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+            <input type="checkbox" />
+            <div class="collapse-title text-xl font-medium border-b">
+              <span class="badge badge-lg border-label-blue bg-label-blue">a-team</span>
+            </div>
+
+            <div class="collapse-content">
+              <h3>Collaborators</h3>
+
+              <ul class="list-inside list-disc">
+                <li>aisrael - admin</li>
+              </ul>
+
+              <h3>Teams</h3>
+
+              <ul class="list-inside list-disc">
+                <li>a-team - maintain</li>
+              </ul>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+<% end %>
 
 <%= if !Enum.empty?(@workflow_runs) do %>
   <section>

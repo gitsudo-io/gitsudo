@@ -32,7 +32,16 @@ defmodule GitsudoWeb.API.LabelJSON do
       owner_id: label.owner_id,
       name: label.name,
       color: label.color,
-      collaborator_policies: label.collaborator_policies
+      collaborator_policies:
+        Enum.map(
+          label.collaborator_policies,
+          &%{id: &1.id, collaborator: &1.collaborator.login, permission: &1.permission}
+        ),
+      team_permissions:
+        Enum.map(
+          label.team_policies,
+          &%{id: &1.id, team_slug: &1.team_slug, permission: &1.permission}
+        )
     }
   end
 end

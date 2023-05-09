@@ -14,6 +14,13 @@ defmodule GitsudoWeb.API.RepoLabelController do
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def index(%{assigns: %{organization: organization, repository: repository}} = conn, params) do
+    repository =
+      repository
+      |> Gitsudo.Repo.preload([
+        :owner,
+        labels: [:team_policies, collaborator_policies: [:collaborator]]
+      ])
+
     for label <- repository.labels do
       Logger.debug("label => #{inspect(label)}")
       Logger.debug("label.collaborator_policies => #{inspect(label.collaborator_policies)}")
