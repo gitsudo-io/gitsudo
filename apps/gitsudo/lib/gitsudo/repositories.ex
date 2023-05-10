@@ -143,7 +143,7 @@ defmodule Gitsudo.Repositories do
   def change_labels(repository, changes, opts \\ []) do
     Logger.debug("changes: #{inspect(changes)}")
 
-    preload = opts |> Keyword.get(:preload, []) |> Keyword.merge(@change_labels_default_preload)
+    preload = opts |> Keyword.get(:preload, @change_labels_default_preload)
 
     repository = Repo.preload(repository, preload)
 
