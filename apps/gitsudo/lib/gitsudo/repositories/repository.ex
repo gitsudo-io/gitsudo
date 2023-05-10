@@ -11,7 +11,9 @@ defmodule Gitsudo.Repositories.Repository do
     field :name, :string
     field :html_url, :string
 
-    many_to_many :labels, Gitsudo.Labels.Label, join_through: "repositories_labels"
+    many_to_many :labels, Gitsudo.Labels.Label,
+      join_through: "repositories_labels",
+      on_replace: :delete
 
     timestamps()
   end

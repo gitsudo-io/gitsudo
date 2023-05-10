@@ -77,7 +77,7 @@ defmodule GitsudoWeb.Router do
       scope "/:repo_name" do
         pipe_through :repo
 
-        resources "/labels", API.RepoLabelController
+        resources "/labels", API.RepoLabelController, only: [:index, :create]
       end
 
       resources "/labels", API.LabelController

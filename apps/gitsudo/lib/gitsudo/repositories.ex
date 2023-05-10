@@ -5,6 +5,7 @@ defmodule Gitsudo.Repositories do
 
   import Ecto.Query, warn: false
 
+  alias Gitsudo.Labels
   alias Gitsudo.Repositories
   alias Gitsudo.Repo
   alias Gitsudo.Repositories.Repository
@@ -130,6 +131,57 @@ defmodule Gitsudo.Repositories do
            |> Repo.update() do
       {:ok, Repo.preload(repository, [:labels])}
     end
+  end
 
+  @change_labels_default_preload [
+    :owner,
+    labels: [:team_policies, collaborator_policies: [:collaborator]]
+  ]
+
+  def change_labels(repository, changes, opts \\ []) do
+    Logger.debug("changes: #{inspect(changes)}")
+
+    preload = opts |> Keyword.get(:preload, []) |> Keyword.merge(@change_labels_default_preload)
+
+    repository = Repo.preload(repository, preload)
+
+    Logger.debug("labels before: #{inspect(repository.labels)}")
+
+    {:ok, new_labels} = apply_changes(repository, changes)
+    Logger.debug("labels after: #{inspect(new_labels)}")
+
+    with {:ok, repository} <-
+           Ecto.Changeset.change(repository)
+           |> Ecto.Changeset.put_assoc(:labels, new_labels)
+           |> Repo.update() do
+      {:ok, Repo.preload(repository, preload)}
+    end
+  end
+
+  defp apply_changes(%{owner: %{id: owner_id}} = repository, changes) do
+    label_ids_to_remove = Map.get(changes, "labelsToRemove", [])
+    label_ids_to_add = Map.get(changes, "labelsToAdd", [])
+
+    repository.labels
+    |> remove_labels(label_ids_to_remove)
+    |> add_labels(owner_id, label_ids_to_add)
+  end
+
+  defp remove_labels(labels, label_ids_to_remove) do
+    Enum.reduce(label_ids_to_remove, labels, fn label_id, labels ->
+      Enum.reject(labels, &(&1.id == label_id))
+    end)
+  end
+
+  defp add_labels(labels, owner_id, label_ids_to_add) do
+    Enum.reduce_while(label_ids_to_add, {:ok, labels}, fn label_id, {:ok, labels} ->
+      case Labels.get_label!(owner_id, label_id) do
+        %Label{} = label ->
+          {:cont, {:ok, [label | labels]}}
+
+        nil ->
+          {:halt, {:error, "Label id #{label_id} not found"}}
+      end
+    end)
   end
 end

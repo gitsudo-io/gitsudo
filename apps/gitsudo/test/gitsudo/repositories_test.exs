@@ -22,13 +22,23 @@ defmodule Gitsudo.RepositoriesTest do
   describe "labels" do
     import Gitsudo.LabelsFixtures
 
-    test "add_label_to_repository works", %{repository: repository} do
-      assert repository.labels == []
+    setup do
+      {:ok, label: label_fixture()}
+    end
 
-      label = label_fixture()
+    test "add_label_to_repository works", %{repository: repository, label: label} do
+      assert repository.labels == []
       {:ok, repository} = Repositories.add_label_to_repository(repository, label)
 
       assert repository.labels == [label]
+    end
+
+    test "add using change_labels works", %{repository: repository, label: label} do
+      assert repository.labels == []
+
+      {:ok, repository} = Repositories.change_labels(repository, %{"labelsToAdd" => [label.id]})
+
+      assert label.id == Enum.at(repository.labels, 0).id
     end
   end
 end

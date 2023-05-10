@@ -15,7 +15,13 @@ defmodule GitsudoWeb.RepositoryController do
   def show(%{assigns: %{organization: organization}} = conn, %{
         "name" => name
       }) do
-    if repository = Repositories.get_repository_by_owner_id_and_name(organization.id, name) do
+    if repository =
+         Repositories.get_repository_by_owner_id_and_name(organization.id, name,
+           preload: [
+             :owner,
+             labels: [:team_policies, collaborator_policies: [:collaborator]]
+           ]
+         ) do
       conn
       |> assign(:repository, repository)
       |> populate_workflows(repository)

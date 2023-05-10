@@ -56,7 +56,11 @@ defmodule GitsudoWeb.API.LabelController do
           map
         ) :: Plug.Conn.t()
   def show(%{assigns: %{organization: organization}} = conn, %{"id" => id}) do
-    label = Labels.get_label!(organization.id, id)
+    label =
+      case id do
+        id when is_integer(id) -> Labels.get_label!(organization.id, id)
+        name when is_binary(id) -> Labels.get_label_by_name(organization.id, name)
+      end
 
     render(conn, :show, label: label)
   end

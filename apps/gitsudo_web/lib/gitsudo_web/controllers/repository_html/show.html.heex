@@ -24,34 +24,43 @@
   org: @organization.login,
   repo: @repository.name
 ) do %>
-  <table class="w-full">
-    <tbody>
-      <tr>
-        <td class="w-full">
-          <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
-            <input type="checkbox" />
-            <div class="collapse-title text-xl font-medium border-b">
-              <span class="badge badge-lg border-label-blue bg-label-blue">a-team</span>
-            </div>
+  <%= if !Enum.empty?(@repository.labels) do %>
+    <table class="w-full">
+      <tbody>
+        <%= for label <- @repository.labels do %>
+          <tr class="align-top">
+            <td class="w-full">
+              <div class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium border-b">
+                  <.badge label={label} />
+                </div>
+                <div class="collapse-content">
+                  <%= if !Enum.empty?(label.collaborator_policies) do %>
+                    <h3>Collaborators</h3>
+                    <ul class="list-inside list-disc">
+                      <%= for cp <- label.collaborator_policies do %>
+                        <li><%= cp.collaborator.login %> - <%= cp.permission %></li>
+                      <% end %>
+                    </ul>
+                  <% end %>
 
-            <div class="collapse-content">
-              <h3>Collaborators</h3>
-
-              <ul class="list-inside list-disc">
-                <li>aisrael - admin</li>
-              </ul>
-
-              <h3>Teams</h3>
-
-              <ul class="list-inside list-disc">
-                <li>a-team - maintain</li>
-              </ul>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+                  <%= if !Enum.empty?(label.team_policies) do %>
+                    <h3>Teams</h3>
+                    <%= for tp <- label.team_policies do %>
+                      <ul class="list-inside list-disc">
+                        <li><%= tp.team_slug %> - <%= tp.permission %></li>
+                      </ul>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
 <% end %>
 
 <%= if !Enum.empty?(@workflow_runs) do %>
