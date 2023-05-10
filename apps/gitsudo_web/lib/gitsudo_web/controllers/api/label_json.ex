@@ -20,7 +20,14 @@ defmodule GitsudoWeb.API.LabelJSON do
           :label => map(),
           optional(any) => any
         }) :: %{
-          data: %{color: any, id: any, name: any, owner_id: any, collaborator_policies: list()}
+          data: %{
+            color: any,
+            id: any,
+            name: any,
+            owner_id: any,
+            collaborator_policies: list(),
+            team_permissions: list()
+          }
         }
   def show(%{label: label}) do
     %{data: data(label)}

@@ -55,7 +55,8 @@ defmodule GitsudoWeb.API.RepoLabelControllerTest do
                  "color" => "label-red",
                  "name" => "backend",
                  "owner_id" => 121_780_924,
-                 "collaborator_policies" => []
+                 "collaborator_policies" => [],
+                 "team_permissions" => []
                }
              ]
     end
