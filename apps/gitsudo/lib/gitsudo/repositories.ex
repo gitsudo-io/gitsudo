@@ -138,6 +138,8 @@ defmodule Gitsudo.Repositories do
     labels: [:team_policies, collaborator_policies: [:collaborator]]
   ]
 
+  @spec change_labels(repository :: %Repository{}, changes :: map(), opts :: Keyword.t()) ::
+          {:ok, %Repository{}} | {:error, any()}
   def change_labels(repository, changes, opts \\ []) do
     Logger.debug("changes: #{inspect(changes)}")
 
@@ -147,13 +149,13 @@ defmodule Gitsudo.Repositories do
 
     Logger.debug("labels before: #{inspect(repository.labels)}")
 
-    {:ok, new_labels} = apply_changes(repository, changes)
-    Logger.debug("labels after: #{inspect(new_labels)}")
-
-    with {:ok, repository} <-
+    with {:ok, new_labels} <- apply_changes(repository, changes),
+         {:ok, repository} <-
            Ecto.Changeset.change(repository)
            |> Ecto.Changeset.put_assoc(:labels, new_labels)
            |> Repo.update() do
+      Logger.debug("labels after: #{inspect(new_labels)}")
+
       {:ok, Repo.preload(repository, preload)}
     end
   end
@@ -173,9 +175,9 @@ defmodule Gitsudo.Repositories do
     end)
   end
 
-  defp add_labels(labels, owner_id, label_ids_to_add) do
+  def add_labels(labels, owner_id, label_ids_to_add) do
     Enum.reduce_while(label_ids_to_add, {:ok, labels}, fn label_id, {:ok, labels} ->
-      case Labels.get_label!(owner_id, label_id) do
+      case Labels.get_label(owner_id, label_id) do
         %Label{} = label ->
           {:cont, {:ok, [label | labels]}}
 

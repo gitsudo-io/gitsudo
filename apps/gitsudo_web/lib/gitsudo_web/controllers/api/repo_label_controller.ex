@@ -33,22 +33,16 @@ defmodule GitsudoWeb.API.RepoLabelController do
   def create(%{assigns: %{organization: _organization, repository: repository}} = conn, params) do
     Logger.debug("params => #{inspect(params)}")
 
-    case repository
-         |> Gitsudo.Repo.preload([
-           :owner,
-           labels: [:team_policies, collaborator_policies: [:collaborator]]
-         ])
-         |> apply_changes(params["changes"]) do
-      {:ok, repository} ->
-        conn
-        |> put_view(json: GitsudoWeb.API.LabelJSON)
-        |> render(:index, labels: repository.labels)
-
-      _ ->
-        # TODO return errors somehow
-        conn
-        |> put_view(json: GitsudoWeb.API.LabelJSON)
-        |> render(:index, labels: repository.labels)
+    with {:ok, repository} <-
+           repository
+           |> Gitsudo.Repo.preload([
+             :owner,
+             labels: [:team_policies, collaborator_policies: [:collaborator]]
+           ])
+           |> apply_changes(params["changes"]) do
+      conn
+      |> put_view(json: GitsudoWeb.API.LabelJSON)
+      |> render(:index, labels: repository.labels)
     end
   end
 

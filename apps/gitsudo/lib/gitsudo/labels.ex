@@ -32,13 +32,18 @@ defmodule Gitsudo.Labels do
   Retrieves a single organization label by id
   """
   def get_label!(owner_id, id, opts \\ []) do
-    label = Repo.get_by!(Label, owner_id: owner_id, id: id)
+    label =
+      Repo.get_by!(Label, owner_id: owner_id, id: id)
+      |> Repo.preload(Keyword.get(opts, :preload, []))
+  end
 
-    if Keyword.has_key?(opts, :preload) do
-      Repo.preload(label, opts[:preload])
-    else
-      label
-    end
+  @doc """
+  Retrieves a single organization label by id
+  """
+  def get_label(owner_id, id, opts \\ []) do
+    label =
+      Repo.get_by(Label, owner_id: owner_id, id: id)
+      |> Repo.preload(Keyword.get(opts, :preload, []))
   end
 
   @doc """
