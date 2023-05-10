@@ -73,10 +73,7 @@ defmodule Gitsudo.Repositories do
       Logger.debug("Found repository: #{inspect(repository)}")
       {:ok, repository}
     else
-      with {:ok, repository} <-
-             %Repository{id: id, owner_id: owner["id"]}
-             |> Repository.changeset(repo)
-             |> Repo.insert() do
+      with {:ok, repository} <- create_repository(repo) do
         {:ok, Repo.preload(repository, [:owner, :labels])}
       end
     end
@@ -98,14 +95,21 @@ defmodule Gitsudo.Repositories do
   @doc """
   Create a Repository record.
   """
-  def create_repository(%{"id" => id, "name" => name, "owner" => owner} = _args) do
+  def create_repository(%{"id" => id, "name" => name, "owner" => owner} = attrs, opts \\ []) do
     Logger.debug(
-      ~s[create_repository(%{"id" => #{id}, "name" => #{name}, "owner" => #{inspect(owner)}} = _args)]
+      ~s[create_repository(%{"id" => #{id}, "name" => #{name}, "owner" => #{inspect(owner)}})]
     )
 
-    %Repository{}
-    |> Repository.changeset(%{id: id, name: name, owner_id: owner["id"]})
-    |> Repo.insert()
+    with {:ok, repository} <-
+           %Repository{id: id, owner_id: owner["id"]}
+           |> Repository.changeset(attrs)
+           |> Repo.insert() do
+      if Keyword.has_key?(opts, :preload) do
+        {:ok, Repo.preload(repository, Keyword.get(opts, :preload))}
+      else
+        {:ok, repository}
+      end
+    end
   end
 
   ########################################################
@@ -120,8 +124,12 @@ defmodule Gitsudo.Repositories do
     repository = Repo.preload(repository, [:labels])
     labels = [label | repository.labels]
 
-    Ecto.Changeset.change(repository)
-    |> Ecto.Changeset.put_assoc(:labels, labels)
-    |> Repo.update()
+    with {:ok, repository} <-
+           Ecto.Changeset.change(repository)
+           |> Ecto.Changeset.put_assoc(:labels, labels)
+           |> Repo.update() do
+      {:ok, Repo.preload(repository, [:labels])}
+    end
+
   end
 end
