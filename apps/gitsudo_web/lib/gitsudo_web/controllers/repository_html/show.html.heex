@@ -1,11 +1,7 @@
-<div class="text-sm breadcrumbs">
-  <ul>
-    <li>
-      <%= link("#{@organization.login}", to: ~p[/#{@organization.login}]) %>
-    </li>
-    <li><%= @repository.name %></li>
-  </ul>
-</div>
+<.breadcrumbs>
+  <:crumb label={@organization.login} link={~p[/#{@organization.login}]} />
+  <:crumb label={@repository.name} link={~p[/#{@organization.login}/#{@repository.name}]} />
+</.breadcrumbs>
 
 <.header>
   <h1 class="inline-flex items-baseline">
