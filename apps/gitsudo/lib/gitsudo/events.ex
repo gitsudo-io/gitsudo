@@ -38,4 +38,12 @@ defmodule Gitsudo.Events do
   def workflow_job_completed(%{"action" => "completed", "workflow_job" => _} = data) do
     GenServer.cast(AsyncWorker, {:workflow_job_completed, data})
   end
+
+  @spec repository_labels_changed(
+          repository :: %Gitsudo.Repositories.Repository{},
+          changes :: map()
+        ) :: :ok
+  def repository_labels_changed(repository, changes) do
+    GenServer.cast(AsyncWorker, {Gitsudo.Events.RepositoryLabelsChanged, {repository, changes}})
+  end
 end

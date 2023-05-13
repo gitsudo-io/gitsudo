@@ -3,6 +3,8 @@ defmodule Gitsudo.Events.AsyncWorker do
   The AsyncWorker GenServer is responsible for handling asynchronous events.
   """
   alias Gitsudo.Workflows
+  alias Gitsudo.Repositories.Repository
+  alias Gitsudo.Repo
 
   use GenServer
 
@@ -25,6 +27,53 @@ defmodule Gitsudo.Events.AsyncWorker do
   """
   def handle_cast({:app_installation_created, data}, state) do
     handle_app_installation_created(data)
+
+    {:noreply, state}
+  end
+
+  # Handle webhook events with "installation_id" and "repository" keys
+  def handle_cast(
+        {event_name,
+         %{
+           "installation" => %{
+             "id" => installation_id
+           },
+           "repository" => %{
+             "owner" => %{"login" => owner},
+             "name" => repo
+           }
+         } = data},
+        state
+      ) do
+    Logger.debug("handle_cast({:#{event_name}, #{inspect(data)}}, state)")
+
+    case GitHub.TokenCache.get_or_refresh_token(installation_id) do
+      {:ok, access_token} ->
+        apply(__MODULE__, :"handle_#{event_name}", [access_token, owner, repo, data])
+
+      {:error, reason} ->
+        Logger.error(reason)
+    end
+
+    {:noreply, state}
+  end
+
+  # Handle internal events with %Gitsudo.Repositories.Repository{} and data
+  def handle_cast({event_module, {%Repository{} = repository, data}}, state) do
+    Logger.debug(
+      "handle_cast({:#{event_module}, #{inspect(repository)}, #{inspect(data)}}, state)"
+    )
+
+    repository = Repo.preload(repository, :owner)
+
+    with app_installation <-
+           Repo.get_by(Gitsudo.GitHub.AppInstallation, account_id: repository.owner.id),
+         {:ok, access_token} <- GitHub.TokenCache.get_or_refresh_token(app_installation.id) do
+      apply(event_module, :handle, [access_token, {repository, data}])
+    else
+      {:error, reason} ->
+        Logger.error(reason)
+    end
 
     {:noreply, state}
   end

@@ -149,14 +149,26 @@ defmodule Gitsudo.Repositories do
 
     Logger.debug("labels before: #{inspect(repository.labels)}")
 
-    with {:ok, new_labels} <- apply_changes(repository, changes),
-         {:ok, repository} <-
-           Ecto.Changeset.change(repository)
-           |> Ecto.Changeset.put_assoc(:labels, new_labels)
-           |> Repo.update() do
-      Logger.debug("labels after: #{inspect(new_labels)}")
+    label_ids_to_remove = Map.get(changes, "labelsToRemove", [])
+    label_ids_to_add = Map.get(changes, "labelsToAdd", [])
 
-      {:ok, Repo.preload(repository, preload)}
+    if Enum.empty?(label_ids_to_remove) && Enum.empty?(label_ids_to_add) do
+      {:ok, repository}
+    else
+      with {:ok, new_labels} <- apply_changes(repository, changes),
+           {:ok, repository} <-
+             Ecto.Changeset.change(repository)
+             |> Ecto.Changeset.put_assoc(:labels, new_labels)
+             |> Repo.update() do
+        Logger.debug("labels after: #{inspect(new_labels)}")
+
+        Gitsudo.Events.repository_labels_changed(repository, %{
+          label_ids_to_remove: label_ids_to_remove,
+          label_ids_to_add: label_ids_to_add
+        })
+
+        {:ok, Repo.preload(repository, preload)}
+      end
     end
   end
 
