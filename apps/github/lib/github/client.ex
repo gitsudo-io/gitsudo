@@ -239,6 +239,36 @@ defmodule GitHub.Client do
     end
   end
 
+  @doc """
+  Remove a repository from a team
+
+  ```
+  DELETE /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}
+  ```
+  """
+  @spec remove_repository_from_team(
+          access_token :: String.t(),
+          org :: String.t(),
+          team_slug :: String.t(),
+          owner :: String.t(),
+          repo :: String.t()
+        ) ::
+          {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def remove_repository_from_team(access_token, org, team_slug, owner, repo) do
+    url = url_for("orgs/#{org}/teams/#{team_slug}/repos/#{owner}/#{repo}")
+
+    with {:ok, resp} <- http_delete(access_token, url) do
+      if 204 == resp.status do
+        {:ok, resp}
+      else
+        Logger.debug("resp.status: #{resp.status}")
+        reason = "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"
+        Logger.error(reason)
+        {:error, reason}
+      end
+    end
+  end
+
   ###########################################################################
   # Workflows
   ###########################################################################
@@ -559,6 +589,13 @@ defmodule GitHub.Client do
       ],
       body
     )
+    |> Finch.request(GitHub.Finch)
+  end
+
+  defp http_delete(access_token, url) when is_binary(access_token) and is_binary(url) do
+    Logger.debug("DELETE #{url}")
+
+    Finch.build(:delete, url, [{"Authorization", "Bearer #{access_token}"}])
     |> Finch.request(GitHub.Finch)
   end
 end

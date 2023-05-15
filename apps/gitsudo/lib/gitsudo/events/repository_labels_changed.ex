@@ -32,7 +32,7 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
     {labels_to_remove, labels_to_add} =
       fetch_labels(repository.owner_id, label_ids_to_remove, label_ids_to_add)
 
-    apply_team_policy_changes(repository, labels_to_remove, labels_to_add)
+    apply_team_policy_changes(access_token, repository, labels_to_remove, labels_to_add)
 
     {:ok, repository}
   end
@@ -55,9 +55,71 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
     {labels_to_remove, labels_to_add}
   end
 
-  defp apply_team_policy_changes(repository, labels_to_remove, labels_to_add) do
+  defp apply_team_policy_changes(access_token, repository, labels_to_remove, labels_to_add) do
     {team_policies_to_remove_only, team_policies_to_update, team_policies_to_add_only} =
       compute_team_policy_changes(labels_to_remove, labels_to_add)
+
+    org = repository.owner.login
+    repo = repository.name
+
+    Logger.debug("team_policies_to_remove_only => #{inspect(team_policies_to_remove_only)}")
+
+    Enum.each(team_policies_to_remove_only, fn {team_slug, permission} ->
+      Logger.debug(
+        "Removing team permission: #{inspect(team_slug)} => #{inspect(permission)} to #{org}/#{repo}"
+      )
+
+      case GitHub.Client.remove_repository_from_team(
+             access_token,
+             org,
+             team_slug,
+             org,
+             repo
+           ) do
+        {:error, reason} -> Logger.error("Failed to remove team permission: #{inspect(reason)}")
+        {:ok, _} -> Logger.debug("Removed team permission: #{inspect(team_slug)}")
+      end
+    end)
+
+    Logger.debug("team_policies_to_update => #{inspect(team_policies_to_update)}")
+
+    Enum.each(team_policies_to_update, fn {team_slug, permission} ->
+      Logger.debug(
+        "Updating team permission: #{inspect(team_slug)} => #{inspect(permission)} to #{org}/#{repo}"
+      )
+
+      case GitHub.Client.put_team_repository_permissions(
+             access_token,
+             org,
+             team_slug,
+             org,
+             repo,
+             permission
+           ) do
+        {:error, reason} -> Logger.error("Failed to remove team permission: #{inspect(reason)}")
+        {:ok, _} -> Logger.debug("Removed team permission: #{inspect(team_slug)}")
+      end
+    end)
+
+    Logger.debug("team_policies_to_add_only => #{inspect(team_policies_to_add_only)}")
+
+    Enum.each(team_policies_to_add_only, fn {team_slug, permission} ->
+      Logger.debug(
+        "Adding team permission: #{inspect(team_slug)} => #{inspect(permission)} to #{org}/#{repo}"
+      )
+
+      case GitHub.Client.put_team_repository_permissions(
+             access_token,
+             org,
+             team_slug,
+             org,
+             repo,
+             permission
+           ) do
+        {:error, reason} -> Logger.error("Failed to remove team permission: #{inspect(reason)}")
+        {:ok, _} -> Logger.debug("Removed team permission: #{inspect(team_slug)}")
+      end
+    end)
   end
 
   def compute_team_policy_changes(labels_to_remove, labels_to_add) do
@@ -75,8 +137,7 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
         end)
       end)
 
-    {team_policies_to_remove_only, team_policies_to_update, team_policies_to_add_only} =
-      compute_team_policies_to_remove_add_update(team_policies_to_remove, team_policies_to_add)
+    compute_team_policies_to_remove_add_update(team_policies_to_remove, team_policies_to_add)
   end
 
   def compute_team_policies_to_remove_add_update(team_policies_to_remove, team_policies_to_add) do
