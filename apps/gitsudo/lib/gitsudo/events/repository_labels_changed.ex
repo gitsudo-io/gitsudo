@@ -62,14 +62,14 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
 
   def compute_team_policy_changes(labels_to_remove, labels_to_add) do
     team_policies_to_remove =
-      Enum.reduce(labels_to_remove, %{}, fn label, to_remove ->
+      MapUtils.from_enum(labels_to_remove, fn label, to_remove ->
         Enum.reduce(label.team_policies, to_remove, fn tp, to_remove ->
           Map.put(to_remove, tp.team_slug, tp.permission)
         end)
       end)
 
     team_policies_to_add =
-      Enum.reduce(labels_to_add, %{}, fn label, to_add ->
+      MapUtils.from_enum(labels_to_add, fn label, to_add ->
         Enum.reduce(label.team_policies, to_add, fn tp, to_add ->
           Map.put(to_add, tp.team_slug, tp.permission)
         end)
@@ -80,33 +80,18 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
   end
 
   def compute_team_policies_to_remove_add_update(team_policies_to_remove, team_policies_to_add) do
-    team_slugs_to_remove = team_policies_to_remove |> Map.keys() |> MapSet.new()
-    team_slugs_to_add = team_policies_to_add |> Map.keys() |> MapSet.new()
-    team_slugs_to_update = MapSet.intersection(team_slugs_to_remove, team_slugs_to_add)
+    {team_policies_to_remove_only, team_policies_to_update, team_policies_to_add_only} =
+      MapUtils.delta(team_policies_to_remove, team_policies_to_add)
 
-    team_policies_to_update =
-      Enum.reduce(team_slugs_to_update, %{}, fn team_slug, to_update ->
-        permission_to_remove = Map.get(team_policies_to_remove, team_slug)
-        permission_to_add = Map.get(team_policies_to_add, team_slug)
-
-        if permission_to_remove == permission_to_add do
-          to_update
-        else
-          Map.put(to_update, team_slug, permission_to_add)
-        end
+    unchanged_team_slugs =
+      team_policies_to_update
+      |> Map.keys()
+      |> Enum.filter(fn team_slug ->
+        Map.get(team_policies_to_remove_only, team_slug) ==
+          Map.get(team_policies_to_update, team_slug)
       end)
 
-    team_policies_to_remove_only =
-      MapSet.difference(team_slugs_to_remove, team_slugs_to_update)
-      |> Enum.reduce(%{}, fn team_slug, to_remove ->
-        Map.put(to_remove, team_slug, Map.get(team_policies_to_remove, team_slug))
-      end)
-
-    team_policies_to_add_only =
-      MapSet.difference(team_slugs_to_add, team_slugs_to_update)
-      |> Enum.reduce(%{}, fn team_slug, to_add ->
-        Map.put(to_add, team_slug, Map.get(team_policies_to_add, team_slug))
-      end)
+    team_policies_to_update = Map.drop(team_policies_to_update, unchanged_team_slugs)
 
     {team_policies_to_remove_only, team_policies_to_update, team_policies_to_add_only}
   end
