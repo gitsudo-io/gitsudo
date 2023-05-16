@@ -121,37 +121,32 @@ defmodule GitsudoWeb.LabelController do
   defp extract_existing_team_permissions(_label_params), do: []
 
   defp build_collaborator_policies(label, params) do
-    label.collaborator_policies
-    |> collaborator_policies_as_attrs()
-    |> remove_collaborator_policies_for_deletion(params)
+    extract_collorator_policies(params)
     |> add_new_collaborators(params)
   end
 
-  defp collaborator_policies_as_attrs(collaborator_policies) do
-    Enum.map(collaborator_policies, fn cp ->
+  defp extract_collorator_policies(
+         %{
+           "collaborator_policy_ids" => collaborator_policy_ids,
+           "collaborator_policy_collaborator_ids" => collaborator_policy_collaborator_ids,
+           "collaborator_policy_permissions" => collaborator_policy_permissions
+         } = _params
+       ) do
+    Enum.zip([
+      collaborator_policy_ids,
+      collaborator_policy_collaborator_ids,
+      collaborator_policy_permissions
+    ])
+    |> Enum.map(fn {id, collaborator_id, permission} ->
       %{
-        id: cp.id,
-        collaborator_id: cp.collaborator_id,
-        permission: cp.permission
+        id: id,
+        collaborator_id: collaborator_id,
+        permission: permission
       }
     end)
   end
 
-  defp remove_collaborator_policies_for_deletion(
-         collaborator_policies,
-         %{"collaborator_policy_ids_for_deletion" => collaborator_policy_ids_for_deletion} =
-           _params
-       ) do
-    Logger.debug("Removing #{inspect(collaborator_policy_ids_for_deletion)}...")
-
-    collaborator_policy_ids_for_deletion
-    |> Enum.reduce(collaborator_policies, fn id, cps ->
-      Enum.reject(cps, &(&1.id == String.to_integer(id)))
-    end)
-  end
-
-  defp remove_collaborator_policies_for_deletion(collaborator_policies, _),
-    do: collaborator_policies
+  defp extract_collorator_policies(_params), do: []
 
   defp add_new_collaborators(
          collaborator_policies,

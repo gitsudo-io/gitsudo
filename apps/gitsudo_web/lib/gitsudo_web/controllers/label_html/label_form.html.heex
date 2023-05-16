@@ -34,10 +34,10 @@
   <%= if @label do %>
     <div class="collapse collapse-arrow border border-base-300 rounded-box">
       <input type="checkbox" checked />
-      <div class="collapse-title text-xl font-medium bg-base-200">
+      <div class="collapse-title text-xl font-medium">
         Team Permissions
       </div>
-      <div class="w-full">
+      <div class="collapse-content w-full">
         <%= content_tag("svelte-team-permissions-editor", nil,
           id: "label-#{@label.id}-team-permissions",
           labelid: @label.id,
@@ -54,10 +54,10 @@
     </div>
     <div class="collapse collapse-arrow border border-base-300 rounded-box">
       <input type="checkbox" checked />
-      <div class="collapse-title text-xl font-medium bg-base-200">
+      <div class="collapse-title text-xl font-medium">
         Collaborators
       </div>
-      <div class="w-full">
+      <div class="collapse-content w-full">
         <%= content_tag("svelte-collaborators-editor", nil,
           id: "label-#{@label.id}-collaborators",
           labelid: @label.id,
