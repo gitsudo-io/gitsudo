@@ -126,14 +126,14 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
     team_policies_to_remove =
       MapUtils.from_enum(labels_to_remove, fn label, to_remove ->
         Enum.reduce(label.team_policies, to_remove, fn tp, to_remove ->
-          Map.put(to_remove, tp.team_slug, tp.permission)
+          Map.put(to_remove, tp.team_slug, to_string(tp.permission))
         end)
       end)
 
     team_policies_to_add =
       MapUtils.from_enum(labels_to_add, fn label, to_add ->
         Enum.reduce(label.team_policies, to_add, fn tp, to_add ->
-          Map.put(to_add, tp.team_slug, tp.permission)
+          Map.put(to_add, tp.team_slug, to_string(tp.permission))
         end)
       end)
 
