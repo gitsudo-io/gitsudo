@@ -78,8 +78,12 @@ defmodule GitsudoWeb.LabelController do
     if label = Labels.get_label_by_name(organization.id, name) do
       team_policies = build_team_policies(params)
       Logger.debug("team_policies => #{inspect(team_policies)}}")
+      collaborator_policies = build_collaborator_policies(label, params)
+      Logger.debug("collaborator_policies => #{inspect(collaborator_policies)}")
 
-      attrs = Map.put(label_params, "team_policies", team_policies)
+      attrs =
+        Map.put(label_params, "team_policies", team_policies)
+        |> Map.put("collaborator_policies", collaborator_policies)
 
       with {:ok, %Label{} = label} <- Labels.update_label(label, attrs) do
         redirect(conn, to: ~p"/#{organization.login}/labels/#{label.name}")
@@ -114,6 +118,38 @@ defmodule GitsudoWeb.LabelController do
   end
 
   defp extract_existing_team_permissions(_label_params), do: []
+
+  defp build_collaborator_policies(label, params) do
+    label.collaborator_policies
+    |> collaborator_policies_as_params()
+    |> remove_collaborator_policies_for_deletion(params)
+  end
+
+  defp collaborator_policies_as_params(collaborator_policies) do
+    Enum.map(collaborator_policies, fn cp ->
+      %{
+        id: cp.id,
+        collaborator_id: cp.collaborator_id,
+        permission: cp.permission
+      }
+    end)
+  end
+
+  defp remove_collaborator_policies_for_deletion(
+         collaborator_policies,
+         %{"collaborator_policy_ids_for_deletion" => collaborator_policy_ids_for_deletion} =
+           _params
+       ) do
+    Logger.debug("Removing #{inspect(collaborator_policy_ids_for_deletion)}...")
+
+    collaborator_policy_ids_for_deletion
+    |> Enum.reduce(collaborator_policies, fn id, cps ->
+      Enum.reject(cps, &(&1.id == String.to_integer(id)))
+    end)
+  end
+
+  defp remove_collaborator_policies_for_deletion(collaborator_policies, _),
+    do: collaborator_policies
 
   def delete(%{assigns: %{organization: organization}} = conn, %{
         "name" => name

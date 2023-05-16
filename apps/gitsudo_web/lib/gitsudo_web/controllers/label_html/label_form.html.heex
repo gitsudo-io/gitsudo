@@ -52,6 +52,30 @@
         ) %>
       </div>
     </div>
+    <div class="collapse collapse-arrow border border-base-300 rounded-box">
+      <input type="checkbox" checked />
+      <div class="collapse-title text-xl font-medium bg-base-200">
+        Collaborators
+      </div>
+      <div class="w-full">
+        <%= content_tag("svelte-collaborators-editor", nil,
+          id: "label-#{@label.id}-collaborators",
+          labelid: @label.id,
+          org: @label.owner.login,
+          collaborators:
+            Jason.encode!(
+              Enum.map(
+                @label.collaborator_policies,
+                &%{
+                  id: &1.id,
+                  collaborator: Map.from_struct(&1.collaborator) |> Map.take([:id, :login]),
+                  permission: &1.permission
+                }
+              )
+            )
+        ) %>
+      </div>
+    </div>
   <% end %>
 
   <:actions>
