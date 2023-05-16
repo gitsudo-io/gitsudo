@@ -91,20 +91,15 @@
     <tr>
       <td>
         <input
-          type="hidden"
-          name="collaborator_policy_collaborator_ids[]"
-          value=""
-        />
-        <input
           type="text"
-          name="collaborator_collaborators[]"
+          name="new_collaborator_logins[]"
           bind:value={new_permissions[i].collaborator_id}
           class="input input-sm input-bordered"
         />
       </td>
       <td>
         <select
-          name="collaborator_permissions[]"
+          name="new_collaborator_permissions[]"
           bind:value={new_permissions[i].permission}
           class="select"
         >

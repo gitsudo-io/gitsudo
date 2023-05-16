@@ -1,6 +1,7 @@
 defmodule GitsudoWeb.LabelController do
   use GitsudoWeb, :controller
 
+  alias Gitsudo.Accounts
   alias Gitsudo.Labels
   alias Gitsudo.Labels.Label
 
@@ -121,11 +122,12 @@ defmodule GitsudoWeb.LabelController do
 
   defp build_collaborator_policies(label, params) do
     label.collaborator_policies
-    |> collaborator_policies_as_params()
+    |> collaborator_policies_as_attrs()
     |> remove_collaborator_policies_for_deletion(params)
+    |> add_new_collaborators(params)
   end
 
-  defp collaborator_policies_as_params(collaborator_policies) do
+  defp collaborator_policies_as_attrs(collaborator_policies) do
     Enum.map(collaborator_policies, fn cp ->
       %{
         id: cp.id,
@@ -150,6 +152,35 @@ defmodule GitsudoWeb.LabelController do
 
   defp remove_collaborator_policies_for_deletion(collaborator_policies, _),
     do: collaborator_policies
+
+  defp add_new_collaborators(
+         collaborator_policies,
+         %{
+           "new_collaborator_logins" => new_collaborator_logins,
+           "new_collaborator_permissions" => new_collaborator_permissions
+         } = _params
+       ) do
+    Enum.zip([new_collaborator_logins, new_collaborator_permissions])
+    |> Enum.reduce(collaborator_policies, fn {login, permission}, collaborator_policies ->
+      if account = Accounts.get_account_by_login(login) do
+        Logger.debug("Adding #{login} with permission #{permission}...")
+
+        [
+          %{
+            id: nil,
+            collaborator_id: account.id,
+            permission: permission
+          }
+          | collaborator_policies
+        ]
+      else
+        Logger.error("Could not find Account with login \"#{login}\"!")
+        collaborator_policies
+      end
+    end)
+  end
+
+  defp add_new_collaborators(collaborator_policies, _), do: collaborator_policies
 
   def delete(%{assigns: %{organization: organization}} = conn, %{
         "name" => name
