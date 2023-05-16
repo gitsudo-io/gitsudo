@@ -9,6 +9,7 @@ defmodule Gitsudo.Accounts.Account do
   schema "accounts" do
     field :login, :string
     field :type, :string
+    field :html_url, :string
     field :avatar_url, :string
 
     timestamps()
@@ -25,7 +26,7 @@ defmodule Gitsudo.Accounts.Account do
         ) :: Ecto.Changeset.t()
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:id, :login, :type, :avatar_url])
+    |> cast(attrs, [:id, :login, :type, :html_url, :avatar_url])
     |> validate_required([:id, :login, :type])
   end
 end

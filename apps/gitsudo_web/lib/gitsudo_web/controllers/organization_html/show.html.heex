@@ -1,14 +1,37 @@
+<.breadcrumbs>
+  <:crumb label={@organization.login} link={~p[/#{@organization.login}]} />
+</.breadcrumbs>
 <.header>
-  <h1><%= @organization.login %></h1>
+  <h1 class="py-4">
+    <%= content_tag(:img, nil,
+      src: @organization.avatar_url,
+      class: "border-round inline h-12 w-12"
+    ) %>
+    <%= @organization.login %>
+    <span class="pl-1 text-sm text-gray-600">
+      <%= link(to: @organization.html_url, class: "inline-flex items-center", title: "View on GitHub") do %>
+        <span class="hero-arrow-top-right-on-square w-4 h-4" />
+      <% end %>
+    </span>
+  </h1>
 </.header>
-
-<h2>Labels</h2>
+<div class="flex justify-between items-end pb-2">
+  <div>
+    <h2>Labels</h2>
+  </div>
+  <div>
+    <%= link(to: ~p[/#{@organization.login}/labels],
+      class: "btn btn-xs btn-ghost"
+    ) do %>
+      <span class="hero-cog-6-tooth h-4 w-4" /><span class="pl-1">Manage labels</span>
+    <% end %>
+  </div>
+</div>
 <ul class="list-disc list-inside">
   <%= for label <- @labels do %>
     <li><.badge label={label} /></li>
   <% end %>
 </ul>
-<p><%= link("Manage labels", to: ~p[/#{@organization.login}/labels]) %></p>
 
 <h2>Repositories</h2>
 
