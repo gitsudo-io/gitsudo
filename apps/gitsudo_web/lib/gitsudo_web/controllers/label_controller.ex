@@ -79,7 +79,7 @@ defmodule GitsudoWeb.LabelController do
     if label = Labels.get_label_by_name(organization.id, name) do
       team_policies = build_team_policies(params)
       Logger.debug("team_policies => #{inspect(team_policies)}}")
-      collaborator_policies = build_collaborator_policies(label, params)
+      collaborator_policies = build_collaborator_policies(params)
       Logger.debug("collaborator_policies => #{inspect(collaborator_policies)}")
 
       attrs =
@@ -120,7 +120,7 @@ defmodule GitsudoWeb.LabelController do
 
   defp extract_existing_team_permissions(_label_params), do: []
 
-  defp build_collaborator_policies(label, params) do
+  defp build_collaborator_policies(params) do
     extract_collorator_policies(params)
     |> add_new_collaborators(params)
   end

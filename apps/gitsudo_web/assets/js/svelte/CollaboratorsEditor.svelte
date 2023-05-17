@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
 
-  export let org;
   export let collaborators; // the element attribute
 
   const permission_values = ["read", "triage", "write", "maintain", "admin"];

@@ -61,7 +61,6 @@
         <%= content_tag("svelte-collaborators-editor", nil,
           id: "label-#{@label.id}-collaborators",
           labelid: @label.id,
-          org: @label.owner.login,
           collaborators:
             Jason.encode!(
               Enum.map(

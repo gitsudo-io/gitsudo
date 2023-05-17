@@ -49,7 +49,7 @@ import component from "svelte-tag"
 new component({ component: InPlaceEditor, tagname: "svelte-in-place-editor", attributes: ["org", "id", "text"] });
 new component({ component: RepoLabels, tagname: "svelte-repo-labels", attributes: ["org", "repo"] });
 new component({ component: TeamPermissionsEditor, tagname: "svelte-team-permissions-editor", attributes: ["org", "id", "labelid", "teampermissions"] });
-new component({ component: CollaboratorsEditor, tagname: "svelte-collaborators-editor", attributes: ["org", "id", "label", "collaborators"] });
+new component({ component: CollaboratorsEditor, tagname: "svelte-collaborators-editor", attributes: ["id", "labelid", "collaborators"] });
 
 window.replace = (elementId, component) => {
     el = document.getElementById(elementId)

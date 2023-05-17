@@ -46,4 +46,12 @@ defmodule Gitsudo.Events do
   def repository_labels_changed(repository, changes) do
     GenServer.cast(AsyncWorker, {Gitsudo.Events.RepositoryLabelsChanged, {repository, changes}})
   end
+
+  @spec label_changed(
+          label_before :: %Gitsudo.Labels.Label{},
+          label_after :: %Gitsudo.Labels.Label{}
+        ) :: :ok
+  def label_changed(label_before, label_after) do
+    GenServer.cast(AsyncWorker, {Gitsudo.Events.LabelChanged, {label_before, label_after}})
+  end
 end

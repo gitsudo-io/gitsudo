@@ -19,7 +19,7 @@ defmodule Gitsudo.Labels do
 
   """
   def list_organization_labels(owner_id, opts \\ []) do
-    query = from l in Label, where: l.owner_id == ^owner_id
+    query = from(l in Label, where: l.owner_id == ^owner_id)
 
     if Keyword.has_key?(opts, :preload) do
       Repo.all(query) |> Repo.preload(opts[:preload])
@@ -107,17 +107,27 @@ defmodule Gitsudo.Labels do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_label(%Label{} = label, attrs, opts \\ []) do
-    with {:ok, label} <-
-           label
+  @spec update_label(
+          %Gitsudo.Labels.Label{},
+          map(),
+          keyword()
+        ) :: {:ok, %Label{}} | {:error, Ecto.Changeset.t()}
+  def update_label(%Label{} = label_before, attrs, opts \\ []) do
+    with label_before <- Repo.preload(label_before, :owner),
+         {:ok, label_after} <-
+           label_before
            |> Label.changeset(attrs)
            |> Repo.update() do
-      {:ok,
-       if Keyword.has_key?(opts, :preload) do
-         Repo.preload(label, opts[:preload])
-       else
-         label
-       end}
+      label_after =
+        if Keyword.has_key?(opts, :preload) do
+          Repo.preload(label_after, opts[:preload])
+        else
+          label_after
+        end
+
+      Gitsudo.Events.label_changed(label_before, label_after)
+
+      {:ok, label_after}
     end
   end
 

@@ -61,14 +61,12 @@ defmodule Gitsudo.Events.AsyncWorker do
   # Handle internal events with %Gitsudo.Repositories.Repository{} and data
   def handle_cast({event_module, {%Repository{} = repository, data}}, state) do
     Logger.debug(
-      "handle_cast({:#{event_module}, #{inspect(repository)}, #{inspect(data)}}, state)"
+      "handle_cast({#{event_module}, #{inspect(repository)}, #{inspect(data)}}, state)"
     )
 
     repository = Repo.preload(repository, :owner)
 
-    with app_installation <-
-           Repo.get_by(Gitsudo.GitHub.AppInstallation, account_id: repository.owner.id),
-         {:ok, access_token} <- GitHub.TokenCache.get_or_refresh_token(app_installation.id) do
+    with {:ok, access_token} <- get_access_token_for_org(repository.owner.id) do
       apply(event_module, :handle, [access_token, {repository, data}])
     else
       {:error, reason} ->
@@ -76,6 +74,31 @@ defmodule Gitsudo.Events.AsyncWorker do
     end
 
     {:noreply, state}
+  end
+
+  # Handle internal events with %Gitsudo.Repositories.Repository{} and data
+  def handle_cast({event_module, data}, state) do
+    Logger.debug("handle_cast({#{event_module}, #{inspect(data)}}, state)")
+
+    case elem(data, 0) do
+      %Gitsudo.Labels.Label{} = label ->
+        with label <- Repo.preload(label, :owner),
+             {:ok, access_token} <- get_access_token_for_org(label.owner.id) do
+          apply(event_module, :handle, [access_token, data])
+        else
+          {:error, reason} ->
+            Logger.error(reason)
+        end
+    end
+
+    {:noreply, state}
+  end
+
+  defp get_access_token_for_org(account_id) do
+    with app_installation <-
+           Repo.get_by(Gitsudo.GitHub.AppInstallation, account_id: account_id) do
+      GitHub.TokenCache.get_or_refresh_token(app_installation.id)
+    end
   end
 
   def handle_cast({event_name, data}, state) do
