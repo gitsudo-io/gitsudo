@@ -6,12 +6,12 @@ defmodule MapUtils do
   @doc """
   Transforms an enumerable into a map, using the given function to map each element to the map key.
   """
-  def from_enum(enumerable, key_fun), do: from_enum(enumerable, %{}, key_fun)
+  def from_enum(enumerable, fun), do: from_enum(enumerable, %{}, fun)
 
-  def from_enum(enumerable, init, key_fun) when is_map(init) and is_function(key_fun, 1),
+  def from_enum(enumerable, init, fun) when is_map(init) and is_function(fun, 1),
     do:
       Enum.reduce(enumerable, init, fn elem, acc ->
-        Map.put(acc, key_fun.(elem), elem)
+        Map.put(acc, fun.(elem), elem)
       end)
 
   def from_enum(enumerable, init, fun) when is_map(init) and is_function(fun, 2),
@@ -19,6 +19,21 @@ defmodule MapUtils do
       Enum.reduce(enumerable, init, fn elem, acc ->
         fun.(elem, acc)
       end)
+
+  @doc """
+  Transforms an enumerable into a map, using the first function to map each element to the map key and the second
+  function to map each element to the corresponding value.
+  """
+  def from_enum(enumerable, key_fun, value_fun)
+      when is_function(key_fun, 1) and is_function(value_fun, 1),
+      do: from_enum(enumerable, %{}, key_fun, value_fun)
+
+  def from_enum(enumerable, init, key_fun, value_fun)
+      when is_function(key_fun, 1) and is_function(value_fun, 1),
+      do:
+        Enum.reduce(enumerable, init, fn elem, acc ->
+          Map.put(acc, key_fun.(elem), value_fun.(elem))
+        end)
 
   @doc """
   Computes the delta (`{left, common, right}`) between two maps, where:

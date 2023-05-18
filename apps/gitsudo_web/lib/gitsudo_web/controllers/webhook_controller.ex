@@ -23,7 +23,11 @@ defmodule GitsudoWeb.WebhookController do
     send_resp(conn, :no_content, "")
   end
 
-  def handle_payload(%{"action" => "created", "installation" => installation} = params) do
+  # app installation created
+  def handle_payload(
+        %{"action" => "created", "installation" => %{"account" => _account} = installation} =
+          params
+      ) do
     Logger.debug(Jason.encode!(installation))
     Gitsudo.Events.app_installation_created(params)
   end

@@ -23,7 +23,7 @@
     <ul class="list-disc pl-4">
       <%= for repository <- @label.repositories do %>
         <li>
-          <%= link(repository.name,
+          <%= link("#{@organization.login}/#{repository.name}",
             to: ~p[/#{@organization.login}/#{repository.name}],
             class: "link"
           ) %>

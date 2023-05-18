@@ -95,38 +95,11 @@ defmodule Gitsudo.Events.AsyncWorker do
   end
 
   defp get_access_token_for_org(account_id) do
-    with app_installation <-
-           Repo.get_by(Gitsudo.GitHub.AppInstallation, account_id: account_id) do
+    if app_installation = Repo.get_by(Gitsudo.GitHub.AppInstallation, account_id: account_id) do
       GitHub.TokenCache.get_or_refresh_token(app_installation.id)
+    else
+      {:error, "No app_installation found for account_id #{account_id}"}
     end
-  end
-
-  def handle_cast({event_name, data}, state) do
-    Logger.debug("handle_cast({:#{event_name}, #{inspect(data)}}, state)")
-
-    case data do
-      %{
-        "installation" => %{
-          "id" => installation_id
-        },
-        "repository" => %{
-          "owner" => %{"login" => owner},
-          "name" => repo
-        }
-      } ->
-        case GitHub.TokenCache.get_or_refresh_token(installation_id) do
-          {:ok, access_token} ->
-            apply(__MODULE__, :"handle_#{event_name}", [access_token, owner, repo, data])
-
-          {:error, reason} ->
-            Logger.error(reason)
-        end
-
-      _ ->
-        Logger.error("No \"installation\" found in #{inspect(data)}, don't know what to do!")
-    end
-
-    {:noreply, state}
   end
 
   @doc """
