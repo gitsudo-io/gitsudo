@@ -117,7 +117,7 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
         MapUtils.from_enum(
           label.collaborator_policies,
           map,
-          & &1.collaborator.id,
+          & &1.collaborator.login,
           &to_string(&1.permission)
         )
       end)
@@ -127,7 +127,7 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
         MapUtils.from_enum(
           label.collaborator_policies,
           map,
-          & &1.collaborator.id,
+          & &1.collaborator.login,
           &to_string(&1.permission)
         )
       end)
@@ -138,9 +138,9 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
     unchanged_collaborators =
       collaborators_to_update
       |> Map.keys()
-      |> Enum.filter(fn collaborator_id ->
-        Map.get(collaborators_to_remove, collaborator_id) ==
-          Map.get(collaborators_to_update, collaborator_id)
+      |> Enum.filter(fn username ->
+        Map.get(collaborators_to_remove, username) ==
+          Map.get(collaborators_to_update, username)
       end)
 
     collaborators_to_update = Map.drop(collaborators_to_update, unchanged_collaborators)

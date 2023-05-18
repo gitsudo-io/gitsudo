@@ -167,6 +167,54 @@ defmodule GitHub.Client do
     do: http_get_and_decode(access_token, "repositories/#{id}")
 
   ###########################################################################
+  # Collaborators
+  ###########################################################################
+
+  @doc """
+  Add a repository collaborator.
+
+  See https://docs.github.com/en/rest/collaborators/collaborators#add-a-repository-collaborator
+  """
+  @spec add_repository_collaborator(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          username :: String.t(),
+          permission :: String.t()
+        ) ::
+          {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def add_repository_collaborator(access_token, owner, repo, username, permission) do
+    url = url_for("repos/#{owner}/#{repo}/collaborators/#{username}")
+    body = %{"permission" => permission}
+
+    with {:ok, resp} <- http_put(access_token, url, body) do
+      if 204 == resp.status do
+        {:ok, resp}
+      else
+        Logger.debug("resp.status: #{resp.status}")
+        reason = "#{resp.status} #{Plug.Conn.Status.reason_phrase(resp.status)}"
+        Logger.error(reason)
+        {:error, reason}
+      end
+    end
+  end
+
+  @doc """
+  Remove a repository collaborator.
+
+  See https://docs.github.com/en/rest/collaborators/collaborators#remove-a-repository-collaborator
+  """
+  @spec remove_repository_collaborator(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          username :: String.t()
+        ) ::
+          {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def remove_repository_collaborator(access_token, owner, repo, username),
+    do: http_delete(access_token, url_for("repos/#{owner}/#{repo}/collaborators/#{username}"))
+
+  ###########################################################################
   # Teams
   ###########################################################################
 

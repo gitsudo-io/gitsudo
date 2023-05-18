@@ -11,7 +11,7 @@ defmodule Gitsudo.Policies.CollaboratorPolicy do
     has_one :owner, through: [:label, :owner]
 
     belongs_to :collaborator, Gitsudo.Accounts.Account
-    field :permission, Ecto.Enum, values: [:pull, :triage, :push, :maintain, :admin]
+    field :permission, Ecto.Enum, values: [:read, :triage, :write, :maintain, :admin]
 
     timestamps()
   end

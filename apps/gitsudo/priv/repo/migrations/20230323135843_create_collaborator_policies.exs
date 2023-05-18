@@ -4,7 +4,7 @@ defmodule Gitsudo.Repo.Migrations.CreateCollaboratorPolicies do
   def change do
     create_query = """
       CREATE TYPE collaborator_permission
-      AS ENUM ('pull', 'triage', 'push', 'maintain', 'admin')
+      AS ENUM ('read', 'triage', 'write', 'maintain', 'admin')
     """
 
     drop_query = "DROP TYPE collaborator_permission"
