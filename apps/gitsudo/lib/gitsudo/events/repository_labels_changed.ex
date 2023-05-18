@@ -4,14 +4,12 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
   Called by Gitsudo.Events.AsyncWorker.
   """
 
-  alias Gitsudo.Repo
   alias Gitsudo.Labels
 
   require Logger
 
   @behaviour Gitsudo.Events.EventHandler
 
-  @callback
   def handle(
         access_token,
         {
@@ -36,8 +34,6 @@ defmodule Gitsudo.Events.RepositoryLabelsChanged do
     apply_team_policy_changes(access_token, repository, labels_to_remove, labels_to_add)
 
     apply_collaborator_changes(access_token, repository, labels_to_remove, labels_to_add)
-
-    {:ok, repository}
 
     {:ok, repository}
   end

@@ -5,13 +5,11 @@ defmodule Gitsudo.Events.LabelChanged do
   """
 
   alias Gitsudo.Repo
-  alias Gitsudo.Labels
 
   require Logger
 
   @behaviour Gitsudo.Events.EventHandler
 
-  @callback
   def handle(
         access_token,
         {
@@ -57,5 +55,7 @@ defmodule Gitsudo.Events.LabelChanged do
         )
       end)
     end
+
+    {:ok, label_after}
   end
 end

@@ -66,9 +66,10 @@ defmodule Gitsudo.Events.AsyncWorker do
 
     repository = Repo.preload(repository, :owner)
 
-    with {:ok, access_token} <- get_access_token_for_org(repository.owner.id) do
-      apply(event_module, :handle, [access_token, {repository, data}])
-    else
+    case get_access_token_for_org(repository.owner.id) do
+      {:ok, access_token} ->
+        apply(event_module, :handle, [access_token, {repository, data}])
+
       {:error, reason} ->
         Logger.error(reason)
     end
