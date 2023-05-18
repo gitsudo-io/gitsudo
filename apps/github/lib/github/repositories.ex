@@ -77,4 +77,20 @@ defmodule GitHub.Repositories do
       end
     end)
   end
+
+  @doc """
+  Apply a set of team permission changes to a repository.
+  """
+  def apply_repository_collaborator_permission_changes(
+        access_token,
+        org,
+        repo,
+        collaborators_to_remove_only,
+        collaborators_to_update,
+        collaborators_to_add_only
+      ) do
+    Logger.debug("collaborators_to_remove_only => #{inspect(collaborators_to_remove_only)}")
+    Logger.debug("collaborators_to_update => #{inspect(collaborators_to_update)}")
+    Logger.debug("collaborators_to_add_only => #{inspect(collaborators_to_add_only)}")
+  end
 end
