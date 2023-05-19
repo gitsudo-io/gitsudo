@@ -13,7 +13,12 @@ defmodule GitHub.Application do
 
     app_id = Application.fetch_env!(:github, GitHub)[:github_app_id]
     Logger.debug("github_app_id: #{app_id}")
-    key_pem = File.read!(System.fetch_env!("GITHUB_APP_PRIVATE_KEY_FILE"))
+
+    key_pem =
+      case key = System.fetch_env("GITHUB_APP_PRIVATE_KEY") do
+        {:ok, key} when key != "" -> key
+        _ -> File.read!(System.fetch_env!("GITHUB_APP_PRIVATE_KEY_FILE"))
+      end
 
     children = [
       # Start the Ecto repository
