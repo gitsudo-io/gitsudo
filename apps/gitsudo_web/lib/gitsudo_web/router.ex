@@ -46,7 +46,7 @@ defmodule GitsudoWeb.Router do
   end
 
   scope "/", GitsudoWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser]
 
     get "/", PageController, :home
     get "/logout", PageController, :logout
