@@ -11,5 +11,8 @@
     "esbuild": "0.17.17",
     "esbuild-svelte": "0.7.3",
     "svelte": "3.58.0"
+  },
+  "scripts": {
+    "deploy": "cd .. && mix assets.deploy && rm -f _build/esbuild"
   }
 }

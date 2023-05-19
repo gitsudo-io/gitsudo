@@ -62,9 +62,14 @@ defmodule GitsudoWeb.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get"],
+      setup: ["deps.get", "cmd --cd assets npm install"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.deploy": [
+        "tailwind default --minify",
+        # "esbuild default --minify", "phx.digest"
+        "cmd --cd assets node build.js --deploy",
+        "phx.digest"
+      ]
     ]
   end
 end

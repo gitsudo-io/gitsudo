@@ -37,14 +37,17 @@ if (watch) {
 
 
 if (deploy) {
+    console.log('Deploying...')
     opts = {
         ...opts,
         minify: true
     }
+    esbuild.build(opts).catch(() => process.exit(1))
+} else {
+    esbuild.context(opts).then(context => {
+        console.log('Building...' + (watch ? ' (watch)' : ''))
+        if (watch) {
+            context.watch()
+        }
+    })
 }
-
-esbuild.context(opts).then(context => {
-    if (watch) {
-        context.watch()
-    }
-})
