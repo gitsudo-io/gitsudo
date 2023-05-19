@@ -4,36 +4,35 @@
       "body": "",
       "headers": {
         "Authorization": "Bearer 06d5607433ef55fbfd842fd06ee740eddec4caaf",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json"
       },
       "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://api.github.com/user"
+      "url": "https://api.github.com/user/installations"
     },
     "response": {
       "binary": false,
-      "body": "{\"login\":\"aisrael\",\"id\":89215,\"node_id\":\"MDQ6VXNlcjg5MjE1\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/89215?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/aisrael\",\"html_url\":\"https://github.com/aisrael\",\"followers_url\":\"https://api.github.com/users/aisrael/followers\",\"following_url\":\"https://api.github.com/users/aisrael/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/aisrael/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/aisrael/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/aisrael/subscriptions\",\"organizations_url\":\"https://api.github.com/users/aisrael/orgs\",\"repos_url\":\"https://api.github.com/users/aisrael/repos\",\"events_url\":\"https://api.github.com/users/aisrael/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/aisrael/received_events\",\"type\":\"User\",\"site_admin\":false,\"name\":\"Alistair Israel\",\"company\":\"@adasupport\",\"blog\":\"https://medium.com/@alistairisrael\",\"location\":\"Ontario, Canada\",\"email\":\"aisrael@gmail.com\",\"hireable\":null,\"bio\":\"Staff Engineer (DevOps) at Ada.cx\",\"twitter_username\":null,\"public_repos\":99,\"public_gists\":28,\"followers\":53,\"following\":17,\"created_at\":\"2009-05-27T16:27:46Z\",\"updated_at\":\"2023-03-10T14:06:59Z\"}",
+      "body": "{\"total_count\":1,\"installations\":[{\"id\":37157798,\"account\":{\"login\":\"gitsudo-io\",\"id\":121780924,\"node_id\":\"O_kgDOB0I6vA\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/121780924?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/gitsudo-io\",\"html_url\":\"https://github.com/gitsudo-io\",\"followers_url\":\"https://api.github.com/users/gitsudo-io/followers\",\"following_url\":\"https://api.github.com/users/gitsudo-io/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/gitsudo-io/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/gitsudo-io/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/gitsudo-io/subscriptions\",\"organizations_url\":\"https://api.github.com/users/gitsudo-io/orgs\",\"repos_url\":\"https://api.github.com/users/gitsudo-io/repos\",\"events_url\":\"https://api.github.com/users/gitsudo-io/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/gitsudo-io/received_events\",\"type\":\"Organization\",\"site_admin\":false},\"repository_selection\":\"all\",\"access_tokens_url\":\"https://api.github.com/app/installations/37157798/access_tokens\",\"repositories_url\":\"https://api.github.com/installation/repositories\",\"html_url\":\"https://github.com/organizations/gitsudo-io/settings/installations/37157798\",\"app_id\":287942,\"app_slug\":\"gitsudo-local-dev\",\"target_id\":121780924,\"target_type\":\"Organization\",\"permissions\":{\"checks\":\"write\",\"actions\":\"write\",\"members\":\"read\",\"secrets\":\"write\",\"contents\":\"read\",\"metadata\":\"read\",\"statuses\":\"read\",\"workflows\":\"write\",\"deployments\":\"read\",\"environments\":\"write\",\"administration\":\"write\",\"security_events\":\"read\",\"repository_hooks\":\"write\",\"actions_variables\":\"write\",\"dependabot_secrets\":\"write\",\"organization_hooks\":\"write\",\"organization_events\":\"read\",\"organization_secrets\":\"write\",\"organization_custom_roles\":\"write\",\"organization_actions_variables\":\"write\",\"organization_dependabot_secrets\":\"write\"},\"events\":[\"member\",\"membership\",\"organization\",\"repository\",\"team\",\"team_add\",\"workflow_job\",\"workflow_run\"],\"created_at\":\"2023-05-04T15:20:12.000-04:00\",\"updated_at\":\"2023-05-04T15:20:13.000-04:00\",\"single_file_name\":null,\"has_multiple_single_files\":false,\"single_file_paths\":[],\"suspended_by\":null,\"suspended_at\":null}]}",
       "headers": {
         "server": "GitHub.com",
-        "date": "Wed, 22 Mar 2023 17:30:00 GMT",
+        "date": "Fri, 19 May 2023 03:59:48 GMT",
         "content-type": "application/json; charset=utf-8",
-        "content-length": "1255",
+        "content-length": "2233",
         "cache-control": "private, max-age=60, s-maxage=60",
         "vary": "Accept, Authorization, Cookie, X-GitHub-OTP",
-        "etag": "\"c508ff56d224e27864c2f26e4755eb8c85724d03d0118c784f8f5acaf93172d5\"",
-        "last-modified": "Fri, 10 Mar 2023 14:06:59 GMT",
+        "etag": "\"757e15f52d07675aac2b06f87955b8cd784266ca33c9974e8d40aacfbcae01c0\"",
         "x-oauth-scopes": "",
         "x-accepted-oauth-scopes": "",
         "x-oauth-client-id": "Iv1.3af19081836d5495",
-        "github-authentication-token-expiration": "2023-03-22 23:13:06 UTC",
-        "x-github-media-type": "github.v3",
+        "github-authentication-token-expiration": "2023-05-19 10:54:13 UTC",
+        "x-github-media-type": "github.v3; format=json",
         "x-github-api-version-selected": "2022-11-28",
         "x-ratelimit-limit": "5000",
-        "x-ratelimit-remaining": "4994",
-        "x-ratelimit-reset": "1679509101",
-        "x-ratelimit-used": "6",
+        "x-ratelimit-remaining": "4996",
+        "x-ratelimit-reset": "1684472080",
+        "x-ratelimit-used": "4",
         "x-ratelimit-resource": "core",
         "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
         "access-control-allow-origin": "*",
@@ -43,105 +42,7 @@
         "x-xss-protection": "0",
         "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
         "content-security-policy": "default-src 'none'",
-        "x-github-request-id": "C75B:23A7:24CAD27:4B58AC3:641B3B17"
-      },
-      "status_code": 200,
-      "type": "ok"
-    }
-  },
-  {
-    "request": {
-      "body": "",
-      "headers": {
-        "Authorization": "Bearer 06d5607433ef55fbfd842fd06ee740eddec4caaf",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      "method": "get",
-      "options": [],
-      "request_body": "",
-      "url": "https://api.github.com/user/orgs"
-    },
-    "response": {
-      "binary": false,
-      "body": "[{\"login\":\"gitsudo-io\",\"id\":121780924,\"node_id\":\"O_kgDOB0I6vA\",\"url\":\"https://api.github.com/orgs/gitsudo-io\",\"repos_url\":\"https://api.github.com/orgs/gitsudo-io/repos\",\"events_url\":\"https://api.github.com/orgs/gitsudo-io/events\",\"hooks_url\":\"https://api.github.com/orgs/gitsudo-io/hooks\",\"issues_url\":\"https://api.github.com/orgs/gitsudo-io/issues\",\"members_url\":\"https://api.github.com/orgs/gitsudo-io/members{/member}\",\"public_members_url\":\"https://api.github.com/orgs/gitsudo-io/public_members{/member}\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/121780924?v=4\",\"description\":\"\"}]",
-      "headers": {
-        "server": "GitHub.com",
-        "date": "Wed, 22 Mar 2023 17:30:00 GMT",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "595",
-        "cache-control": "private, max-age=60, s-maxage=60",
-        "vary": "Accept, Authorization, Cookie, X-GitHub-OTP",
-        "etag": "\"4e06e5acb6f8da543de9e497fa46dcb32861d971d2ceca482f71c06fdae2a081\"",
-        "x-oauth-scopes": "",
-        "x-accepted-oauth-scopes": "admin:org, read:org, repo, user, write:org",
-        "x-oauth-client-id": "Iv1.3af19081836d5495",
-        "github-authentication-token-expiration": "2023-03-22 23:13:06 UTC",
-        "x-github-media-type": "github.v3",
-        "x-github-api-version-selected": "2022-11-28",
-        "x-ratelimit-limit": "5000",
-        "x-ratelimit-remaining": "4993",
-        "x-ratelimit-reset": "1679509101",
-        "x-ratelimit-used": "7",
-        "x-ratelimit-resource": "core",
-        "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
-        "access-control-allow-origin": "*",
-        "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
-        "x-frame-options": "deny",
-        "x-content-type-options": "nosniff",
-        "x-xss-protection": "0",
-        "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
-        "content-security-policy": "default-src 'none'",
-        "x-github-request-id": "C75B:23A7:24CAD4C:4B58B45:641B3B18"
-      },
-      "status_code": 200,
-      "type": "ok"
-    }
-  },
-  {
-    "request": {
-      "body": "",
-      "headers": {
-        "Authorization": "Bearer 06d5607433ef55fbfd842fd06ee740eddec4caaf",
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      "method": "get",
-      "options": [],
-      "request_body": "",
-      "url": "https://api.github.com/orgs/gitsudo-io/repos"
-    },
-    "response": {
-      "binary": false,
-      "body": "[{\"id\":596202192,\"node_id\":\"R_kgDOI4lS0A\",\"name\":\"gitsudo\",\"full_name\":\"gitsudo-io/gitsudo\",\"private\":true,\"owner\":{\"login\":\"gitsudo-io\",\"id\":121780924,\"node_id\":\"O_kgDOB0I6vA\",\"avatar_url\":\"https://avatars.githubusercontent.com/u/121780924?v=4\",\"gravatar_id\":\"\",\"url\":\"https://api.github.com/users/gitsudo-io\",\"html_url\":\"https://github.com/gitsudo-io\",\"followers_url\":\"https://api.github.com/users/gitsudo-io/followers\",\"following_url\":\"https://api.github.com/users/gitsudo-io/following{/other_user}\",\"gists_url\":\"https://api.github.com/users/gitsudo-io/gists{/gist_id}\",\"starred_url\":\"https://api.github.com/users/gitsudo-io/starred{/owner}{/repo}\",\"subscriptions_url\":\"https://api.github.com/users/gitsudo-io/subscriptions\",\"organizations_url\":\"https://api.github.com/users/gitsudo-io/orgs\",\"repos_url\":\"https://api.github.com/users/gitsudo-io/repos\",\"events_url\":\"https://api.github.com/users/gitsudo-io/events{/privacy}\",\"received_events_url\":\"https://api.github.com/users/gitsudo-io/received_events\",\"type\":\"Organization\",\"site_admin\":false},\"html_url\":\"https://github.com/gitsudo-io/gitsudo\",\"description\":null,\"fork\":false,\"url\":\"https://api.github.com/repos/gitsudo-io/gitsudo\",\"forks_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/forks\",\"keys_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/keys{/key_id}\",\"collaborators_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/collaborators{/collaborator}\",\"teams_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/teams\",\"hooks_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/hooks\",\"issue_events_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/issues/events{/number}\",\"events_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/events\",\"assignees_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/assignees{/user}\",\"branches_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/branches{/branch}\",\"tags_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/tags\",\"blobs_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/git/blobs{/sha}\",\"git_tags_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/git/tags{/sha}\",\"git_refs_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/git/refs{/sha}\",\"trees_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/git/trees{/sha}\",\"statuses_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/statuses/{sha}\",\"languages_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/languages\",\"stargazers_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/stargazers\",\"contributors_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/contributors\",\"subscribers_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/subscribers\",\"subscription_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/subscription\",\"commits_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/commits{/sha}\",\"git_commits_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/git/commits{/sha}\",\"comments_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/comments{/number}\",\"issue_comment_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/issues/comments{/number}\",\"contents_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/contents/{+path}\",\"compare_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/compare/{base}...{head}\",\"merges_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/merges\",\"archive_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/{archive_format}{/ref}\",\"downloads_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/downloads\",\"issues_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/issues{/number}\",\"pulls_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/pulls{/number}\",\"milestones_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/milestones{/number}\",\"notifications_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/notifications{?since,all,participating}\",\"labels_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/labels{/name}\",\"releases_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/releases{/id}\",\"deployments_url\":\"https://api.github.com/repos/gitsudo-io/gitsudo/deployments\",\"created_at\":\"2023-02-01T17:24:20Z\",\"updated_at\":\"2023-02-01T17:24:45Z\",\"pushed_at\":\"2023-03-22T15:49:34Z\",\"git_url\":\"git://github.com/gitsudo-io/gitsudo.git\",\"ssh_url\":\"git@github.com:gitsudo-io/gitsudo.git\",\"clone_url\":\"https://github.com/gitsudo-io/gitsudo.git\",\"svn_url\":\"https://github.com/gitsudo-io/gitsudo\",\"homepage\":null,\"size\":485,\"stargazers_count\":0,\"watchers_count\":0,\"language\":\"Elixir\",\"has_issues\":true,\"has_projects\":true,\"has_downloads\":true,\"has_wiki\":false,\"has_pages\":false,\"has_discussions\":false,\"forks_count\":0,\"mirror_url\":null,\"archived\":false,\"disabled\":false,\"open_issues_count\":0,\"license\":null,\"allow_forking\":false,\"is_template\":false,\"web_commit_signoff_required\":false,\"topics\":[],\"visibility\":\"private\",\"forks\":0,\"open_issues\":0,\"watchers\":0,\"default_branch\":\"main\",\"permissions\":{\"admin\":true,\"maintain\":true,\"push\":true,\"triage\":true,\"pull\":true}}]",
-      "headers": {
-        "server": "GitHub.com",
-        "date": "Wed, 22 Mar 2023 17:30:00 GMT",
-        "content-type": "application/json; charset=utf-8",
-        "content-length": "4973",
-        "cache-control": "private, max-age=60, s-maxage=60",
-        "vary": "Accept, Authorization, Cookie, X-GitHub-OTP",
-        "etag": "\"06243fe1e03646c70878d4018b6afba1cea46f9334338b8b40056f0de6ce8bff\"",
-        "x-oauth-scopes": "",
-        "x-accepted-oauth-scopes": "",
-        "x-oauth-client-id": "Iv1.3af19081836d5495",
-        "github-authentication-token-expiration": "2023-03-22 23:13:06 UTC",
-        "x-github-media-type": "github.v3",
-        "x-github-api-version-selected": "2022-11-28",
-        "x-ratelimit-limit": "5000",
-        "x-ratelimit-remaining": "4992",
-        "x-ratelimit-reset": "1679509101",
-        "x-ratelimit-used": "8",
-        "x-ratelimit-resource": "core",
-        "access-control-expose-headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset",
-        "access-control-allow-origin": "*",
-        "strict-transport-security": "max-age=31536000; includeSubdomains; preload",
-        "x-frame-options": "deny",
-        "x-content-type-options": "nosniff",
-        "x-xss-protection": "0",
-        "referrer-policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
-        "content-security-policy": "default-src 'none'",
-        "x-github-request-id": "C75B:23A7:24CAD83:4B58BA7:641B3B18"
+        "x-github-request-id": "F2D6:764D:52F7CB:AC4650:6466F433"
       },
       "status_code": 200,
       "type": "ok"

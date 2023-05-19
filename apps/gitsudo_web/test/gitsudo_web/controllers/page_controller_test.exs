@@ -13,7 +13,7 @@ defmodule GitsudoWeb.PageControllerTest do
     use_cassette "get_home_works" do
       conn = get(conn, ~p"/")
 
-      assert html_response(conn, 200) =~ "Repository"
+      assert html_response(conn, 200) =~ "Organizations"
     end
   end
 end
