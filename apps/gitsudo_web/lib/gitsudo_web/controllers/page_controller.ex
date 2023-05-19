@@ -15,7 +15,12 @@ defmodule GitsudoWeb.PageController do
     with user <- conn.assigns[:current_user],
          {:ok, installations} <-
            Accounts.list_user_installations(user) do
-      conn |> assign(:installations, installations)
+      if length(installations) == 1 do
+        [installation | _] = installations
+        redirect(conn, to: ~p[/#{installation["account"]["login"]}])
+      else
+        conn |> assign(:installations, installations)
+      end
     else
       _ ->
         conn
