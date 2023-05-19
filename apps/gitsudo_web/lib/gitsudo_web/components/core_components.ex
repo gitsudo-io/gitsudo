@@ -13,6 +13,11 @@ defmodule GitsudoWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   import GitsudoWeb.Gettext
 
+  use Phoenix.VerifiedRoutes,
+    endpoint: GitsudoWeb.Endpoint,
+    router: GitsudoWeb.Router,
+    statics: GitsudoWeb.static_paths()
+
   @doc """
   Renders a modal.
 
@@ -630,6 +635,8 @@ defmodule GitsudoWeb.CoreComponents do
     """
   end
 
+  require Logger
+
   @doc """
   Renders a badge.
   """
@@ -639,14 +646,34 @@ defmodule GitsudoWeb.CoreComponents do
   attr(:label, :string)
   attr(:title, :string, default: nil)
   attr(:align, :string, default: nil)
+  attr(:link, :string)
 
   def badge(%{label: label} = assigns) do
     badge(
       Map.merge(
-        %{color: label.color, text: label.name, title: label.description},
+        %{
+          color: label.color,
+          text: label.name,
+          title: label.description
+        },
         Map.delete(assigns, :label)
       )
     )
+  end
+
+  def badge(%{link: link} = assigns) do
+    Logger.debug("link: #{assigns.link}")
+
+    ~H"""
+    <a :if={@link} href={link}>
+      <span
+        class={["badge badge-lg bg-#{@color} border-#{@color} h-6", @align && "align-#{@align}"]}
+        title={@title}
+      >
+        <%= @text %>
+      </span>
+    </a>
+    """
   end
 
   def badge(assigns) do

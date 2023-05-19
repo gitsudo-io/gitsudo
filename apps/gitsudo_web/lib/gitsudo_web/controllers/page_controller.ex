@@ -7,7 +7,19 @@ defmodule GitsudoWeb.PageController do
 
   @spec home(Plug.Conn.t(), any) :: Plug.Conn.t()
   def home(conn, _params) do
-    conn |> list_repositories |> render(:home)
+    conn |> list_user_installations |> render(:home)
+  end
+
+  @spec list_user_installations(Plug.Conn.t()) :: Plug.Conn.t()
+  def list_user_installations(conn) do
+    with user <- conn.assigns[:current_user],
+         {:ok, installations} <-
+           Accounts.list_user_installations(user) do
+      conn |> assign(:installations, installations)
+    else
+      _ ->
+        conn
+    end
   end
 
   @spec list_repositories(Plug.Conn.t()) :: Plug.Conn.t()

@@ -27,11 +27,9 @@
     <% end %>
   </div>
 </div>
-<ul class="list-disc list-inside">
-  <%= for label <- @labels do %>
-    <li><.badge label={label} /></li>
-  <% end %>
-</ul>
+<%= for label <- @labels do %>
+  <.badge label={label} link={~p[/#{@organization.login}/labels/#{label.name}]} class="pr-4" />
+<% end %>
 
 <h2>Repositories</h2>
 

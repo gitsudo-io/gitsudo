@@ -497,6 +497,20 @@ defmodule GitHub.Client do
   def get_user(access_token), do: http_get_and_decode(access_token, "user")
 
   @doc """
+  List app installations accessible to the user access token
+
+  See: https://docs.github.com/en/rest/apps/installations?apiVersion=2022-11-28#list-app-installations-accessible-to-the-user-access-token
+
+  ```
+    GET /user/installations
+  ```
+  """
+  @spec list_user_installations(access_token :: String.t()) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def list_user_installations(access_token),
+    do: http_get_and_decode(access_token, "user/installations")
+
+  @doc """
   ```
     GET /user/repos
   ```

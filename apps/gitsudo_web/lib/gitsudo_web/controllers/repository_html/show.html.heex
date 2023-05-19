@@ -7,7 +7,7 @@
   <h1 class="inline-flex items-baseline">
     <%= @repository.name %>
     <span class="pl-1 text-sm text-gray-600">
-      <%= link(to: @repository.html_url, class: "inline-flex items-center", title: "View on GitHub") do %>
+      <%= link(to: @repository.html_url, class: "inline-flex items-center", target: "_blank", title: "View on GitHub") do %>
         <span class="hero-arrow-top-right-on-square w-4 h-4" />
       <% end %>
     </span>

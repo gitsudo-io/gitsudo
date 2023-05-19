@@ -110,4 +110,19 @@ defmodule Gitsudo.Accounts do
     |> UserSession.changeset(data)
     |> Repo.insert_or_update()
   end
+
+  @doc """
+  List user installations
+  """
+  @spec list_user_installations(user :: %Account{}) ::
+          {:ok, list()} | {:error, any()}
+  def list_user_installations(user) do
+    with user_session <- get_user_session(user.id) do
+      case GitHub.Client.list_user_installations(user_session.access_token) do
+        {:ok, %{"installations" => installations}} -> {:ok, installations}
+        {:ok, _} -> {:error, "Unexpected response from GitHub"}
+        {:error, reason} -> {:error, reason}
+      end
+    end
+  end
 end

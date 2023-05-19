@@ -20,6 +20,9 @@ defmodule Gitsudo.Events.LabelChanged do
     label_before =
       Repo.preload(label_before, repositories: [:owner], collaborator_policies: [:collaborator])
 
+    label_after =
+      Repo.preload(label_after, repositories: [:owner], collaborator_policies: [:collaborator])
+
     Logger.debug("access_token => #{inspect(access_token)}")
     Logger.debug("label_before => #{inspect(label_before)}")
     Logger.debug("label_after => #{inspect(label_after)}")
