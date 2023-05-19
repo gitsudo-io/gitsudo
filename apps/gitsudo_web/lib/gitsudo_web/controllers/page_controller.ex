@@ -7,7 +7,7 @@ defmodule GitsudoWeb.PageController do
 
   @spec home(Plug.Conn.t(), any) :: Plug.Conn.t()
   def home(conn, _params) do
-    conn |> list_user_installations |> render(:home)
+    conn |> list_user_installations
   end
 
   @spec list_user_installations(Plug.Conn.t()) :: Plug.Conn.t()
@@ -15,15 +15,18 @@ defmodule GitsudoWeb.PageController do
     with user <- conn.assigns[:current_user],
          {:ok, installations} <-
            Accounts.list_user_installations(user) do
+      Logger.debug("list_user_installations() found: #{length(installations)}")
+
       if length(installations) == 1 do
         [installation | _] = installations
-        redirect(conn, to: ~p[/#{installation["account"]["login"]}])
+        Logger.debug("Redirecting to #{~p[/#{installation["account"]["login"]}]}")
+        conn |> redirect(to: ~p[/#{installation["account"]["login"]}]) |> halt()
       else
-        conn |> assign(:installations, installations)
+        conn |> assign(:installations, installations) |> render(:home)
       end
     else
       _ ->
-        conn
+        conn |> render(:home)
     end
   end
 

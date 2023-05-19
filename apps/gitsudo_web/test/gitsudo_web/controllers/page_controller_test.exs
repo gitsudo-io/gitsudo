@@ -13,7 +13,7 @@ defmodule GitsudoWeb.PageControllerTest do
     use_cassette "get_home_works" do
       conn = get(conn, ~p"/")
 
-      assert html_response(conn, 200) =~ "Organizations"
+      assert redirected_to(conn, 302) =~ "/gitsudo-io"
     end
   end
 end
