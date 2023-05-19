@@ -13,8 +13,8 @@
           Color
         </label>
         <%= for color <- ["red", "orange", "yellow", "lime", "green", "teal", "cyan", "blue", "violet", "purple", "pink", "gray"] do %>
-          <div class="inline form-control pr-2 align-top">
-            <label class="align-top">
+          <div class="inline form-control pr-2 items-start">
+            <label>
               <.input
                 field={f[:color]}
                 type="radio"
@@ -22,7 +22,7 @@
                 value={"label-#{color}"}
                 checked={f[:color].value == "label-#{color}"}
               />
-              <.badge color={"label-#{color}"} text={color} />
+              <.badge color={"label-#{color}"} text={color} align="top" />
             </label>
           </div>
         <% end %>

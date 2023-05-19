@@ -646,26 +646,25 @@ defmodule GitsudoWeb.CoreComponents do
   attr(:label, :string)
   attr(:title, :string, default: nil)
   attr(:align, :string, default: nil)
-  attr(:link, :string)
+  attr(:link, :string, default: nil)
+  attr(:class, :string, default: nil)
 
-  def badge(%{label: label} = assigns) do
+  def badge(%{label: label, title: title} = assigns) do
     badge(
       Map.merge(
+        Map.delete(assigns, :label),
         %{
           color: label.color,
           text: label.name,
-          title: label.description
-        },
-        Map.delete(assigns, :label)
+          title: title || label.description
+        }
       )
     )
   end
 
-  def badge(%{link: link} = assigns) do
-    Logger.debug("link: #{assigns.link}")
-
+  def badge(%{link: link} = assigns) when is_binary(link) do
     ~H"""
-    <a :if={@link} href={link}>
+    <a href={@link} class={@class}>
       <span
         class={["badge badge-lg bg-#{@color} border-#{@color} h-6", @align && "align-#{@align}"]}
         title={@title}
@@ -679,7 +678,7 @@ defmodule GitsudoWeb.CoreComponents do
   def badge(assigns) do
     ~H"""
     <span
-      class={["badge badge-lg bg-#{@color} border-#{@color} h-6", @align && "align-#{@align}"]}
+      class={["badge badge-lg bg-#{@color} border-#{@color} h-6", @align && "align-#{@align}", @class]}
       title={@title}
     >
       <%= @text %>
