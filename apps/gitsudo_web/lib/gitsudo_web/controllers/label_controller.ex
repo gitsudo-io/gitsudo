@@ -159,20 +159,22 @@ defmodule GitsudoWeb.LabelController do
        ) do
     Enum.zip([new_collaborator_logins, new_collaborator_permissions])
     |> Enum.reduce(collaborator_policies, fn {login, permission}, collaborator_policies ->
-      if {:ok, account} = Accounts.find_or_fetch_account(organization, login) do
-        Logger.debug("Adding #{login} with permission #{permission}...")
+      case Accounts.find_or_fetch_account(organization, login) do
+        {:ok, account} ->
+          Logger.debug("Adding #{login} with permission #{permission}...")
 
-        [
-          %{
-            id: nil,
-            collaborator_id: account.id,
-            permission: permission
-          }
-          | collaborator_policies
-        ]
-      else
-        Logger.error("Could not find Account with login \"#{login}\"!")
-        collaborator_policies
+          [
+            %{
+              id: nil,
+              collaborator_id: account.id,
+              permission: permission
+            }
+            | collaborator_policies
+          ]
+
+        _ ->
+          Logger.error("Could not find Account with login \"#{login}\"!")
+          collaborator_policies
       end
     end)
   end
