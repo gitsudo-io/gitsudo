@@ -1,9 +1,9 @@
 <header>
   <div class="navbar bg-base-100">
     <div class="flex-1">
-      <a class="btn btn-ghost normal-case text-xl" href="http://localhost:4000">
+      <%= link to: ~p[/], class: "btn btn-ghost normal-case text-xl" do %>
         Git<span class="opacity-75">sudo</span>
-      </a>
+      <% end %>
     </div>
     <div class="flex-none gap-1">
       <%= if @current_user do %>
