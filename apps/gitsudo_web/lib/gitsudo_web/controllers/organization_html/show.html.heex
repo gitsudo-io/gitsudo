@@ -9,8 +9,10 @@
     ) %>
     <%= @organization.login %>
     <span class="pl-1 text-sm text-gray-600">
-      <%= link(to: @organization.html_url, target: "_blank", class: "inline-flex items-center", title: "View on GitHub") do %>
-        <span class="hero-arrow-top-right-on-square w-4 h-4" />
+      <%= if @organization.html_url do %>
+        <%= link(to: @organization.html_url, target: "_blank", class: "inline-flex items-center", title: "View on GitHub") do %>
+          <span class="hero-arrow-top-right-on-square w-4 h-4" />
+        <% end %>
       <% end %>
     </span>
   </h1>
