@@ -50,13 +50,13 @@ defmodule Gitsudo.Accounts do
   end
 
   @spec find_or_create_account(any, map) :: {:ok, Account} | {:error, Ecto.Changeset.t()}
-  def find_or_create_account(account_id, %{"login" => login, "type" => type}) do
+  def find_or_create_account(account_id, %{"login" => login, "type" => type} = attrs) do
     Logger.debug("find_or_create_account(#{account_id}, %{login: #{login}, type: #{type}})")
 
     account = Repo.get(Account, account_id) || %Account{id: account_id}
 
     account
-    |> Account.changeset(%{id: account_id, login: login, type: type})
+    |> Account.changeset(attrs)
     |> Repo.insert_or_update()
   end
 
