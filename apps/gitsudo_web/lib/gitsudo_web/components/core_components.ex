@@ -650,14 +650,23 @@ defmodule GitsudoWeb.CoreComponents do
   attr(:class, :string, default: nil)
 
   def badge(%{label: label, title: title} = assigns) do
+    label_assigns = %{
+      color: label.color,
+      text: label.name,
+      title: title || label.description
+    }
+
+    label_assigns =
+      if Ecto.assoc_loaded?(label.owner) do
+        Map.put(label_assigns, :link, ~p[/#{label.owner.login}/labels/#{label.name}])
+      else
+        label_assigns
+      end
+
     badge(
       Map.merge(
         Map.delete(assigns, :label),
-        %{
-          color: label.color,
-          text: label.name,
-          title: title || label.description
-        }
+        label_assigns
       )
     )
   end

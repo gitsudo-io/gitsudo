@@ -13,6 +13,36 @@ defmodule Gitsudo.Accounts do
     Repo.get(Account, id)
   end
 
+  def find_or_fetch_account(organization, login) do
+    case get_account_by_login(login) do
+      nil ->
+        Logger.debug("Fetching account with login \"#{login}\"...")
+
+        with {:ok, access_token} <-
+               Gitsudo.Organizations.get_access_token_for_org(organization.id),
+             {:ok, user_data} <- GitHub.Client.get_user(access_token, login) do
+          create_account_from_json(user_data)
+        else
+          {:error, reason} -> Logger.error(reason)
+        end
+
+      account ->
+        Logger.debug("Found account with login \"#{login}\"...")
+        {:ok, account}
+    end
+  end
+
+  def create_account_from_json(
+        %{"id" => account_id, "login" => login, "type" => type} = user_data
+      ) do
+    Account.new(%{
+      id: account_id,
+      login: login,
+      type: type
+    })
+    |> Repo.insert()
+  end
+
   @spec get_account_by_login(login :: String.t()) ::
           Account | term() | nil
   def get_account_by_login(login) do

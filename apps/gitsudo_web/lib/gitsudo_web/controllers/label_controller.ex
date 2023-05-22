@@ -2,6 +2,7 @@ defmodule GitsudoWeb.LabelController do
   use GitsudoWeb, :controller
 
   alias Gitsudo.Accounts
+  alias Gitsudo.Organizations
   alias Gitsudo.Labels
   alias Gitsudo.Labels.Label
 
@@ -79,7 +80,7 @@ defmodule GitsudoWeb.LabelController do
     if label = Labels.get_label_by_name(organization.id, name) do
       team_policies = build_team_policies(params)
       Logger.debug("team_policies => #{inspect(team_policies)}}")
-      collaborator_policies = build_collaborator_policies(params)
+      collaborator_policies = build_collaborator_policies(organization, params)
       Logger.debug("collaborator_policies => #{inspect(collaborator_policies)}")
 
       attrs =
@@ -120,9 +121,9 @@ defmodule GitsudoWeb.LabelController do
 
   defp extract_existing_team_permissions(_label_params), do: []
 
-  defp build_collaborator_policies(params) do
+  defp build_collaborator_policies(organization, params) do
     extract_collorator_policies(params)
-    |> add_new_collaborators(params)
+    |> add_new_collaborators(organization, params)
   end
 
   defp extract_collorator_policies(
@@ -150,6 +151,7 @@ defmodule GitsudoWeb.LabelController do
 
   defp add_new_collaborators(
          collaborator_policies,
+         organization,
          %{
            "new_collaborator_logins" => new_collaborator_logins,
            "new_collaborator_permissions" => new_collaborator_permissions
@@ -157,7 +159,7 @@ defmodule GitsudoWeb.LabelController do
        ) do
     Enum.zip([new_collaborator_logins, new_collaborator_permissions])
     |> Enum.reduce(collaborator_policies, fn {login, permission}, collaborator_policies ->
-      if account = Accounts.get_account_by_login(login) do
+      if {:ok, account} = Accounts.find_or_fetch_account(organization, login) do
         Logger.debug("Adding #{login} with permission #{permission}...")
 
         [
@@ -175,7 +177,7 @@ defmodule GitsudoWeb.LabelController do
     end)
   end
 
-  defp add_new_collaborators(collaborator_policies, _), do: collaborator_policies
+  defp add_new_collaborators(collaborator_policies, _, _), do: collaborator_policies
 
   def delete(%{assigns: %{organization: organization}} = conn, %{
         "name" => name

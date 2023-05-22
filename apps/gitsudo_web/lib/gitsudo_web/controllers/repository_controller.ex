@@ -19,7 +19,7 @@ defmodule GitsudoWeb.RepositoryController do
          Repositories.get_repository_by_owner_id_and_name(organization.id, name,
            preload: [
              :owner,
-             labels: [:team_policies, collaborator_policies: [:collaborator]]
+             labels: [:owner, :team_policies, collaborator_policies: [:collaborator]]
            ]
          ) do
       conn

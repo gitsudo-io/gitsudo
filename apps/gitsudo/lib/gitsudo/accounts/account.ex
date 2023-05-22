@@ -29,4 +29,6 @@ defmodule Gitsudo.Accounts.Account do
     |> cast(attrs, [:id, :login, :type, :html_url, :avatar_url])
     |> validate_required([:id, :login, :type])
   end
+
+  def new(attrs), do: %__MODULE__{} |> changeset(attrs)
 end

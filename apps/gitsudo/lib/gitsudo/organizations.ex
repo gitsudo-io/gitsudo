@@ -21,4 +21,12 @@ defmodule Gitsudo.Organizations do
       {:ok, Repositories.enrich_repos_with_labels_and_config_sets(org_repos)}
     end
   end
+
+  def get_access_token_for_org(account_id) do
+    if app_installation = Repo.get_by(Gitsudo.GitHub.AppInstallation, account_id: account_id) do
+      GitHub.TokenCache.get_or_refresh_token(app_installation.id)
+    else
+      {:error, "No app_installation found for account_id #{account_id}"}
+    end
+  end
 end

@@ -482,6 +482,22 @@ defmodule GitHub.Client do
   end
 
   ###########################################################################
+  # Users
+  ###########################################################################
+
+  @doc """
+  Get the user.
+
+  ```
+    GET /user
+  ```
+  """
+  @spec get_user(access_token :: String.t(), login :: String.t()) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_user(access_token, login),
+    do: http_get_and_decode(access_token, "users/#{login}")
+
+  ###########################################################################
   # User scope
   ###########################################################################
 
