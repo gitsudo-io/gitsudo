@@ -64,6 +64,8 @@ defmodule GitsudoWeb.MixProject do
     [
       setup: ["deps.get", "cmd --cd assets npm install"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+      "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": [
         "tailwind default --minify",
         # "esbuild default --minify", "phx.digest"
