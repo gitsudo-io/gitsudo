@@ -9,9 +9,10 @@ defmodule GitsudoWeb.LabelController do
   require Logger
 
   @spec index(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def index(conn, _params) do
+  def index(%{assigns: %{organization: organization}} = conn, _params) do
     conn
     |> fetch_labels()
+    |> assign(:page_title, "#{organization.login} - Labels")
     |> render(:index)
   end
 
@@ -49,7 +50,9 @@ defmodule GitsudoWeb.LabelController do
         "name" => name
       }) do
     if label = Labels.get_label_by_name(organization.id, name) do
-      render(conn, :show, label: label)
+      conn
+      |> assign(:page_title, "#{organization.login} - #{label.name}")
+      |> render(:show, label: label)
     else
       conn |> send_resp(:not_found, "Not found") |> halt
     end

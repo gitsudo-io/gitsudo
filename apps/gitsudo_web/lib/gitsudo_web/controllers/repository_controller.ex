@@ -23,6 +23,7 @@ defmodule GitsudoWeb.RepositoryController do
            ]
          ) do
       conn
+      |> assign(:page_title, "#{organization.login}/#{repository.name}")
       |> assign(:repository, repository)
       |> populate_workflows(repository)
       |> render(:show)

@@ -17,6 +17,7 @@ defmodule GitsudoWeb.OrganizationController do
       labels = Gitsudo.Labels.list_organization_labels(organization.id)
 
       conn
+      |> assign(:page_title, organization.login)
       |> assign(:organization, organization)
       |> assign(:labels, labels)
       |> fetch_repositories(organization)
