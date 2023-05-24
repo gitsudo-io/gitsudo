@@ -65,7 +65,8 @@ defmodule Gitsudo.Accounts do
           client_secret :: String.t(),
           code :: String.t()
         ) ::
-          {:ok, map()} | {:error, Exception.t() | Jason.DecodeError.t()}
+          {:ok, %{required(:user_id) => integer()}}
+          | {:error, Exception.t() | Jason.DecodeError.t()}
   def handle_user_login(client_id, client_secret, code) do
     with {:ok, json} <-
            GitHub.Client.exchange_code_for_access_token(client_id, client_secret, code) do
@@ -83,10 +84,10 @@ defmodule Gitsudo.Accounts do
     expires_at_unix = now + expires_in
     refresh_token_expires_at_unix = now + refresh_token_expires_in
 
-    with {:ok, expires_at} <- DateTime.from_unix(expires_at_unix),
+    with {:ok, %{"id" => id} = github_user} <- GitHub.Client.get_user(access_token),
+         {:ok, expires_at} <- DateTime.from_unix(expires_at_unix),
          {:ok, refresh_token_expires_at} <-
-           DateTime.from_unix(refresh_token_expires_at_unix),
-         {:ok, %{"id" => id} = github_user} <- GitHub.Client.get_user(access_token) do
+           DateTime.from_unix(refresh_token_expires_at_unix) do
       Logger.debug("Found user: #{inspect(github_user)}")
 
       with {:ok, user} <- create_or_update_user(github_user),
@@ -97,7 +98,7 @@ defmodule Gitsudo.Accounts do
                refresh_token: refresh_token,
                refresh_token_expires_at: refresh_token_expires_at
              }) do
-        {:ok, %{user_id: user.id, exp: expires_at_unix}}
+        {:ok, %{user_id: user.id}}
       end
     end
   end

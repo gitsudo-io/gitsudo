@@ -20,10 +20,9 @@ defmodule GitsudoWeb.OauthController do
       Application.fetch_env!(:gitsudo_web, GitsudoWeb.Endpoint)[:github_client_secret]
 
     case Gitsudo.Accounts.handle_user_login(client_id, client_secret, code) do
-      {:ok, %{user_id: user_id, exp: expires_at}} ->
+      {:ok, %{user_id: user_id}} ->
         conn
         |> put_session(:user_id, user_id)
-        |> put_session(:exp, expires_at)
         |> redirect(to: ~p"/")
 
       {:error, reason} ->
@@ -33,12 +32,6 @@ defmodule GitsudoWeb.OauthController do
 
         conn
         |> put_flash(:error, message)
-        |> redirect(to: ~p"/login")
-        |> halt()
-
-      _ ->
-        conn
-        |> put_flash(:error, "Something went wrong")
         |> redirect(to: ~p"/login")
         |> halt()
     end
