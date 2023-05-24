@@ -34,31 +34,53 @@
     <h1 class="pt-8">Policies</h1>
 
     <h2>Collaborators</h2>
-    <table class="table">
-      <tr>
-        <th>Team</th>
-        <th>Permission</th>
-      </tr>
-      <%= for team_policy <- @label.team_policies do %>
-        <tr>
-          <td>
-            <%= team_policy.team_slug %>
-            <%= link(to: "https://github.com/orgs/#{@organization.login}/teams/#{team_policy.team_slug}", target: "_blank") do %>
-              <span class="hero-arrow-top-right-on-square" />
-            <% end %>
-          </td>
-          <td><%= team_policy.permission %></td>
-        </tr>
-      <% end %>
-    </table>
+    <%= unless Enum.empty?(@label.team_policies) do %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>Permission</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for team_policy <- @label.team_policies do %>
+            <tr>
+              <td>
+                <%= team_policy.team_slug %>
+                <%= link(to: "https://github.com/orgs/#{@organization.login}/teams/#{team_policy.team_slug}", target: "_blank") do %>
+                  <span class="hero-arrow-top-right-on-square" />
+                <% end %>
+              </td>
+              <td><%= team_policy.permission %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
 
-    <ul class="list-disc pl-4">
-      <%= for collaborator_policy <- @label.collaborator_policies do %>
-        <li>
-          <%= collaborator_policy.collaborator.login %>: <%= collaborator_policy.permission %>
-        </li>
-      <% end %>
-    </ul>
+    <%= unless Enum.empty?(@label.collaborator_policies) do %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Permission</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for collaborator_policy <- @label.collaborator_policies do %>
+            <tr>
+              <td>
+                <%= collaborator_policy.collaborator.login %>
+                <%= link(to: "https://github.com/#{collaborator_policy.collaborator.login}", target: "_blank") do %>
+                  <span class="hero-arrow-top-right-on-square" />
+                <% end %>
+              </td>
+              <td><%= collaborator_policy.permission %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 <% end %>
 <.back navigate={~p"/#{@organization.login}/labels"}>
