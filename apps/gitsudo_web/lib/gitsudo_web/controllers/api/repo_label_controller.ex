@@ -30,19 +30,29 @@ defmodule GitsudoWeb.API.RepoLabelController do
     |> render(:index, labels: repository.labels)
   end
 
-  def create(%{assigns: %{organization: _organization, repository: repository}} = conn, params) do
+  def create(
+        %{assigns: %{organization: _organization, repository: repository, user_role: user_role}} =
+          conn,
+        params
+      ) do
     Logger.debug("params => #{inspect(params)}")
 
-    with {:ok, repository} <-
-           repository
-           |> Gitsudo.Repo.preload([
-             :owner,
-             labels: [:team_policies, collaborator_policies: [:collaborator]]
-           ])
-           |> apply_changes(params["changes"]) do
+    if user_role == "admin" do
+      with {:ok, repository} <-
+             repository
+             |> Gitsudo.Repo.preload([
+               :owner,
+               labels: [:team_policies, collaborator_policies: [:collaborator]]
+             ])
+             |> apply_changes(params["changes"]) do
+        conn
+        |> put_view(json: GitsudoWeb.API.LabelJSON)
+        |> render(:index, labels: repository.labels)
+      end
+    else
       conn
-      |> put_view(json: GitsudoWeb.API.LabelJSON)
-      |> render(:index, labels: repository.labels)
+      |> send_resp(:unauthorized, "Unauthorized")
+      |> halt()
     end
   end
 

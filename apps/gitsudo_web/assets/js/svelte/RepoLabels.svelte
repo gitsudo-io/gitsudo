@@ -4,8 +4,9 @@
 
   export let org;
   export let repo;
+  export let editable;
 
-  let contentDiv;
+  let edit_enabled = editable == "true";
   let edited = false;
   let editing = false;
   let originalLabels = [];
@@ -173,12 +174,14 @@
   </div>
 {:else if !edited}
   <div><slot /></div>
-  <div class="pt-4">
-    <button
-      class="btn btn-sm btn-primary"
-      on:click|preventDefault={startEditing}>Edit Labels</button
-    >
-  </div>
+  {#if edit_enabled}
+    <div class="pt-4">
+      <button
+        class="btn btn-sm btn-primary"
+        on:click|preventDefault={startEditing}>Edit Labels</button
+      >
+    </div>
+  {/if}
 {:else}
   <table class="w-full">
     <tbody>
@@ -221,10 +224,12 @@
       {/each}
     </tbody>
   </table>
-  <div class="pt-4">
-    <button
-      class="btn btn-sm btn-primary"
-      on:click|preventDefault={startEditing}>Edit Labels</button
-    >
-  </div>
+  {#if edit_enabled}
+    <div class="pt-4">
+      <button
+        class="btn btn-sm btn-primary"
+        on:click|preventDefault={startEditing}>Edit Labels</button
+      >
+    </div>
+  {/if}
 {/if}

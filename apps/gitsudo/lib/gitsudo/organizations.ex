@@ -29,4 +29,23 @@ defmodule Gitsudo.Organizations do
       {:error, "No app_installation found for account_id #{account_id}"}
     end
   end
+
+  @spec get_user_role(
+          user_session :: %Gitsudo.Accounts.UserSession{},
+          organization :: %Gitsudo.Accounts.Account{}
+        ) :: {:ok, String.t()} | {:error, any}
+  def get_user_role(user_session, organization) do
+    case GitHub.Client.get_organization_membership(
+           user_session.access_token,
+           organization.login,
+           user_session.user.login
+         ) do
+      {:ok, %{"role" => user_role} = _org_membership} ->
+        {:ok, user_role}
+
+      {:error, err} ->
+        Logger.error(err)
+        {:error, err}
+    end
+  end
 end

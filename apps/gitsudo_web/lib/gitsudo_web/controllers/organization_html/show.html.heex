@@ -21,13 +21,15 @@
   <div>
     <h2>Labels</h2>
   </div>
-  <div>
-    <%= link(to: ~p[/#{@organization.login}/labels],
+  <%= if @user_role == "admin" do %>
+    <div>
+      <%= link(to: ~p[/#{@organization.login}/labels],
       class: "btn btn-xs btn-ghost"
     ) do %>
-      <span class="hero-cog-6-tooth h-4 w-4" /><span class="pl-1">Manage labels</span>
-    <% end %>
-  </div>
+        <span class="hero-cog-6-tooth h-4 w-4" /><span class="pl-1">Manage labels</span>
+      <% end %>
+    </div>
+  <% end %>
 </div>
 <%= for label <- @labels do %>
   <.badge label={label} link={~p[/#{@organization.login}/labels/#{label.name}]} class="pr-1" />

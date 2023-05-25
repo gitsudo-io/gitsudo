@@ -18,7 +18,8 @@
 <%= content_tag("svelte-repo-labels",
   id: "labels-#{@organization.id}-#{@repository.id}",
   org: @organization.login,
-  repo: @repository.name
+  repo: @repository.name,
+  editable: (if @user_role == "admin", do: "true", else: "false")
 ) do %>
   <%= if !Enum.empty?(@repository.labels) do %>
     <table class="w-full">

@@ -74,24 +74,30 @@ defmodule GitsudoWeb.LabelController do
   POST /:owner/:repo/labels
   """
   def update(
-        %{assigns: %{organization: organization}} = conn,
+        %{assigns: %{organization: organization, user_role: user_role}} = conn,
         %{
           "name" => name,
           "label" => label_params
         } = params
       ) do
     if label = Labels.get_label_by_name(organization.id, name) do
-      team_policies = build_team_policies(params)
-      Logger.debug("team_policies => #{inspect(team_policies)}}")
-      collaborator_policies = build_collaborator_policies(organization, params)
-      Logger.debug("collaborator_policies => #{inspect(collaborator_policies)}")
+      if user_role == "admin" do
+        team_policies = build_team_policies(params)
+        Logger.debug("team_policies => #{inspect(team_policies)}}")
+        collaborator_policies = build_collaborator_policies(organization, params)
+        Logger.debug("collaborator_policies => #{inspect(collaborator_policies)}")
 
-      attrs =
-        Map.put(label_params, "team_policies", team_policies)
-        |> Map.put("collaborator_policies", collaborator_policies)
+        attrs =
+          Map.put(label_params, "team_policies", team_policies)
+          |> Map.put("collaborator_policies", collaborator_policies)
 
-      with {:ok, %Label{} = label} <- Labels.update_label(label, attrs) do
-        redirect(conn, to: ~p"/#{organization.login}/labels/#{label.name}")
+        with {:ok, %Label{} = label} <- Labels.update_label(label, attrs) do
+          redirect(conn, to: ~p"/#{organization.login}/labels/#{label.name}")
+        end
+      else
+        conn
+        |> send_resp(:unauthorized, "Unauthorized")
+        |> halt()
       end
     else
       conn |> send_resp(:not_found, "Not found") |> halt

@@ -21,7 +21,9 @@ defmodule GitsudoWeb.UserAuth do
       Logger.debug("user: #{inspect(user_session.user)}")
 
       if user_session.expires_at > DateTime.utc_now() do
-        conn |> assign(:current_user, user_session.user)
+        conn
+        |> assign(:user_session, user_session)
+        |> assign(:current_user, user_session.user)
       else
         conn |> assign(:current_user, nil)
       end

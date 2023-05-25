@@ -14,7 +14,9 @@
       <.badge label={@label} align="middle" /></h1>
     <:subtitle><%= @label.description %></:subtitle>
     <:actions>
-      <%= link("Edit", to: ~p[/#{@organization.login}/labels/#{@label.name}/edit], class: "btn") %>
+      <%= if @user_role == "admin" do %>
+        <%= link("Edit", to: ~p[/#{@organization.login}/labels/#{@label.name}/edit], class: "btn") %>
+      <% end %>
     </:actions>
   </.header>
 

@@ -11,6 +11,7 @@ defmodule GitsudoWeb.LabelControllerTest do
 
   setup %{conn: conn} do
     user_session = user_session_fixture()
+    conn = Plug.Conn.assign(conn, :user_role, "admin")
     {:ok, conn: Plug.Test.init_test_session(conn, user_id: user_session.id)}
   end
 

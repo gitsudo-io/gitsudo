@@ -215,6 +215,25 @@ defmodule GitHub.Client do
     do: http_delete(access_token, url_for("repos/#{owner}/#{repo}/collaborators/#{username}"))
 
   ###########################################################################
+  # Organization Members
+  ###########################################################################
+
+  @doc """
+  Get organization membership for a user
+
+  ```
+  GET /orgs/{org}/memberships/{username}
+  ```
+  """
+  @spec get_organization_membership(
+          access_token :: String.t(),
+          org :: String.t(),
+          username :: String.t()
+        ) :: {:ok, any()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_organization_membership(access_token, org, username),
+    do: http_get_and_decode(access_token, "orgs/#{org}/memberships/#{username}")
+
+  ###########################################################################
   # Teams
   ###########################################################################
 
