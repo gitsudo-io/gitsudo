@@ -353,6 +353,24 @@ defmodule GitHub.Client do
     http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/workflows")
   end
 
+  @doc """
+  Get a workflow
+
+  ```
+  GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}
+  ```
+  """
+  @spec get_workflow(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          workflow_id :: integer()
+        ) ::
+          {:ok, map()} | {:error, String.t() | Exception.t() | Jason.DecodeError.t()}
+  def get_workflow(access_token, owner, repo, workflow_id) do
+    http_get_and_decode(access_token, "repos/#{owner}/#{repo}/actions/workflows/#{workflow_id}")
+  end
+
   @default_per_page 30
 
   @doc """

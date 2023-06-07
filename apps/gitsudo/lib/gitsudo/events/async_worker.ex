@@ -290,9 +290,9 @@ defmodule Gitsudo.Events.AsyncWorker do
           map()
         ) :: any
   def handle_workflow_run_completed(
-        _access_token,
-        _owner,
-        _repo,
+        access_token,
+        owner,
+        repo,
         %{
           "workflow" => %{"id" => workflow_id},
           "workflow_run" => workflow_run_data
@@ -300,14 +300,34 @@ defmodule Gitsudo.Events.AsyncWorker do
       ) do
     Logger.debug("handle_workflow_run_completed(#{inspect(workflow_run_data)})")
 
-    case workflow_run_data
-         |> Map.put("workflow_id", workflow_id)
-         |> Workflows.insert_or_update_workflow_run() do
-      {:ok, workflow_run} ->
-        Logger.debug("Created/updated workflow_run: #{inspect(workflow_run)}")
+    with {:ok, _workflow} <-
+           ensure_workflow_exists(access_token, owner, repo, workflow_id) do
+      case workflow_run_data
+           |> Map.put("workflow_id", workflow_id)
+           |> Workflows.insert_or_update_workflow_run() do
+        {:ok, workflow_run} ->
+          Logger.debug("Created/updated workflow_run: #{inspect(workflow_run)}")
 
-      {:error, reason} ->
-        Logger.error(reason)
+        {:error, reason} ->
+          Logger.error(reason)
+      end
+    end
+  end
+
+  @spec ensure_workflow_exists(
+          access_token :: String.t(),
+          owner :: String.t(),
+          repo :: String.t(),
+          workflow_id :: integer()
+        ) :: {:ok, map()} | {:error, any()}
+  def ensure_workflow_exists(access_token, owner, repo, workflow_id) do
+    if workflow = Workflows.get_workflow(workflow_id) do
+      {:ok, workflow}
+    else
+      with {:ok, workflow_data} <-
+             GitHub.Client.get_workflow(access_token, owner, repo, workflow_id) do
+        Workflows.insert_or_update_workflow(workflow_data)
+      end
     end
   end
 
