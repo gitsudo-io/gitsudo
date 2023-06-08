@@ -370,9 +370,12 @@ defmodule Gitsudo.Events.AsyncWorker do
     if workflow_run = Workflows.get_workflow_run(workflow_run_id) do
       {:ok, workflow_run}
     else
-      with {:ok, workflow_run_data} <-
+      with {:ok, %{"workflow_id" => workflow_id} = workflow_run_data} <-
              GitHub.Client.get_workflow_run(access_token, owner, repo, workflow_run_id) do
-        Workflows.insert_or_update_workflow_run(workflow_run_data)
+        with {:ok, _workflow} <-
+               ensure_workflow_exists(access_token, owner, repo, workflow_id) do
+          Workflows.insert_or_update_workflow_run(workflow_run_data)
+        end
       end
     end
   end
