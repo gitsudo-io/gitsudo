@@ -35,7 +35,9 @@ config :gitsudo,
 
 # Set Ecto Repo defaults
 # Configure your database
-config :gitsudo, Gitsudo.Repo, migration_timestamps: [type: :utc_datetime_usec]
+config :gitsudo, Gitsudo.Repo, 
+  migration_timestamps: [type: :utc_datetime_usec],
+  ssl: true
 
 # Configures the mailer
 #
